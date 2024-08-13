@@ -1,0 +1,33 @@
+version: '3'
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5000:3000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    environment:
+      - NODE_ENV=development
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: gymsoft
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
