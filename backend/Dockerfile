@@ -1,5 +1,5 @@
 # Usar una imagen base de Node.js
-FROM node:18-alpine
+FROM node:20.17-alpine
 
 # Establecer el directorio de trabajo dentro del contenedor
 WORKDIR /app
@@ -9,6 +9,7 @@ COPY package.json package-lock.json ./
 
 # Instalar las dependencias
 RUN npm install
+RUN npm install -g nodemon
 
 # Copiar el resto del código de la aplicación
 COPY . .
@@ -17,4 +18,4 @@ COPY . .
 EXPOSE 5000
 
 # Comando para iniciar el servidor
-CMD ["node", "index.js"]
+CMD ["nodemon", "server.js"]
