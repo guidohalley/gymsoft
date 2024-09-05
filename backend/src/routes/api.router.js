@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import validarToken from '../middleware/validarToken.middleware.js';
 import accesoRouter from './acceso.router.js';
+import musculosRouter from './musculos.router.js';
 
 const apiRouter = Router();
 
@@ -12,7 +13,7 @@ apiRouter.get("/", (req, res) => {
 apiRouter.use('/acceso', accesoRouter);
 
 //Endpoints privados
-apiRouter.use('/acceso', validarToken, accesoRouter);
+apiRouter.use('/musculos', validarToken, musculosRouter);
 
 
 export default apiRouter;

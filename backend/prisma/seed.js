@@ -72,6 +72,30 @@ const crearUsuarios = async () => {
       "gimnasioId": 1,
       "rolId": 2
     },
+    {
+      "id": 4,
+      "email": "luciano@gmail.com",
+      "nombre": "Luciano",
+      "apellido": "Cassettai",
+      "nroTelefono": "3764902330",
+      "direccion": "Avenida Alem 4618",
+      "activo": true,
+      "password": "$2b$10$a8VEjlLNJ6h0tMi8o6xgnOV7SrhFsvS2oLXtAF6nod8jlVpJwXqHK",
+      "gimnasioId": 2,
+      "rolId": 2
+    },
+    {
+      "id": 5,
+      "email": "guido@gmail.com",
+      "nombre": "Guido",
+      "apellido": "Halley",
+      "nroTelefono": "3764902330",
+      "direccion": "Avenida Alem 4618",
+      "activo": true,
+      "password": "$2b$10$a8VEjlLNJ6h0tMi8o6xgnOV7SrhFsvS2oLXtAF6nod8jlVpJwXqHK",
+      "gimnasioId": 1,
+      "rolId": 3
+    },
   ]
 
   await insertarDatos('Usuario', usuarios);
@@ -79,7 +103,8 @@ const crearUsuarios = async () => {
 
 const crearGimnasios =  () => {
   const gimnasios = [
-    {"id": 1,"nombre": "NeutronGym","direccion": "Av. Aguado 1684"}
+    {"id": 1,"nombre": "NeutronGym","direccion": "Av. Aguado 1684"},
+    {"id": 2,"nombre": "Zeus","direccion": "Sarmiento 123"}
   ]
 
   insertarDatos('Gimnasio', gimnasios);
@@ -108,7 +133,7 @@ async function main() {
   await crearGimnasios();
   await crearRoles();
   await crearUsuarios();
-  await crearMusculos();
+  //await crearMusculos();
   await crearTipoClase();
 
   console.log('Datos insertados correctamente');

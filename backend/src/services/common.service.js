@@ -2,12 +2,12 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const create = async (model,data) => {
+const create = async (model, data) => {
     try {
         const newRow = await prisma[model].create({
             data,
-            select:{
-                id:true
+            select: {
+                id: true
             }
         });
 
@@ -17,30 +17,45 @@ const create = async (model,data) => {
     }
 }
 
-const getAll = async (model,companyId, params) => {
-    const { description, active, page, limit } = params;
+const getAll = async (model, gimnasioId, params) => {
+    const { nombre, descripcion,activo,page, limit } = params;
 
     const skip = (page - 1) * limit;
 
-    const filters = {};
+    let filtros = {};
 
-    if (description) {
-        filters.description = {
-            contains: description,
+    if (nombre) {
+        filtros.nombre = {
+            contains: nombre,
             mode: 'insensitive',
         };
     }
 
-    if (active !== undefined) {
-        filters.active = active;
+    if (descripcion) {
+        filtros.descripcion = {
+            contains: descripcion,
+            mode: 'insensitive',
+        };
     }
 
-    filters.companyId = companyId;
+    if (activo !== undefined) {
+        filtros.activo = activo;
+    }
 
     try {
         const rows = await prisma[model].findMany(
             {
-                where: filters,
+                where:{
+                    AND: [
+                        filtros,
+                        {
+                            OR: [
+                                {esGlobal: true},
+                                {gimnasioId: gimnasioId},
+                            ]
+                        }
+                    ]
+                },
                 skip: skip,
                 take: limit,
                 orderBy: {
@@ -55,13 +70,13 @@ const getAll = async (model,companyId, params) => {
     }
 }
 
-const getById = async (model,id, companyId) => {
+const getById = async (model, id, gimnasioId) => {
     try {
         const row = await prisma[model].findUnique(
             {
                 where: {
                     id: parseInt(id),
-                    companyId: companyId
+                    gimnasioId: gimnasioId
                 }
             }
         );
@@ -72,14 +87,17 @@ const getById = async (model,id, companyId) => {
     }
 }
 
-const update = async (model,id,data) => {
+const update = async (model, id, data) => {
     try {
         const updatedRows = await prisma[model].update(
             {
                 where: {
                     id: parseInt(id)
                 },
-                data
+                data,
+                select: {
+                    id: true
+                }
             }
         );
 

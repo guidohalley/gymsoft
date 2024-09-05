@@ -17,8 +17,8 @@ export const login = async (req, res, next) => {
 
     try {
 
-        const usuario = await usuarioService.findByEmail(email);
-        console.log(usuario);
+        const usuario = await usuarioService.findByEmailLogin(email);
+
         if (!usuario) {
             return next(mensajeError('Credenciales Invalidas', HTTP_STATUS.UNAUTHORIZED));
         }
@@ -32,11 +32,12 @@ export const login = async (req, res, next) => {
         const secretKey = process.env.JWT_SECRET;
         if (!secretKey) {
             return next(mensajeError('Error interno, JWT_SECRET no esta definido', HTTP_STATUS.INTERNAL_SERVER_ERROR, null, __archivo, 'login'));
-        }
+        }   
 
         const sesionUsuario = {
-            id: usuario.id,
+            usuarioId: usuario.id,
             email: usuario.email,
+            gimnasioId: usuario.gimnasioId
         };
 
         const token = jwt.sign(sesionUsuario, secretKey, { expiresIn: '6h' });
