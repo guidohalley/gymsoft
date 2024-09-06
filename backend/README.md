@@ -1,4 +1,4 @@
-# lams-backend
+# Gymsoft
 
 Este proyecto es una API construida con Express y Prisma que utiliza una base de datos Postgres.
 
@@ -35,7 +35,7 @@ Para crear el esquema en la base de datos, utiliza Prisma Migrate. Ejecuta el si
 npx prisma migrate dev
 ```
 
-> La conexion a la base de datos se define en el archivo .env en la variable **DATABASE_URL**.Es importante tener en cuenta que la base de datos debe existir en el servidor de base de datos, por defecto se llama **lams**
+> La conexion a la base de datos se define en el archivo .env en la variable **DATABASE_URL**.Es importante tener en cuenta que la base de datos debe existir en el servidor de base de datos, por defecto se llama **gymsoft**
 
 Para cargar los datos en la bd adicionales:
 
@@ -43,27 +43,14 @@ Para cargar los datos en la bd adicionales:
 npm run seed
 ```
 
-Para pruebas usar el seed anterior y adicionalmente test-seed el cual carga dos usuarios 
-
-```sh
-npm run test-seed
-```
-
-Cargar datos de localidades 
-```sh
-psql -h localhost -U postgres -d lams -f .\db\countries.sql
-psql -h localhost -U postgres -d lams -f .\db\states.sql
-psql -h localhost -U postgres -d lams -f .\db\cities.sql
-```
-
 Datos de prueba 
 
 | Usuario | Password  | 
 |----------|----------|
-| lcassettai@sobrelaweb.com    | demo  | 
-| rcano@sobrelaweb.com    | demo   | 
+| admin@gmail.com    | demo  | 
+| martin@gmail.com    | demo   | 
+| martina@gmail.com    | demo   | 
 
-> NO CORRER test-seed en produccion
 
 ## Iniciar el Servidor
 Para comenzar a escuchar el servidor, ejecuta:
@@ -75,7 +62,7 @@ npm start
 ## Prueba de la API
 Para verificar que la API esté funcionando correctamente, abre tu navegador y dirígete a la siguiente URL:
 
-http://localhost:3000/api/v1
+http://localhost:3000/api
 
 Deberías recibir la siguiente respuesta:
 
