@@ -3,8 +3,8 @@ import { validationResult } from 'express-validator';
 import { mensajeError, mensajeExito } from '../utils/responseHandler.util.js';
 import HTTP_STATUS from '../constants/httpStatusCodes.js';
 
-const __fileName = 'musculos.controller.js';
-const model = 'Musculo';
+const __fileName = 'categoriasEjercicio.controller.js';
+const model = 'CategoriaEjercicio';
 
 const create = async (req, res,next) => {
     const errors = validationResult(req);
