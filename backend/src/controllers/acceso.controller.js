@@ -29,6 +29,10 @@ export const login = async (req, res, next) => {
             return next(mensajeError('Credenciales Invalidas', HTTP_STATUS.UNAUTHORIZED));
         }
 
+        if(!usuario.activo){
+            return next(mensajeError('El usuario se encuentra inactivo', HTTP_STATUS.UNAUTHORIZED));
+        }
+
         const secretKey = process.env.JWT_SECRET;
         if (!secretKey) {
             return next(mensajeError('Error interno, JWT_SECRET no esta definido', HTTP_STATUS.INTERNAL_SERVER_ERROR, null, __archivo, 'login'));

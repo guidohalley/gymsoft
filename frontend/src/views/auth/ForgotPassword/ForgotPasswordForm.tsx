@@ -21,7 +21,7 @@ type ForgotPasswordFormSchema = {
 }
 
 const validationSchema = Yup.object().shape({
-    email: Yup.string().required('Please enter your email'),
+    email: Yup.string().required('Ingresa tu email'),
 })
 
 const ForgotPasswordForm = (props: ForgotPasswordFormProps) => {
@@ -58,16 +58,14 @@ const ForgotPasswordForm = (props: ForgotPasswordFormProps) => {
                     <>
                         <h3 className="mb-1">Check your email</h3>
                         <p>
-                            We have sent a password recovery instruction to your
-                            email
+                           Te enviamos instrucciones a tu correo para recuperar tu clave
                         </p>
                     </>
                 ) : (
                     <>
-                        <h3 className="mb-1">Forgot Password</h3>
+                        <h3 className="mb-1">Olvide mi clave</h3>
                         <p>
-                            Please enter your email address to receive a
-                            verification code
+                           Por favor ingresa tu email y te enviaremos un codigo para restablecer tu contraseña
                         </p>
                     </>
                 )}
@@ -79,7 +77,7 @@ const ForgotPasswordForm = (props: ForgotPasswordFormProps) => {
             )}
             <Formik
                 initialValues={{
-                    email: 'admin@mail.com',
+                    email: 'email@ejemplo.com',
                 }}
                 validationSchema={validationSchema}
                 onSubmit={(values, { setSubmitting }) => {
@@ -113,11 +111,11 @@ const ForgotPasswordForm = (props: ForgotPasswordFormProps) => {
                                 variant="solid"
                                 type="submit"
                             >
-                                {emailSent ? 'Resend Email' : 'Send Email'}
+                                {emailSent ? 'Resend Email' : 'Enviar codigo de recuperacion'}
                             </Button>
                             <div className="mt-4 text-center">
-                                <span>Back to </span>
-                                <ActionLink to={signInUrl}>Sign in</ActionLink>
+                                <span>Volver al  </span>
+                                <ActionLink to={signInUrl}>Login</ActionLink>
                             </div>
                         </FormContainer>
                     </Form>
