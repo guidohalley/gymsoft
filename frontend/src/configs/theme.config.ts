@@ -28,16 +28,16 @@ export type ThemeConfig = {
  * we recommend to use the configuration that generated from demo.
  */
 export const themeConfig: ThemeConfig = {
-    themeColor: 'indigo',
+    themeColor: 'cyan',
     direction: THEME_ENUM.DIR_LTR,
     mode: THEME_ENUM.MODE_LIGHT,
-    primaryColorLevel: 600,
+    primaryColorLevel: 700,
     cardBordered: true,
     panelExpand: false,
     controlSize: 'md',
-    navMode: THEME_ENUM.NAV_MODE_LIGHT,
+    navMode: THEME_ENUM.NAV_MODE_THEMED,
     layout: {
-        type: THEME_ENUM.LAYOUT_TYPE_MODERN,
+        type: THEME_ENUM.LAYOUT_TYPE_CLASSIC,
         sideNavCollapse: false,
     },
 }

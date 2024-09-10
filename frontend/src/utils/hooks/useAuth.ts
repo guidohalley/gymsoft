@@ -35,12 +35,12 @@ function useAuth() {
         try {
             const resp = await apiSignIn(values)
             if (resp.data) {
-                const { token } = resp.data
+                const { token } = resp.data.data
                 dispatch(signInSuccess(token))
-                if (resp.data.user) {
+                if (resp.data.data.usuario) {
                     dispatch(
                         setUser(
-                            resp.data.user || {
+                            resp.data.data.usuario || {
                                 avatar: '',
                                 userName: 'Anonymous',
                                 authority: ['USER'],
@@ -117,7 +117,7 @@ function useAuth() {
     }
 
     const signOut = async () => {
-        await apiSignOut()
+        //await apiSignOut()
         handleSignOut()
     }
 

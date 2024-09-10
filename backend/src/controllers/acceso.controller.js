@@ -41,7 +41,19 @@ export const login = async (req, res, next) => {
         };
 
         const token = jwt.sign(sesionUsuario, secretKey, { expiresIn: '6h' });
-        res.json(mensajeExito('Login correcto', 200, { token }));
+
+        const respuesta = {
+            token,
+            usuario:{
+                nombre: usuario.nombre,
+                apellido: usuario.apellido,
+                email: usuario.email,
+                rol: usuario.rol.nombre,
+                authority:[usuario.rol.nombre]
+            }
+        }
+        
+        res.json(mensajeExito('Login correcto', 200, respuesta));
     } catch (error) {
         return next(mensajeError("Error en el login", HTTP_STATUS.INTERNAL_SERVER_ERROR, null, __fileName, 'login', error));
     }
