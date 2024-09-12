@@ -116,14 +116,14 @@ model Ejercicio {
   nombre               String             @db.VarChar(128)
   descripcion          String             @db.VarChar(255)
   activo               Boolean            @default(true)
-  createdAt            DateTime           @default(now()) @map("created_at")
-  updatedAt            DateTime           @updatedAt @map("updated_at")
   categoriaEjercicioId Int                @map("categoria_ejercicio_id")
   esGlobal             Boolean            @default(true) @map("es_global")
   creadoPor            Int?               @map("creado_por")
   gimnasioId           Int?               @map("gimnasio_id")
   path                 String?            @db.VarChar(255)
   url                  String?            @db.VarChar(255)
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
   categoriaEjercicio   CategoriaEjercicio @relation(fields: [categoriaEjercicioId], references: [id])
   ejerciciosMusculos   EjercicioMusculo[]
   bloquesEjercicios    BloqueEjercicio[]
