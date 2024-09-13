@@ -5,6 +5,7 @@ import musculosRouter from './musculos.router.js';
 import categoriasEjercicioRouter from './categoriasEjercicio.router.js';
 import ejerciciosRouter from './ejercicios.router.js';
 import tiposClasesRouter from './tiposClases.router.js';
+import dispositivosRouter from './dispositivos.router.js';
 
 const apiRouter = Router();
 
@@ -20,6 +21,7 @@ apiRouter.use('/musculos', validarToken, musculosRouter);
 apiRouter.use('/categorias-ejercicio', validarToken, categoriasEjercicioRouter);
 apiRouter.use('/ejercicios', validarToken, ejerciciosRouter);
 apiRouter.use('/tipos-clases', validarToken, tiposClasesRouter);
+apiRouter.use('/dispositivos', validarToken, dispositivosRouter);
 
 
 export default apiRouter;
