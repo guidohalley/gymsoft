@@ -134,7 +134,7 @@ async function main() {
   await crearRoles();
   await crearUsuarios();
   //await crearMusculos();
-  await crearTipoClase();
+  //await crearTipoClase();
 
   console.log('Datos insertados correctamente');
 }

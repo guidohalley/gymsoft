@@ -82,14 +82,14 @@ CREATE TABLE "ejercicios" (
     "nombre" VARCHAR(128) NOT NULL,
     "descripcion" VARCHAR(255) NOT NULL,
     "activo" BOOLEAN NOT NULL DEFAULT true,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
     "categoria_ejercicio_id" INTEGER NOT NULL,
     "es_global" BOOLEAN NOT NULL DEFAULT true,
     "creado_por" INTEGER,
     "gimnasio_id" INTEGER,
     "path" VARCHAR(255),
     "url" VARCHAR(255),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "ejercicios_pkey" PRIMARY KEY ("id")
 );
@@ -164,11 +164,12 @@ CREATE TABLE "tipos_clases" (
 CREATE TABLE "clases" (
     "id" SERIAL NOT NULL,
     "descripcion" VARCHAR(128) NOT NULL,
-    "activa" BOOLEAN NOT NULL DEFAULT true,
-    "fecha_inicio" TIMESTAMP(3) NOT NULL,
-    "fecha_fin" TIMESTAMP(3) NOT NULL,
+    "activo" BOOLEAN NOT NULL DEFAULT true,
+    "fecha_inicio" DATE NOT NULL,
+    "fecha_fin" DATE NOT NULL,
     "tipo_clase_id" INTEGER NOT NULL,
     "gimnasio_id" INTEGER NOT NULL,
+    "creado_por" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -276,6 +277,9 @@ ALTER TABLE "clases" ADD CONSTRAINT "clases_gimnasio_id_fkey" FOREIGN KEY ("gimn
 
 -- AddForeignKey
 ALTER TABLE "clases" ADD CONSTRAINT "clases_tipo_clase_id_fkey" FOREIGN KEY ("tipo_clase_id") REFERENCES "tipos_clases"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "clases" ADD CONSTRAINT "clases_creado_por_fkey" FOREIGN KEY ("creado_por") REFERENCES "usuarios"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "bloques" ADD CONSTRAINT "bloques_rutina_id_fkey" FOREIGN KEY ("rutina_id") REFERENCES "rutinas"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -46,6 +46,7 @@ model Usuario {
   ejercicios           Ejercicio[]
   tiposClases          TipoClase[]
   rutinas              Rutina[]
+  clases               Clase[]
 
   @@map("usuarios")
 }
@@ -212,17 +213,19 @@ model TipoClase {
 model Clase {
   id              Int                @id @default(autoincrement())
   descripcion     String             @db.VarChar(128)
-  activa          Boolean            @default(true)
-  fechaInicio     DateTime           @map("fecha_inicio")
-  fechaFin        DateTime           @map("fecha_fin")
+  activo          Boolean            @default(true)
+  fechaInicio     DateTime           @db.Date	@map("fecha_inicio")
+  fechaFin        DateTime           @db.Date	@map("fecha_fin")
   tipoClaseId     Int                @map("tipo_clase_id")
   rutina          Rutina?
   gimnasioId      Int                @map("gimnasio_id")
+  creadoPor       Int                @map("creado_por")
   createdAt       DateTime           @default(now()) @map("created_at")
   updatedAt       DateTime           @updatedAt @map("updated_at")
   claseDispotivio ClaseDispositivo[]
   gimnasio        Gimnasio           @relation(fields: [gimnasioId], references: [id])
   tipoClase       TipoClase          @relation(fields: [tipoClaseId], references: [id])
+  usuario         Usuario            @relation(fields: [creadoPor], references: [id])
 
   @@map("clases")
 }
