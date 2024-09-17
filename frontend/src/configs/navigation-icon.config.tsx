@@ -4,7 +4,10 @@ import {
     HiOutlineTemplate,
     HiOutlineViewGridAdd,
     HiOutlineHome,
+    HiAdjustments 
 } from 'react-icons/hi'
+
+import { GoDot } from "react-icons/go";
 
 export type NavigationIcons = Record<string, JSX.Element>
 
@@ -14,6 +17,8 @@ const navigationIcon: NavigationIcons = {
     collapseMenu: <HiOutlineTemplate />,
     groupSingleMenu: <HiOutlineDesktopComputer />,
     groupCollapseMenu: <HiOutlineColorSwatch />,
+    ajustes: <HiAdjustments />,
+    punto: <GoDot />,
 }
 
 export default navigationIcon
