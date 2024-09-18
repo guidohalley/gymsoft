@@ -6,6 +6,7 @@ import categoriasEjercicioRouter from './categoriasEjercicio.router.js';
 import ejerciciosRouter from './ejercicios.router.js';
 import tiposClasesRouter from './tiposClases.router.js';
 import dispositivosRouter from './dispositivos.router.js';
+import clasesRouter from './clases.router.js'
 
 const apiRouter = Router();
 
@@ -22,6 +23,7 @@ apiRouter.use('/categorias-ejercicio', validarToken, categoriasEjercicioRouter);
 apiRouter.use('/ejercicios', validarToken, ejerciciosRouter);
 apiRouter.use('/tipos-clases', validarToken, tiposClasesRouter);
 apiRouter.use('/dispositivos', validarToken, dispositivosRouter);
+apiRouter.use('/clases', validarToken, clasesRouter);
 
 
 export default apiRouter;

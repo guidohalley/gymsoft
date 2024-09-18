@@ -1,6 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+const debug = process.env.NODE_ENV === 'debug' ? {log: ['query']} : undefined;
+const prisma = new PrismaClient(debug);
+
+prisma.$on('query', (e) => {
+    console.log('Query: ' + e.query)
+    console.log('Params: ' + e.params)
+    console.log('Duration: ' + e.duration + 'ms')
+  })
 
 const create = async (model, data) => {
     try {
