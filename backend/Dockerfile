@@ -5,7 +5,7 @@ FROM node:20.17-alpine
 WORKDIR /app
 
 # Copiar los archivos de package.json y package-lock.json
-COPY package.json package-lock.json ./
+COPY package*.json ./
 
 # Instalar las dependencias
 RUN npm install
@@ -14,8 +14,10 @@ RUN npm install -g nodemon
 # Copiar el resto del código de la aplicación
 COPY . .
 
+RUN npx prisma generate
+
 # Exponer el puerto de la API
 EXPOSE 5000
 
 # Comando para iniciar el servidor
-CMD ["nodemon", "server.js"]
+CMD ["nodemon", "--legacy-watch", "server.js"]
