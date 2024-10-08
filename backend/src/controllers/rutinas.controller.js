@@ -15,12 +15,13 @@ const create = async (req, res,next) => {
     }
 
     try {
-        const { nombre,descripcion } = req.body;
+        const { nombre,descripcion,estadoId } = req.body;
         const { usuarioId,gimnasioId } = req.payload;
 
         const data = {
             nombre: nombre,
             descripcion:descripcion,
+            estadoId:estadoId,
             gimnasioId: gimnasioId,
             creadoPor: usuarioId
         };
@@ -90,7 +91,7 @@ const update = async (req, res,next) => {
 
     try {
         const { id } = req.params;
-        const { nombre,descripcion, activo,claseId } = req.body;
+        const { nombre,descripcion,claseId,estadoId } = req.body;
         const { gimnasioId } = req.payload;
 
         const datoExistente = await commonService.getById(model,id,gimnasioId);
@@ -99,7 +100,7 @@ const update = async (req, res,next) => {
             return next(mensajeError('No se encontraron datos', HTTP_STATUS.NOT_FOUND));
         }
 
-        await commonService.update(model,id,{nombre,activo,descripcion,claseId});
+        await commonService.update(model,id,{nombre,descripcion,claseId,estadoId});
         res.json(mensajeExito('Se actualizaron los datos', HTTP_STATUS.OK));
     } catch (error) {
         return next(mensajeError("Error al actualizar los datos", HTTP_STATUS.INTERNAL_SERVER_ERROR, null, __fileName, 'update', error));
@@ -123,7 +124,7 @@ const remove = async (req, res,next) => {
             return next(mensajeError('No se encontraron datos', HTTP_STATUS.NOT_FOUND));
         }
 
-        await commonService.update(model,id,{ activo: false });
+        await commonService.update(model,id,{ estadoId: 3 });
 
         res.json(mensajeExito('Se elimino el elemento', HTTP_STATUS.OK));
     } catch (error) {

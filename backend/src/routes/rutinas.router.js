@@ -16,11 +16,12 @@ const validarCreacion = [
     .isLength({ max: descripcionLength })
     .withMessage(`La longitud maxima de la descripcion es de ${descripcionLength}`)
     .notEmpty().withMessage('La descripcion es requerida'),
+    body('estado_id').optional().isNumeric(true).withMessage('El campo estado es invalido')
 ];
 
 const validarActualizacion = [
     body('nombre').isLength({ max: nombreMaxLength }).withMessage(`La longitud maxima es ${nombreMaxLength}`),
-    body('activo').optional().isBoolean(true).withMessage('El campo activo es invalido'),
+    body('estado').optional().isNumeric(true).withMessage('El campo estado es invalido'),
     body('claseId').optional().isNumeric().withMessage('El campo claseId es invalido'),
     body('descripcion').isLength({ max: descripcionLength }).withMessage(`La longitud maxima de la escripcion es de ${descripcionLength}`),
 ];

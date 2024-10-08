@@ -134,20 +134,29 @@ model Ejercicio {
   @@map("ejercicios")
 }
 
+model EstadoRutina {
+  id      Int      @id @default(autoincrement())
+  estado  String   @db.VarChar(128)
+  rutinas Rutina[]
+
+  @@map("estados_rutinas")
+}
+
 model Rutina {
-  id          Int       @id @default(autoincrement())
-  nombre      String    @db.VarChar(128)
-  descripcion String    @db.VarChar(255)
-  activo      Boolean   @default(true)
-  creadoPor   Int?      @map("creado_por")
-  gimnasioId  Int?      @map("gimnasio_id")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-  claseId     Int?      @unique
+  id          Int          @id @default(autoincrement())
+  nombre      String       @db.VarChar(128)
+  descripcion String       @db.VarChar(255)
+  estadoId    Int          @map("estado_id")
+  creadoPor   Int?         @map("creado_por")
+  gimnasioId  Int?         @map("gimnasio_id")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  claseId     Int?         @unique
   bloques     Bloque[]
-  clase       Clase?    @relation(fields: [claseId], references: [id])
-  usuario     Usuario?  @relation(fields: [creadoPor], references: [id])
-  gimnasio    Gimnasio? @relation(fields: [gimnasioId], references: [id])
+  estado      EstadoRutina @relation(fields: [estadoId], references: [id])
+  clase       Clase?       @relation(fields: [claseId], references: [id])
+  usuario     Usuario?     @relation(fields: [creadoPor], references: [id])
+  gimnasio    Gimnasio?    @relation(fields: [gimnasioId], references: [id])
 
   @@map("rutinas")
 }
@@ -156,10 +165,10 @@ model BloqueEjercicio {
   ejercicioId  Int       @map("ejercicio_id")
   bloqueId     Int       @map("bloque_id")
   orden        Int
-  repeticiones Int
-  series       Int
-  descanso     Int
-  peso         Int
+  repeticiones String?    @db.VarChar(128)
+  series       Int?
+  descanso     Int?
+  peso         Int?
   ejercicio    Ejercicio @relation(fields: [ejercicioId], references: [id])
   bloque       Bloque    @relation(fields: [bloqueId], references: [id])
 
@@ -214,8 +223,8 @@ model Clase {
   id              Int                @id @default(autoincrement())
   descripcion     String             @db.VarChar(128)
   activo          Boolean            @default(true)
-  fechaInicio     DateTime           @db.Date	@map("fecha_inicio")
-  fechaFin        DateTime           @db.Date	@map("fecha_fin")
+  fechaInicio     DateTime           @map("fecha_inicio") @db.Date
+  fechaFin        DateTime           @map("fecha_fin") @db.Date
   tipoClaseId     Int                @map("tipo_clase_id")
   rutina          Rutina?
   gimnasioId      Int                @map("gimnasio_id")
@@ -233,6 +242,8 @@ model Clase {
 model Bloque {
   id                Int               @id @default(autoincrement())
   descripcion       String            @db.VarChar(128)
+  series            String?            @db.VarChar(128)
+  descanso          String?            @db.VarChar(128)
   rutinaId          Int               @map("rutina_id")
   createdAt         DateTime          @default(now()) @map("created_at")
   updatedAt         DateTime          @updatedAt @map("updated_at")

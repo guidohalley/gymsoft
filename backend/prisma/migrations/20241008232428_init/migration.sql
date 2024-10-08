@@ -95,11 +95,19 @@ CREATE TABLE "ejercicios" (
 );
 
 -- CreateTable
+CREATE TABLE "estados_rutinas" (
+    "id" SERIAL NOT NULL,
+    "estado" VARCHAR(128) NOT NULL,
+
+    CONSTRAINT "estados_rutinas_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "rutinas" (
     "id" SERIAL NOT NULL,
     "nombre" VARCHAR(128) NOT NULL,
     "descripcion" VARCHAR(255) NOT NULL,
-    "activo" BOOLEAN NOT NULL DEFAULT true,
+    "estado_id" INTEGER NOT NULL,
     "creado_por" INTEGER,
     "gimnasio_id" INTEGER,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -114,10 +122,10 @@ CREATE TABLE "bloques_ejercicios" (
     "ejercicio_id" INTEGER NOT NULL,
     "bloque_id" INTEGER NOT NULL,
     "orden" INTEGER NOT NULL,
-    "repeticiones" INTEGER NOT NULL,
-    "series" INTEGER NOT NULL,
-    "descanso" INTEGER NOT NULL,
-    "peso" INTEGER NOT NULL,
+    "repeticiones" VARCHAR(128),
+    "series" INTEGER,
+    "descanso" INTEGER,
+    "peso" INTEGER,
 
     CONSTRAINT "bloques_ejercicios_pkey" PRIMARY KEY ("ejercicio_id","bloque_id")
 );
@@ -180,6 +188,8 @@ CREATE TABLE "clases" (
 CREATE TABLE "bloques" (
     "id" SERIAL NOT NULL,
     "descripcion" VARCHAR(128) NOT NULL,
+    "series" VARCHAR(128),
+    "descanso" VARCHAR(128),
     "rutina_id" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -241,6 +251,9 @@ ALTER TABLE "ejercicios" ADD CONSTRAINT "ejercicios_creado_por_fkey" FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE "ejercicios" ADD CONSTRAINT "ejercicios_gimnasio_id_fkey" FOREIGN KEY ("gimnasio_id") REFERENCES "gimnasios"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "rutinas" ADD CONSTRAINT "rutinas_estado_id_fkey" FOREIGN KEY ("estado_id") REFERENCES "estados_rutinas"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "rutinas" ADD CONSTRAINT "rutinas_claseId_fkey" FOREIGN KEY ("claseId") REFERENCES "clases"("id") ON DELETE SET NULL ON UPDATE CASCADE;
