@@ -5,7 +5,7 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon --env-file=.env server.js",
+    "start": "nodemon --env-file=.env --legacy-watch server.js",
     "test": "jest",
     "test-watch": "jest --watch",
     "seed": "node prisma/seed.js",
@@ -32,7 +32,7 @@
     "babel-jest": "^29.7.0",
     "jest": "^29.7.0",
     "nodemon": "^3.1.4",
-    "prisma": "^5.19.1",
+    "prisma": "^5.20.0",
     "supertest": "^7.0.0"
   }
 }

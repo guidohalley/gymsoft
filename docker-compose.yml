@@ -1,39 +1,56 @@
-version: '3.8'
 services:
   frontend:
+    container_name: gymsoft-frontend
     build: ./frontend
     ports:
-      - "3000:3000"
+      - "5173:5173"
     volumes:
-      - ./frontend:/app
+      - ./frontend:/app:delegated
+      - /app/node_modules 
     environment:
       NODE_ENV: development
+      VITE_API_URL: http://localhost:5000/api
     depends_on:
       - backend
+    networks:
+      - gymsoft-network
 
   backend:
+    container_name: gymsoft-backend
     build: ./backend
     ports:
       - "5000:5000"
     volumes:
-      - ./backend:/app
+      - ./backend:/app  # Mapea el directorio backend en el host al contenedor
+      - /app/node_modules  # Evita que los node_modules se sobrescriban
+    env_file:
+      - ./backend/.env
     environment:
       NODE_ENV: development
       DATABASE_URL: postgres://postgres:postgres@db:5432/gymsoft
     depends_on:
       - db
-    command: nodemon /app/server.js
+    command: npm start
+    networks:
+      - gymsoft-network
 
   db:
+    container_name: pg-16
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: gymsoft
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - ./pgdata:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5433:5432"
+    networks:
+      - gymsoft-network
 
 volumes:
   pgdata:
+
+networks:
+  gymsoft-network:
+    driver: bridge
