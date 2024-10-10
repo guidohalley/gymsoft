@@ -20,6 +20,7 @@ const validarActualizacion = [
     body('fechaInicio').optional().isDate().withMessage(`La fecha inicio debe tener formato de fecha`),
     body('fechaFin').optional().isDate().withMessage(`La fecha fin debe tener formato de fecha`),
     body('tipoClaseId').isNumeric().withMessage(`El tipo de clase debe ser numerico`),
+    body('rutinaId').optional().isNumeric().withMessage('El campo rutinaId es invalido'),
     body('activo').optional().isBoolean(true).withMessage('El campo activo es invalido')
 ];
 

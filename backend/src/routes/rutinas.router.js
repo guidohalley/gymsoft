@@ -22,7 +22,6 @@ const validarCreacion = [
 const validarActualizacion = [
     body('nombre').isLength({ max: nombreMaxLength }).withMessage(`La longitud maxima es ${nombreMaxLength}`),
     body('estado').optional().isNumeric(true).withMessage('El campo estado es invalido'),
-    body('claseId').optional().isNumeric().withMessage('El campo claseId es invalido'),
     body('descripcion').isLength({ max: descripcionLength }).withMessage(`La longitud maxima de la escripcion es de ${descripcionLength}`),
 ];
 

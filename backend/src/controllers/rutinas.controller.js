@@ -91,7 +91,7 @@ const update = async (req, res,next) => {
 
     try {
         const { id } = req.params;
-        const { nombre,descripcion,claseId,estadoId } = req.body;
+        const { nombre,descripcion,estadoId } = req.body;
         const { gimnasioId } = req.payload;
 
         const datoExistente = await commonService.getById(model,id,gimnasioId);
@@ -100,7 +100,7 @@ const update = async (req, res,next) => {
             return next(mensajeError('No se encontraron datos', HTTP_STATUS.NOT_FOUND));
         }
 
-        await commonService.update(model,id,{nombre,descripcion,claseId,estadoId});
+        await commonService.update(model,id,{nombre,descripcion,estadoId});
         res.json(mensajeExito('Se actualizaron los datos', HTTP_STATUS.OK));
     } catch (error) {
         return next(mensajeError("Error al actualizar los datos", HTTP_STATUS.INTERNAL_SERVER_ERROR, null, __fileName, 'update', error));
