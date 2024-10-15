@@ -30,7 +30,7 @@ model Usuario {
   email                String               @unique
   nombre               String               @db.VarChar(128)
   apellido             String               @db.VarChar(128)
-  nroTelefono          String               @map("nro_telefono") @db.VarChar(20)
+  nroTelefono          String               @map("nro_telefono") @db.VarChar(30)
   direccion            String               @db.VarChar(255)
   activo               Boolean              @default(true)
   password             String               @db.VarChar(255)
@@ -123,6 +123,8 @@ model Ejercicio {
   gimnasioId           Int?               @map("gimnasio_id")
   path                 String?            @db.VarChar(255)
   url                  String?            @db.VarChar(255)
+  nombreArchivo        String?            @db.VarChar(255) @map("nombre_archivo")
+  mimetype             String?            @db.VarChar(255)
   createdAt            DateTime           @default(now()) @map("created_at")
   updatedAt            DateTime           @updatedAt @map("updated_at")
   categoriaEjercicio   CategoriaEjercicio @relation(fields: [categoriaEjercicioId], references: [id])
@@ -151,10 +153,9 @@ model Rutina {
   gimnasioId  Int?         @map("gimnasio_id")
   createdAt   DateTime     @default(now()) @map("created_at")
   updatedAt   DateTime     @updatedAt @map("updated_at")
-  claseId     Int?         @unique
   bloques     Bloque[]
+  clases      Clase[]
   estado      EstadoRutina @relation(fields: [estadoId], references: [id])
-  clase       Clase?       @relation(fields: [claseId], references: [id])
   usuario     Usuario?     @relation(fields: [creadoPor], references: [id])
   gimnasio    Gimnasio?    @relation(fields: [gimnasioId], references: [id])
 
@@ -226,11 +227,12 @@ model Clase {
   fechaInicio     DateTime           @map("fecha_inicio") @db.Date
   fechaFin        DateTime           @map("fecha_fin") @db.Date
   tipoClaseId     Int                @map("tipo_clase_id")
-  rutina          Rutina?
+  rutinaId        Int?               @map("rutina_id")
   gimnasioId      Int                @map("gimnasio_id")
   creadoPor       Int                @map("creado_por")
   createdAt       DateTime           @default(now()) @map("created_at")
   updatedAt       DateTime           @updatedAt @map("updated_at")
+  rutina          Rutina?            @relation(fields: [rutinaId], references: [id])
   claseDispotivio ClaseDispositivo[]
   gimnasio        Gimnasio           @relation(fields: [gimnasioId], references: [id])
   tipoClase       TipoClase          @relation(fields: [tipoClaseId], references: [id])
@@ -242,8 +244,9 @@ model Clase {
 model Bloque {
   id                Int               @id @default(autoincrement())
   descripcion       String            @db.VarChar(128)
-  series            String?            @db.VarChar(128)
-  descanso          String?            @db.VarChar(128)
+  orden             Int?
+  series            String?           @db.VarChar(80)
+  descanso          String?           @db.VarChar(80)
   rutinaId          Int               @map("rutina_id")
   createdAt         DateTime          @default(now()) @map("created_at")
   updatedAt         DateTime          @updatedAt @map("updated_at")

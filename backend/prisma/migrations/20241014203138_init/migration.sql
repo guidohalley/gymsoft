@@ -16,7 +16,7 @@ CREATE TABLE "usuarios" (
     "email" TEXT NOT NULL,
     "nombre" VARCHAR(128) NOT NULL,
     "apellido" VARCHAR(128) NOT NULL,
-    "nro_telefono" VARCHAR(20) NOT NULL,
+    "nro_telefono" VARCHAR(30) NOT NULL,
     "direccion" VARCHAR(255) NOT NULL,
     "activo" BOOLEAN NOT NULL DEFAULT true,
     "password" VARCHAR(255) NOT NULL,
@@ -88,6 +88,8 @@ CREATE TABLE "ejercicios" (
     "gimnasio_id" INTEGER,
     "path" VARCHAR(255),
     "url" VARCHAR(255),
+    "nombre_archivo" VARCHAR(255),
+    "mimetype" VARCHAR(255),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -112,7 +114,6 @@ CREATE TABLE "rutinas" (
     "gimnasio_id" INTEGER,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
-    "claseId" INTEGER,
 
     CONSTRAINT "rutinas_pkey" PRIMARY KEY ("id")
 );
@@ -176,6 +177,7 @@ CREATE TABLE "clases" (
     "fecha_inicio" DATE NOT NULL,
     "fecha_fin" DATE NOT NULL,
     "tipo_clase_id" INTEGER NOT NULL,
+    "rutina_id" INTEGER,
     "gimnasio_id" INTEGER NOT NULL,
     "creado_por" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -188,8 +190,9 @@ CREATE TABLE "clases" (
 CREATE TABLE "bloques" (
     "id" SERIAL NOT NULL,
     "descripcion" VARCHAR(128) NOT NULL,
-    "series" VARCHAR(128),
-    "descanso" VARCHAR(128),
+    "orden" INTEGER,
+    "series" VARCHAR(80),
+    "descanso" VARCHAR(80),
     "rutina_id" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -215,9 +218,6 @@ CREATE UNIQUE INDEX "roles_nombre_key" ON "roles"("nombre");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "usuarios_email_key" ON "usuarios"("email");
-
--- CreateIndex
-CREATE UNIQUE INDEX "rutinas_claseId_key" ON "rutinas"("claseId");
 
 -- AddForeignKey
 ALTER TABLE "usuarios" ADD CONSTRAINT "usuarios_rol_id_fkey" FOREIGN KEY ("rol_id") REFERENCES "roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -256,9 +256,6 @@ ALTER TABLE "ejercicios" ADD CONSTRAINT "ejercicios_gimnasio_id_fkey" FOREIGN KE
 ALTER TABLE "rutinas" ADD CONSTRAINT "rutinas_estado_id_fkey" FOREIGN KEY ("estado_id") REFERENCES "estados_rutinas"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "rutinas" ADD CONSTRAINT "rutinas_claseId_fkey" FOREIGN KEY ("claseId") REFERENCES "clases"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "rutinas" ADD CONSTRAINT "rutinas_creado_por_fkey" FOREIGN KEY ("creado_por") REFERENCES "usuarios"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -284,6 +281,9 @@ ALTER TABLE "tipos_clases" ADD CONSTRAINT "tipos_clases_creado_por_fkey" FOREIGN
 
 -- AddForeignKey
 ALTER TABLE "tipos_clases" ADD CONSTRAINT "tipos_clases_gimnasio_id_fkey" FOREIGN KEY ("gimnasio_id") REFERENCES "gimnasios"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "clases" ADD CONSTRAINT "clases_rutina_id_fkey" FOREIGN KEY ("rutina_id") REFERENCES "rutinas"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "clases" ADD CONSTRAINT "clases_gimnasio_id_fkey" FOREIGN KEY ("gimnasio_id") REFERENCES "gimnasios"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

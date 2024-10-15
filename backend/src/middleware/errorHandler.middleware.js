@@ -15,7 +15,7 @@ const errorHandler = (err, req, res,next)  => {
         const errorLogInfo = {
             error : err.originalError || err.stack || err,
             status: statusCode,
-            file: err.file || __filename,
+            file: err.file || 'unknown',
             functionCalled: err.functionCalled || 'unknown',
             endpoint : `${req.method} ${req.originalUrl}`,
             message: err.message || 'Internal Server Error'

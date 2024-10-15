@@ -15,7 +15,7 @@ const create = async (req, res,next) => {
     }
 
     try {
-        const { descripcion,fechaInicio,fechaFin,tipoClaseId } = req.body;
+        const { descripcion,fechaInicio,fechaFin,tipoClaseId,rutinaId} = req.body;
         const { usuarioId,gimnasioId } = req.payload;
 
         const fechaInicioFormateada = new Date(fechaInicio); 
@@ -25,6 +25,7 @@ const create = async (req, res,next) => {
             descripcion: descripcion,
             fechaInicio: fechaInicioFormateada,
             fechaFin: fechaFinFormateada,
+            rutinaId: rutinaId ?? null,
             tipoClaseId:tipoClaseId,
             gimnasioId: gimnasioId,
             creadoPor: usuarioId
@@ -94,7 +95,7 @@ const update = async (req, res,next) => {
 
     try {
         const { id } = req.params;
-        const { descripcion,fechaInicio,fechaFin,tipoClaseId } = req.body;
+        const { descripcion,fechaInicio,fechaFin,tipoClaseId,rutinaId } = req.body;
         const { gimnasioId } = req.payload;
 
         const datoExistente = await commonService.getById(model,id,gimnasioId);
@@ -110,7 +111,8 @@ const update = async (req, res,next) => {
             descripcion: descripcion,
             fechaInicio: fechaInicioFormateada,
             fechaFin: fechaFinFormateada,
-            tipoClaseId:tipoClaseId
+            tipoClaseId:tipoClaseId,
+            rutinaId: rutinaId
         };
 
         const datoActualizado = await commonService.update(model,id,data);
