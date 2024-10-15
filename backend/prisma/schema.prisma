@@ -123,6 +123,8 @@ model Ejercicio {
   gimnasioId           Int?               @map("gimnasio_id")
   path                 String?            @db.VarChar(255)
   url                  String?            @db.VarChar(255)
+  nombreArchivo        String?            @db.VarChar(255) @map("nombre_archivo")
+  mimetype             String?            @db.VarChar(255)
   createdAt            DateTime           @default(now()) @map("created_at")
   updatedAt            DateTime           @updatedAt @map("updated_at")
   categoriaEjercicio   CategoriaEjercicio @relation(fields: [categoriaEjercicioId], references: [id])

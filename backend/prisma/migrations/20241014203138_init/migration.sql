@@ -88,6 +88,8 @@ CREATE TABLE "ejercicios" (
     "gimnasio_id" INTEGER,
     "path" VARCHAR(255),
     "url" VARCHAR(255),
+    "nombre_archivo" VARCHAR(255),
+    "mimetype" VARCHAR(255),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 

@@ -1,6 +1,7 @@
 import {Router} from 'express';
 import {body,param} from 'express-validator';
 import ejerciciosController from '../controllers/ejercicios.controller.js';
+import { uploadMiddleware } from '../middleware/upload.middleware.js';
 
 const router = Router();
 const nombreMaxLength = 128;
@@ -32,11 +33,10 @@ const validarId = [
     param('id').isNumeric().withMessage('El id debe ser un numero'),
 ];
 
-router.post('/',validarCreacion,ejerciciosController.create);
+router.post('/',uploadMiddleware,ejerciciosController.create);
 router.get('/',ejerciciosController.getAll );
 router.get('/:id', ejerciciosController.getById);
-router.put('/:id',validarId.concat(validarActualizacion),ejerciciosController.update);
+router.put('/:id',uploadMiddleware,validarId,validarActualizacion,ejerciciosController.update);
 router.delete('/:id',validarId,ejerciciosController.remove);
-
 
 export default router;

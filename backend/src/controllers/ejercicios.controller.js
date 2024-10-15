@@ -2,6 +2,7 @@ import commonService from '../services/common.service.js';
 import { validationResult } from 'express-validator';
 import { mensajeError, mensajeExito } from '../utils/responseHandler.util.js';
 import HTTP_STATUS from '../constants/httpStatusCodes.js';
+import {upLoadFile} from '../utils/awsS3.util.js';
 
 const __fileName = 'ejercicios.controller.js';
 const model = 'Ejercicio';
@@ -22,11 +23,22 @@ const create = async (req, res,next) => {
             descripcion: descripcion,
             path:path,
             url:url,
-            categoriaEjercicioId: categoriaEjercicioId,
-            esGlobal:esGlobal,
+            categoriaEjercicioId: Number(categoriaEjercicioId),
+            esGlobal:Boolean(esGlobal),
             gimnasioId: gimnasioId,
             creadoPor: usuarioId
         };
+
+        if(req.file){
+            const s3 = await upLoadFile(req.file);
+            if(s3.imageUrl){
+                data.url = s3.imageUrl;
+                data.nombreArchivo = req.file.filename ;
+                data.mimetype = req.file.mimetype ?? '';
+            }else{
+                return next(mensajeError("Error al subir el video a AWS", HTTP_STATUS.INTERNAL_SERVER_ERROR, null, __fileName, 'upload', 'error'));
+            }
+        }        
 
         const nuevaFila = await commonService.create(model,data);
 
@@ -105,15 +117,29 @@ const update = async (req, res,next) => {
             return next(mensajeError('No se encontraron datos', HTTP_STATUS.NOT_FOUND));
         }
 
-        const datoActualizado = await commonService.update(model,id,{
+        const data = {
             nombre,
-            activo,
+            activo: Boolean(activo),
             descripcion,
-            categoriaEjercicioId,
+            categoriaEjercicioId: Number(categoriaEjercicioId),
             path,
             url,
-            esGlobal 
-        });
+            esGlobal: Boolean(esGlobal),
+        }
+
+        if(req.file){
+            const s3 = await upLoadFile(req.file);
+            console.log(req.file);
+            if(s3.imageUrl){
+                data.url = s3.imageUrl;
+                data.nombreArchivo = req.file.filename ;
+                data.mimetype = req.file.mimetype ?? '';
+            }else{
+                return next(mensajeError("Error al subir el video a AWS", HTTP_STATUS.INTERNAL_SERVER_ERROR, null, __fileName, 'upload', 'error'));
+            }
+        }  
+
+        const datoActualizado = await commonService.update(model,id,data);
         res.json(mensajeExito('Se actualizaron los datos', HTTP_STATUS.OK));
     } catch (error) {
         if (error.code === 'P2003') {
@@ -154,5 +180,5 @@ export default {
     getById,
     create,
     update,
-    remove
+    remove	
 }
