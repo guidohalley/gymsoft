@@ -8,6 +8,7 @@ import tiposClasesRouter from './tiposClases.router.js';
 import dispositivosRouter from './dispositivos.router.js';
 import clasesRouter from './clases.router.js'
 import rutinasRouter from './rutinas.router.js';
+import bloquesRouter from './bloques.router.js';
 
 const apiRouter = Router();
 
@@ -26,6 +27,7 @@ apiRouter.use('/tipos-clases', validarToken, tiposClasesRouter);
 apiRouter.use('/dispositivos', validarToken, dispositivosRouter);
 apiRouter.use('/clases', validarToken, clasesRouter);
 apiRouter.use('/rutinas', validarToken, rutinasRouter);
+apiRouter.use('/bloques', validarToken, bloquesRouter);
 
 
 export default apiRouter;
