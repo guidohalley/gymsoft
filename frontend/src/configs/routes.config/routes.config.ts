@@ -4,6 +4,7 @@ import type { Routes } from '@/@types/routes'
 
 export const publicRoutes: Routes = [...authRoute]
 import {ADMIN,ENTRENADOR,DUENIO} from '@/constants/roles.constant';
+import { components } from 'react-select';
 
 export const protectedRoutes = [
     {
@@ -23,6 +24,12 @@ export const protectedRoutes = [
         path: '/ajustes/tipos-de-clases',
         component: lazy(() => import('@/views/ajustes/TiposDeClases')),
         authority: [ADMIN,DUENIO],
-    }
+    },
+    {
+        key: 'NuevoEjercicio',
+        path: '/ejercicios/NuevoEjercicio',
+        component: lazy(() => import('@/views/ejercicios/NuevoEjercicio')),
+        authority: [ADMIN,ENTRENADOR,DUENIO],
+    },
 
 ]
