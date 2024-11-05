@@ -47,6 +47,7 @@ model Usuario {
   tiposClases          TipoClase[]
   rutinas              Rutina[]
   clases               Clase[]
+  bloques              Bloque[]
 
   @@map("usuarios")
 }
@@ -66,115 +67,9 @@ model Gimnasio {
   ejercicios           Ejercicio[]
   tiposClases          TipoClase[]
   rutinas              Rutina[]
+  bloques              Bloque[]
 
   @@map("gimnasios")
-}
-
-model CategoriaEjercicio {
-  id         Int         @id @default(autoincrement())
-  nombre     String      @db.VarChar(128)
-  activo     Boolean     @default(true)
-  esGlobal   Boolean     @default(true) @map("es_global")
-  creadoPor  Int?        @map("creado_por")
-  gimnasioId Int?        @map("gimnasio_id")
-  createdAt  DateTime    @default(now()) @map("created_at")
-  updatedAt  DateTime    @updatedAt @map("updated_at")
-  usuario    Usuario?    @relation(fields: [creadoPor], references: [id])
-  gimnasio   Gimnasio?   @relation(fields: [gimnasioId], references: [id])
-  ejercicios Ejercicio[]
-
-  @@map("categorias_ejercicios")
-}
-
-model Musculo {
-  id         Int                @id @default(autoincrement())
-  nombre     String             @db.VarChar(128)
-  activo     Boolean            @default(true)
-  esGlobal   Boolean            @default(true) @map("es_global")
-  creadoPor  Int?               @map("creado_por")
-  gimnasioId Int?               @map("gimnasio_id")
-  createdAt  DateTime           @default(now()) @map("created_at")
-  updatedAt  DateTime           @updatedAt @map("updated_at")
-  ejercicios EjercicioMusculo[]
-  usuario    Usuario?           @relation(fields: [creadoPor], references: [id])
-  gimnasio   Gimnasio?          @relation(fields: [gimnasioId], references: [id])
-
-  @@map("musculos")
-}
-
-model EjercicioMusculo {
-  ejercicioId Int       @map("ejercicio_id")
-  musculoId   Int       @map("musculo_id")
-  ejercicio   Ejercicio @relation(fields: [ejercicioId], references: [id])
-  musculo     Musculo   @relation(fields: [musculoId], references: [id])
-
-  @@id([ejercicioId, musculoId])
-  @@map("ejercicios_musculos")
-}
-
-model Ejercicio {
-  id                   Int                @id @default(autoincrement())
-  nombre               String             @db.VarChar(128)
-  descripcion          String             @db.VarChar(255)
-  activo               Boolean            @default(true)
-  categoriaEjercicioId Int                @map("categoria_ejercicio_id")
-  esGlobal             Boolean            @default(true) @map("es_global")
-  creadoPor            Int?               @map("creado_por")
-  gimnasioId           Int?               @map("gimnasio_id")
-  path                 String?            @db.VarChar(255)
-  url                  String?            @db.VarChar(255)
-  nombreArchivo        String?            @db.VarChar(255) @map("nombre_archivo")
-  mimetype             String?            @db.VarChar(255)
-  createdAt            DateTime           @default(now()) @map("created_at")
-  updatedAt            DateTime           @updatedAt @map("updated_at")
-  categoriaEjercicio   CategoriaEjercicio @relation(fields: [categoriaEjercicioId], references: [id])
-  ejerciciosMusculos   EjercicioMusculo[]
-  bloquesEjercicios    BloqueEjercicio[]
-  usuario              Usuario?           @relation(fields: [creadoPor], references: [id])
-  gimnasio             Gimnasio?          @relation(fields: [gimnasioId], references: [id])
-
-  @@map("ejercicios")
-}
-
-model EstadoRutina {
-  id      Int      @id @default(autoincrement())
-  estado  String   @db.VarChar(128)
-  rutinas Rutina[]
-
-  @@map("estados_rutinas")
-}
-
-model Rutina {
-  id          Int          @id @default(autoincrement())
-  nombre      String       @db.VarChar(128)
-  descripcion String       @db.VarChar(255)
-  estadoId    Int          @map("estado_id")
-  creadoPor   Int?         @map("creado_por")
-  gimnasioId  Int?         @map("gimnasio_id")
-  createdAt   DateTime     @default(now()) @map("created_at")
-  updatedAt   DateTime     @updatedAt @map("updated_at")
-  bloques     Bloque[]
-  clases      Clase[]
-  estado      EstadoRutina @relation(fields: [estadoId], references: [id])
-  usuario     Usuario?     @relation(fields: [creadoPor], references: [id])
-  gimnasio    Gimnasio?    @relation(fields: [gimnasioId], references: [id])
-
-  @@map("rutinas")
-}
-
-model BloqueEjercicio {
-  ejercicioId  Int       @map("ejercicio_id")
-  bloqueId     Int       @map("bloque_id")
-  orden        Int
-  repeticiones String?    @db.VarChar(128)
-  series       Int?
-  descanso     Int?
-  peso         Int?
-  ejercicio    Ejercicio @relation(fields: [ejercicioId], references: [id])
-  bloque       Bloque    @relation(fields: [bloqueId], references: [id])
-
-  @@id([ejercicioId, bloqueId])
-  @@map("bloques_ejercicios")
 }
 
 model Dispositivo {
@@ -241,19 +136,141 @@ model Clase {
   @@map("clases")
 }
 
+model EstadoRutina {
+  id      Int      @id @default(autoincrement())
+  estado  String   @db.VarChar(128)
+  rutinas Rutina[]
+
+  @@map("estados_rutinas")
+}
+
+model Rutina {
+  id            Int             @id @default(autoincrement())
+  nombre        String          @db.VarChar(128)
+  descripcion   String          @db.VarChar(255)
+  estadoId      Int             @map("estado_id")
+  creadoPor     Int?            @map("creado_por")
+  gimnasioId    Int?            @map("gimnasio_id")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+  clases        Clase[]
+  estado        EstadoRutina    @relation(fields: [estadoId], references: [id])
+  usuario       Usuario?        @relation(fields: [creadoPor], references: [id])
+  gimnasio      Gimnasio?       @relation(fields: [gimnasioId], references: [id])
+  rutinaBloques RutinaBloques[]
+
+  @@map("rutinas")
+}
+
+model RutinaBloques {
+  rutinaId Int @map("rutina_id")
+  bloqueId Int @map("bloque_id")
+
+  rutina Rutina @relation(fields: [rutinaId], references: [id])
+  bloque Bloque @relation(fields: [bloqueId], references: [id])
+
+  @@id([rutinaId, bloqueId])
+  @@map("rutinas_bloques")
+}
+
 model Bloque {
   id                Int               @id @default(autoincrement())
   descripcion       String            @db.VarChar(128)
+  activo            Boolean           @default(true)
   orden             Int?
   series            String?           @db.VarChar(80)
   descanso          String?           @db.VarChar(80)
-  rutinaId          Int               @map("rutina_id")
+  creadoPor         Int?              @map("creado_por")
+  gimnasioId        Int?              @map("gimnasio_id")
   createdAt         DateTime          @default(now()) @map("created_at")
   updatedAt         DateTime          @updatedAt @map("updated_at")
-  rutina            Rutina            @relation(fields: [rutinaId], references: [id])
   bloquesEjercicios BloqueEjercicio[]
+  rutinaBloques     RutinaBloques[]
+  usuario           Usuario?          @relation(fields: [creadoPor], references: [id])
+  gimnasio          Gimnasio?         @relation(fields: [gimnasioId], references: [id])
 
   @@map("bloques")
+}
+
+model BloqueEjercicio {
+  ejercicioId  Int       @map("ejercicio_id")
+  bloqueId     Int       @map("bloque_id")
+  orden        Int
+  repeticiones String?   @db.VarChar(128)
+  series       Int?
+  descanso     Int?
+  peso         Int?
+  ejercicio    Ejercicio @relation(fields: [ejercicioId], references: [id])
+  bloque       Bloque    @relation(fields: [bloqueId], references: [id])
+
+  @@id([ejercicioId, bloqueId])
+  @@map("bloques_ejercicios")
+}
+
+model Ejercicio {
+  id                   Int                @id @default(autoincrement())
+  nombre               String             @db.VarChar(128)
+  descripcion          String             @db.VarChar(255)
+  activo               Boolean            @default(true)
+  categoriaEjercicioId Int                @map("categoria_ejercicio_id")
+  esGlobal             Boolean            @default(true) @map("es_global")
+  creadoPor            Int?               @map("creado_por")
+  gimnasioId           Int?               @map("gimnasio_id")
+  path                 String?            @db.VarChar(255)
+  url                  String?            @db.VarChar(255)
+  nombreArchivo        String?            @map("nombre_archivo") @db.VarChar(255)
+  mimetype             String?            @db.VarChar(255)
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
+  categoriaEjercicio   CategoriaEjercicio @relation(fields: [categoriaEjercicioId], references: [id])
+  ejerciciosMusculos   EjercicioMusculo[]
+  bloquesEjercicios    BloqueEjercicio[]
+  usuario              Usuario?           @relation(fields: [creadoPor], references: [id])
+  gimnasio             Gimnasio?          @relation(fields: [gimnasioId], references: [id])
+
+  @@map("ejercicios")
+}
+
+model CategoriaEjercicio {
+  id         Int         @id @default(autoincrement())
+  nombre     String      @db.VarChar(128)
+  activo     Boolean     @default(true)
+  esGlobal   Boolean     @default(true) @map("es_global")
+  creadoPor  Int?        @map("creado_por")
+  gimnasioId Int?        @map("gimnasio_id")
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
+  usuario    Usuario?    @relation(fields: [creadoPor], references: [id])
+  gimnasio   Gimnasio?   @relation(fields: [gimnasioId], references: [id])
+  ejercicios Ejercicio[]
+
+  @@map("categorias_ejercicios")
+}
+
+model EjercicioMusculo {
+  ejercicioId Int       @map("ejercicio_id")
+  musculoId   Int       @map("musculo_id")
+  ejercicio   Ejercicio @relation(fields: [ejercicioId], references: [id])
+  musculo     Musculo   @relation(fields: [musculoId], references: [id])
+
+  @@id([ejercicioId, musculoId])
+  @@map("ejercicios_musculos")
+}
+
+model Musculo {
+  id         Int                @id @default(autoincrement())
+  nombre     String             @db.VarChar(128)
+  activo     Boolean            @default(true)
+  esGlobal   Boolean            @default(true) @map("es_global")
+  creadoPor  Int?               @map("creado_por")
+  gimnasioId Int?               @map("gimnasio_id")
+  createdAt  DateTime           @default(now()) @map("created_at")
+  updatedAt  DateTime           @updatedAt @map("updated_at")
+  ejercicios EjercicioMusculo[]
+  usuario    Usuario?           @relation(fields: [creadoPor], references: [id])
+  gimnasio   Gimnasio?          @relation(fields: [gimnasioId], references: [id])
+
+  @@map("musculos")
 }
 
 model Otp {
