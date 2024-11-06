@@ -45,7 +45,17 @@ const navigationConfig: NavigationTree[] = [
             authority: [ADMIN,DUENIO],
             subMenu: [],
         }]
-    }
+    },
+    {
+        key: 'categoriaEjercicios',
+        path: '/categorias-ejercicios',
+        title: 'Categoria de Ejercicios',
+        translateKey: 'nav.categoriasEjercicios',
+        icon: 'exercise',
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: [ADMIN,DUENIO],
+        subMenu: [],
+    },
 ]
 
 export default navigationConfig

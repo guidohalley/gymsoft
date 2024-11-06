@@ -4,6 +4,7 @@ import type { Routes } from '@/@types/routes'
 
 export const publicRoutes: Routes = [...authRoute]
 import {ADMIN,ENTRENADOR,DUENIO} from '@/constants/roles.constant';
+import path from 'path';
 
 export const protectedRoutes = [
     {
@@ -23,6 +24,13 @@ export const protectedRoutes = [
         path: '/ajustes/tipos-de-clases',
         component: lazy(() => import('@/views/ajustes/TiposDeClases')),
         authority: [ADMIN,DUENIO],
-    }
+    },
+    {
+        key: 'categoriasEjercicios',
+        path: '/categorias-ejercicios',
+        component: lazy(() => import('@/views/categorias/Categorias')),
+        authority: [ADMIN,DUENIO],
+
+    },
 
 ]
