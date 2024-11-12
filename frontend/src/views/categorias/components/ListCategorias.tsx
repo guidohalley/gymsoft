@@ -86,7 +86,7 @@ const ListCategorias: React.FC<ListCategoriasProps> = ({ categorias, onDelete, o
                 <div className="flex space-x-2">
                     <Button
                         variant="link"
-                        onClick={() => handleEdit(row.original.id, { nombre: 'Nuevo Nombre' })}
+                        onClick={() => handleEdit(row.original.id, row.original)}
                     >
                         Modificar
                     </Button>
@@ -142,32 +142,7 @@ const ListCategorias: React.FC<ListCategoriasProps> = ({ categorias, onDelete, o
 
     // Función para manejar la edición de una categoría
     const handleEdit = async (id: number, data: Partial<Categoria>) => {
-        try {
-            const updatedCategoria = await updateCategoriaEjercicio(id, data);
-            onEdit(id, updatedCategoria); // Actualiza la lista en el componente padre
-
-            // Mostrar notificación de éxito
-            toast.push(
-                <Notification
-                    title="Categoría actualizada"
-                    customIcon={<HiOutlineCheckCircle className="text-2xl text-blue-500" />}
-                >
-                    La categoría se ha actualizado exitosamente.
-                </Notification>
-            );
-        } catch (error) {
-            console.error('Error al actualizar la categoría:', error);
-
-            // Mostrar notificación de error
-            toast.push(
-                <Notification
-                    title="Error"
-                    customIcon={<HiOutlineExclamationCircle className="text-2xl text-red-500" />}
-                >
-                    Hubo un error al actualizar la categoría.
-                </Notification>
-            );
-        }
+        onEdit(id, data);
     };
 
     return (

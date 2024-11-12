@@ -6,6 +6,9 @@ import FormCategoriasSkeleton from './components/FormCategoriasSkeleton';
 import ListCategorias from './components/ListCategorias';
 import ListCategoriasSkeleton from './components/ListCategoriasSkeleton';
 import Modal from '@/components/ui/Modal/Modal';
+import toast from '@/components/ui/toast';
+import Notification from '@/components/ui/Notification';
+import { HiOutlineCheckCircle, HiOutlineExclamationCircle, HiOutlineTrash } from 'react-icons/hi';
 import { getCategoriasEjercicios, deleteCategoriaEjercicio, updateCategoriaEjercicio } from '@/services/CategoriaEjerciciosService';
 
 interface Categoria {
@@ -59,14 +62,22 @@ const Categorias: React.FC = () => {
     const handleEditSave = async (updatedData: Partial<Categoria>) => {
         if (selectedCategoria && selectedCategoria.id) {
             try {
-                await updateCategoriaEjercicio(selectedCategoria.id, updatedData);
+                await updateCategoriaEjercicio(selectedCategoria, updatedData);
                 setCategorias((prevCategorias) =>
                     prevCategorias.map((categoria) =>
-                        categoria.id === selectedCategoria.id ? { ...categoria, ...updatedData } : categoria
+                        categoria.id === selectedCategoria ? { ...categoria, ...updatedData } : categoria
                     )
                 );
                 setEditModalOpen(false);
                 setSelectedCategoria(null);
+                toast.push(
+                    <Notification
+                        title="Categoría actualizada"
+                        customIcon={<HiOutlineCheckCircle className="text-2xl text-blue-500" />}
+                    >
+                        La categoría se ha actualizado exitosamente.
+                    </Notification>
+                );
             } catch (error) {
                 console.error('Error al actualizar la categoría:', error);
             }
