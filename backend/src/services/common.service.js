@@ -66,7 +66,7 @@ const getAll = async (model, gimnasioId, params) => {
                 skip: skip,
                 take: limit,
                 orderBy: {
-                    createdAt: 'desc',
+                    id: 'desc',
                 },
             }
         );
@@ -78,13 +78,23 @@ const getAll = async (model, gimnasioId, params) => {
 }
 
 const getById = async (model, id, gimnasioId) => {
+    let filtro ;
+
+    if(gimnasioId === undefined || gimnasioId === null) {
+        filtro  = {
+            id: parseInt(id)
+        }
+    }else{
+        filtro = {
+            id: parseInt(id),
+            gimnasioId: gimnasioId
+        }
+    }
+
     try {
         const row = await prisma[model].findUnique(
             {
-                where: {
-                    id: parseInt(id),
-                    gimnasioId: gimnasioId
-                }
+                where: filtro
             }
         );
 
