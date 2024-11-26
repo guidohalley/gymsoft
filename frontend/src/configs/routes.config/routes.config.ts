@@ -14,12 +14,6 @@ export const protectedRoutes = [
         authority: [ADMIN,ENTRENADOR,DUENIO],
     },
     {
-        key: 'musculos',
-        path: '/ajustes/musculos',
-        component: lazy(() => import('@/views/ajustes/Musculos')),
-        authority: [ADMIN,DUENIO],
-    },
-    {
         key: 'tiposDeClases',
         path: '/ajustes/tipos-de-clases',
         component: lazy(() => import('@/views/ajustes/TiposDeClases')),
@@ -30,7 +24,12 @@ export const protectedRoutes = [
         path: '/categorias-ejercicios',
         component: lazy(() => import('@/views/categorias/Categorias')),
         authority: [ADMIN,DUENIO],
-
     },
+    {
+        key: 'musculos',
+        path: '/musculos',
+        component: lazy(() => import('@/views/musculos')),
+        authority: [ADMIN,DUENIO],
+    }
 
 ]

@@ -25,16 +25,7 @@ const navigationConfig: NavigationTree[] = [
         icon: 'ajustes',
         type: NAV_ITEM_TYPE_COLLAPSE,
         authority: [ADMIN,DUENIO],
-        subMenu: [{
-            key: 'musculos',
-            path: '/ajustes/musculos',
-            title: 'Musculos',
-            translateKey: 'nav.musculos',
-            icon: '',
-            type: NAV_ITEM_TYPE_ITEM,
-            authority: [ADMIN,DUENIO],
-            subMenu: [],
-        },
+        subMenu: [
         {
             key: 'tiposDeClases',
             path: '/ajustes/tipos-de-clases',
@@ -54,6 +45,16 @@ const navigationConfig: NavigationTree[] = [
         icon: 'exercise',
         type: NAV_ITEM_TYPE_ITEM,
         authority: [ADMIN,DUENIO],
+        subMenu: [],
+    },
+    {
+        key: 'musculos',
+        path: '/musculos',
+        title: 'Musculos',
+        translateKey: 'nav.musculos',
+        icon: 'musculos',
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: [],
         subMenu: [],
     },
 ]

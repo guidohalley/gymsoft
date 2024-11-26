@@ -6,6 +6,8 @@ import {
     HiOutlineHome,
     HiAdjustments 
 } from 'react-icons/hi'
+import { GiMuscleUp } from "react-icons/gi";
+
 
 import { GoDot } from "react-icons/go";
 
@@ -19,6 +21,7 @@ const navigationIcon: NavigationIcons = {
     groupCollapseMenu: <HiOutlineColorSwatch />,
     ajustes: <HiAdjustments />,
     punto: <GoDot />,
+    musculos: <GiMuscleUp />,
 }
 
 export default navigationIcon
