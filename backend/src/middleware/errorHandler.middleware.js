@@ -1,41 +1,69 @@
-import logger from '../utils/logger.js';
+import logger from "../utils/logger.js";
 
-const logError = ({error, status, file, functionCalled, endpoint,message}) => {
-    const errorMessage = `${status} ${message}\nFile: ${file} \nFunction: ${functionCalled} \nEndpoint: ${endpoint}\n${error}`;
-    logger.error(errorMessage);
-    if (process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'test') {
-        console.error(error);
-    }
+// Función para generar logs de error
+const logError = (
+  { error, status, file, functionCalled, endpoint, message, request },
+  level = "info"
+) => {
+  const logData = {
+    status,
+    message,
+    file: file || "unknown",
+    function: functionCalled || "unknown",
+    endpoint,
+    requestBody: request.body || {},
+    requestQuery: request.query || {},
+    errorDetails: error,
+  };
+
+  if (level === "info") {
+    logger.info(JSON.stringify(logData));
+  } else {
+    logger.error(JSON.stringify(logData));
+  }
+
+  if (process.env.NODE_ENV === "dev") {
+    console.error(logData);
+  }
 };
 
-const errorHandler = (err, req, res,next)  => {
-    const statusCode = err.status || 500;
+// Middleware de manejo de errores
+const errorHandler = (err, req, res, next) => {
+  const statusCode = err.status || 500;
 
-    if(statusCode >= 500){
-        const errorLogInfo = {
-            error : err.originalError || err.stack || err,
-            status: statusCode,
-            file: err.file || 'unknown',
-            functionCalled: err.functionCalled || 'unknown',
-            endpoint : `${req.method} ${req.originalUrl}`,
-            message: err.message || 'Internal Server Error'
-        };
+  // Información detallada del error
+  const errorLogInfo = {
+    error: err.originalError || err.stack || err,
+    status: statusCode,
+    file: err.file,
+    functionCalled: err.functionCalled,
+    endpoint: `${req.method} ${req.originalUrl}`,
+    message: err.message || "Internal Server Error",
+    request: {
+      body: req.body,
+      query: req.query,
+    },
+  };
 
-        logError(errorLogInfo);
-    }
+  // Log según el tipo de error
+  if (statusCode >= 500) {
+    logError(errorLogInfo, "error");
+  } else if (statusCode >= 400 && statusCode < 500) {
+    logError(errorLogInfo, "info");
+  }
 
-    //Establece el código de estado del error
-    const response = {
-        ok: false,
-        method: req.method,
-        status: statusCode,
-        message: err.message || 'Internal Server Error',
-        info: err.data || null,
-        timestamp: new Date().toISOString(),
-        path: req.originalUrl
-    };
+  // Respuesta al cliente
+  const response = {
+    ok: false,
+    method: req.method,
+    status: statusCode,
+    message: err.message || "Internal Server Error",
+    info: err.data || null,
+    timestamp: new Date().toISOString(),
+    path: req.originalUrl,
+  };
 
-    res.status(err.status || 500).json(response);
-}
+  res.status(statusCode).json(response);
+};
 
 export default errorHandler;
