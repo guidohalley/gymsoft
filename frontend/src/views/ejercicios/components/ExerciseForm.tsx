@@ -1,80 +1,77 @@
-import React, { useState } from 'react'
-import { Formik, Form, Field } from 'formik'
-import * as Yup from 'yup'
-import Input from '@/components/ui/Input'
-import Button from '@/components/ui/Button'
-import { FormContainer, FormItem } from '@/components/ui/Form'
-import Select from '@/components/ui/Select'
-import Checkbox from '@/components/ui/Checkbox'
-import toast from '@/components/ui/toast'
-import Notification from '@/components/ui/Notification'
-import ExerciseUpload from './ExerciseUpload'
+import React, { useState } from 'react';
+import { Formik, Form, Field } from 'formik';
+import * as Yup from 'yup';
+import Input from '@/components/ui/Input';
+import Button from '@/components/ui/Button';
+import { FormContainer, FormItem } from '@/components/ui/Form';
+import Select from '@/components/ui/Select';
+import Checkbox from '@/components/ui/Checkbox';
+import toast from '@/components/ui/toast';
+import Notification from '@/components/ui/Notification';
+import ExerciseUpload from './ExerciseUpload';
 import {
     HiOutlineCheckCircle,
     HiOutlineExclamationCircle,
-} from 'react-icons/hi'
+} from 'react-icons/hi';
 
+// Validación del formulario
 const validationSchema = Yup.object().shape({
     nombre: Yup.string().required('El nombre es requerido'),
     descripcion: Yup.string().required('La descripción es requerida'),
     categoriaEjercicioId: Yup.string().required(
-        'Debes seleccionar una categoría',
+        'Debes seleccionar una categoría'
     ),
     esGlobal: Yup.boolean(),
     video: Yup.array()
         .min(1, 'Debes subir al menos un archivo')
         .max(1, 'Solo se permite un archivo'),
-})
+});
 
 interface ExerciseFormProps {
-    onSubmit: (values: FormData) => Promise<void>
-    categorias: { value: string; label: string }[]
+    onSubmit: (values: FormData) => Promise<void>;
+    categorias: { value: string; label: string }[];
     initialValues: {
-        nombre: string
-        descripcion: string
-        categoriaEjercicioId: string
-        esGlobal: boolean
-        video: File[]
-    }
+        nombre: string;
+        descripcion: string;
+        categoriaEjercicioId: string;
+        esGlobal: boolean;
+        video: File[];
+    };
+    enableReinitialize?: boolean;
 }
 
 const ExerciseForm: React.FC<ExerciseFormProps> = ({
     onSubmit,
-    onUpdate,
     categorias,
     initialValues,
+    enableReinitialize = false,
 }) => {
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
 
     return (
         <Formik
-            initialValues={{
-                nombre: '',
-                descripcion: '',
-                categoriaEjercicioId: '',
-                esGlobal: false,
-                video: [], // Inicializamos como arreglo vacío
-            }}
+            initialValues={initialValues}
+            enableReinitialize={enableReinitialize}
             validationSchema={validationSchema}
             onSubmit={async (values, { resetForm }) => {
-                setLoading(true)
+                setLoading(true);
                 try {
-                    const formData = new FormData()
-                    formData.append('nombre', values.nombre)
-                    formData.append('descripcion', values.descripcion)
+                    const formData = new FormData();
+                    formData.append('nombre', values.nombre);
+                    formData.append('descripcion', values.descripcion);
                     formData.append(
                         'categoriaEjercicioId',
-                        values.categoriaEjercicioId,
-                    )
+                        values.categoriaEjercicioId
+                    );
                     formData.append(
                         'esGlobal',
-                        values.esGlobal ? 'true' : 'false',
-                    )
+                        values.esGlobal ? 'true' : 'false'
+                    );
                     if (values.video.length > 0) {
-                        formData.append('video', values.video[0])
+                        formData.append('video', values.video[0]);
                     }
 
-                    await onSubmit(formData)
+                    await onSubmit(formData);
 
                     toast.push(
                         <Notification
@@ -83,11 +80,11 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                                 <HiOutlineCheckCircle className="text-2xl text-green-500" />
                             }
                         >
-                            Ejercicio creado exitosamente.
-                        </Notification>,
-                    )
-                    resetForm()
-                } catch (error) {
+                            Ejercicio creado o actualizado exitosamente.
+                        </Notification>
+                    );
+                    resetForm();
+                } catch {
                     toast.push(
                         <Notification
                             title="Error"
@@ -96,10 +93,10 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                             }
                         >
                             Ocurrió un problema al guardar el ejercicio.
-                        </Notification>,
-                    )
+                        </Notification>
+                    );
                 } finally {
-                    setLoading(false)
+                    setLoading(false);
                 }
             }}
         >
@@ -122,9 +119,7 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                         <FormItem
                             label="Descripción"
                             asterisk
-                            invalid={
-                                !!errors.descripcion && touched.descripcion
-                            }
+                            invalid={!!errors.descripcion && touched.descripcion}
                             errorMessage={errors.descripcion}
                         >
                             <Field
@@ -149,7 +144,7 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                                     <Select
                                         value={categorias.find(
                                             (option) =>
-                                                option.value === field.value,
+                                                option.value === field.value
                                         )}
                                         placeholder="Seleccione una categoría..."
                                         options={categorias}
@@ -157,7 +152,7 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                                             option &&
                                             form.setFieldValue(
                                                 field.name,
-                                                option.value,
+                                                option.value
                                             )
                                         }
                                     />
@@ -193,13 +188,16 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                                         : null
                                 }
                                 onChange={(file) =>
-                                    setFieldValue('video', file ? [file] : [])
+                                    setFieldValue(
+                                        'video',
+                                        file ? [file] : []
+                                    )
                                 }
                                 maxFileSizeMB={5}
                                 renameFile={(originalName) =>
                                     `ejercicio-${values.nombre.replace(
                                         /\s+/g,
-                                        '_',
+                                        '_'
                                     )}-${Date.now()}.${originalName
                                         .split('.')
                                         .pop()}`
@@ -223,7 +221,7 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                 </Form>
             )}
         </Formik>
-    )
-}
+    );
+};
 
-export default ExerciseForm
+export default ExerciseForm;

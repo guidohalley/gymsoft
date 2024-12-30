@@ -71,14 +71,14 @@ const ExerciseTable: React.FC<ExerciseTableProps> = ({ data, onDelete, onEdit })
             cell: ({ row }) => (
                 <div className="flex space-x-2">
                     <Button
-                        variant="link"
+                        variant="plain"
                         icon={<HiOutlinePencilAlt />}
                         onClick={() => onEdit(row.original.id)}
                     >
                         Modificar
                     </Button>
                     <Button
-                        variant="link"
+                        variant="plain"
                         className="text-red-500"
                         icon={<HiOutlineTrash />}
                         onClick={() => onDelete(row.original.id)}
