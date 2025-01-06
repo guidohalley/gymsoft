@@ -58,6 +58,10 @@ export const protectedRoutes = [
         path: '/ejercicios/editar/:id',
         component: lazy(() => import('@/views/ejercicios/ExerciseFormPage')), // Reutiliza el formulario para editar
         authority: [ADMIN, DUENIO],
+        key: 'bloquesEjercicios',
+        path: '/bloques-ejercicios',
+        component: lazy(() => import('@/views/BloquesEjercicios')),
+        authority: [ADMIN,DUENIO],
     },
 
 ]
