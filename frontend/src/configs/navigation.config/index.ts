@@ -57,6 +57,37 @@ const navigationConfig: NavigationTree[] = [
         authority: [],
         subMenu: [],
     },
+    {
+        key: 'ejercicios',
+        path: '/ejercicios',
+        title: 'Ejercicios',
+        translateKey: 'nav.ejercicios',
+        icon: 'exercise',
+        type: NAV_ITEM_TYPE_COLLAPSE, // Cambiado a COLLAPSE para incluir submenús
+        authority: [ADMIN, DUENIO],
+        subMenu: [
+            {
+                key: 'listado-ejercicios',
+                path: '/ejercicios/listado',
+                title: 'Listado de Ejercicios',
+                translateKey: 'nav.listadoEjercicios',
+                icon: '',
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: [ADMIN, DUENIO],
+                subMenu: [],
+            },
+            {
+                key: 'nuevo-ejercicio',
+                path: '/ejercicios/nuevo',
+                title: 'Nuevo Ejercicio',
+                translateKey: 'nav.nuevoEjercicio',
+                icon: '',
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: [ADMIN, DUENIO],
+                subMenu: [],
+            },
+        ],
+    },
 ]
 
 export default navigationConfig

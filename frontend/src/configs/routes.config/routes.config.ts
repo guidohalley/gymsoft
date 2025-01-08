@@ -30,6 +30,34 @@ export const protectedRoutes = [
         path: '/musculos',
         component: lazy(() => import('@/views/musculos')),
         authority: [ADMIN,DUENIO],
-    }
+    },
+    {
+        component: lazy(() => import('@/views/ejercicios/ExerciseListPage')), // Ruta principal para ejercicios
+        authority: [ADMIN, DUENIO],
+    },
+    {
+        key: 'listado-ejercicios',
+        path: '/ejercicios/listado',
+        component: lazy(() => import('@/views/ejercicios/ExerciseListPage')), // Ruta para el listado
+        authority: [ADMIN, DUENIO],
+    },
+    {
+        key: 'nuevo-ejercicio',
+        path: '/ejercicios/nuevo',
+        component: lazy(() => import('@/views/ejercicios/ExerciseFormPage')), // Ruta para crear un nuevo ejercicio
+        authority: [ADMIN, DUENIO],
+    },
+    {
+        key: 'detalle-ejercicio',
+        path: '/ejercicios/:id',
+        component: lazy(() => import('@/views/ejercicios/ExerciseDetailPage')), // Ruta para detalles del ejercicio
+        authority: [ADMIN, DUENIO],
+    },
+    {
+        key: 'editar-ejercicio',
+        path: '/ejercicios/editar/:id',
+        component: lazy(() => import('@/views/ejercicios/ExerciseFormPage')), // Reutiliza el formulario para editar
+        authority: [ADMIN, DUENIO],
+    },
 
 ]
