@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { getBloques } from '@/services/BloquesService';
+import { getBloques, deleteBloque } from '@/services/BloquesService';
 import BloquesTable from './components/BloquesTable';
 import BloquesTableTools from './components/BloquesTableTools';
 import Card from '@/components/ui/Card';
 import Spinner from '@/components/ui/Spinner';
 import Notification from '@/components/ui/Notification';
 import toast from '@/components/ui/toast';
+import Button from '@/components/ui/Button';
 
 const BloquesListPage: React.FC = () => {
     const [bloques, setBloques] = useState<any[]>([]);
@@ -17,12 +18,8 @@ const BloquesListPage: React.FC = () => {
         const fetchBloques = async () => {
             try {
                 const response = await getBloques();
-                if (Array.isArray(response.data)) {
-                    setBloques(response.data);
-                    setFilteredBloques(response.data);
-                } else {
-                    throw new Error('Formato de datos incorrecto');
-                }
+                setBloques(response.data);
+                setFilteredBloques(response.data);
             } catch (error) {
                 console.error('Error al cargar los bloques:', error);
                 setError('No se pudieron cargar los bloques.');
@@ -51,13 +48,39 @@ const BloquesListPage: React.FC = () => {
                     return value.toString().toLowerCase().includes(lowercasedTerm);
                 }
                 return false;
-            }),
+            })
         );
         setFilteredBloques(filtered);
     };
 
+    // Confirmación de eliminación 
+    const handleDelete = async (id: number) => {
+        const confirmDelete = window.confirm('¿Estás seguro de que deseas eliminar este bloque?');
+        if (confirmDelete) {
+            try {
+                await deleteBloque(id);
+                setFilteredBloques((prev) => prev.filter((bloque) => bloque.id !== id));
+                toast.push(
+                    <Notification title="Éxito" type="success">
+                        El bloque ha sido eliminado correctamente.
+                    </Notification>
+                );
+            } catch (error) {
+                toast.push(
+                    <Notification title="Error" type="danger">
+                        Ocurrió un error al intentar eliminar el bloque.
+                    </Notification>
+                );
+            }
+        }
+    };
+
     const handleCreate = () => {
         window.location.href = '/bloques-ejercicios/nuevo';
+    };
+
+    const handleEdit = (id: number) => {
+        window.location.href = `/bloques-ejercicios/${id}/editar`;
     };
 
     return (
