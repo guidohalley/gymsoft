@@ -92,7 +92,7 @@ const navigationConfig: NavigationTree[] = [
         //  Nueva entrada: Bloques de Ejercicios
     {
         key: 'bloquesEjercicios',
-        path: '/bloques-ejercicios',
+        path: '/bloques',
         title: 'Bloques de Ejercicios',
         translateKey: 'nav.bloquesEjercicios',
         icon: 'bloques',

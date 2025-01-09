@@ -18,8 +18,8 @@ const BloquesListPage: React.FC = () => {
         const fetchBloques = async () => {
             try {
                 const response = await getBloques();
-                setBloques(response.data);
-                setFilteredBloques(response.data);
+                setBloques(response.data.data);
+                setFilteredBloques(response.data.data);
             } catch (error) {
                 console.error('Error al cargar los bloques:', error);
                 setError('No se pudieron cargar los bloques.');
@@ -76,11 +76,11 @@ const BloquesListPage: React.FC = () => {
     };
 
     const handleCreate = () => {
-        window.location.href = '/bloques-ejercicios/nuevo';
+        window.location.href = '/bloques/nuevo';
     };
-
+    
     const handleEdit = (id: number) => {
-        window.location.href = `/bloques-ejercicios/${id}/editar`;
+        window.location.href = `/bloques/${id}/editar`;
     };
 
     return (
