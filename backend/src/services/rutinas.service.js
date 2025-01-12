@@ -49,3 +49,71 @@ export const getAll = async (gimnasioId, params) => {
         throw error;
     }
 }
+
+export const getAllBloques = async (rutinaId) => {
+    try {
+        const bloques = await prisma.bloque.findMany({
+            where: {
+                rutinaBloques: {
+                    some: { rutinaId: rutinaId }
+                }
+            },
+            select: {
+                id: true,
+                descripcion: true,
+                activo: true,
+                orden: true,
+                series: true,
+                descanso: true,
+                creadoPor: true,
+                gimnasioId: true,
+                createdAt: true,
+                updatedAt: true
+            }
+        });
+
+        return bloques;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const asociarBloques = async (rutinaId,bloquesId) => {
+    try {
+        const bloquesInsertados = await prisma.rutinaBloques.createMany({
+            data: bloquesId.map(bloque => {
+                return {
+                    bloqueId: bloque,
+                    rutinaId: rutinaId
+                }
+            })
+        });
+
+        return bloquesInsertados;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const desasociarBloques = async (rutinaId,bloquesId) => {
+    try {
+        const bloquesEliminados = await prisma.rutinaBloques.deleteMany({
+            where: {
+                AND: [
+                    {
+                        rutinaId: rutinaId
+                    },
+                    {
+                        bloqueId: {
+                            in: bloquesId
+                        }
+                    }
+                ]
+            }
+        });
+
+        return bloquesEliminados;
+    } catch (error) {
+        throw error;
+    }
+}

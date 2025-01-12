@@ -35,5 +35,9 @@ router.get('/:id', rutinasController.getById);
 router.put('/:id',validarId.concat(validarActualizacion),rutinasController.update);
 router.delete('/:id',validarId,rutinasController.remove);
 
+router.get('/:id/bloques',validarId,rutinasController.getBloques);
+router.post('/:id/bloques',validarId,rutinasController.addBloques);
+router.delete('/:id/bloques',validarId,rutinasController.deleteBloques);
+
 
 export default router;
