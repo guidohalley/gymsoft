@@ -1,5 +1,5 @@
 import commonService from '../services/common.service.js';
-import { getAll as getAllRutinas,getAllBloques,asociarBloques, desasociarBloques} from '../services/rutinas.service.js';
+import { getAll as getAllRutinas,getAllBloques,asociarBloques, desasociarBloques,getRutinasBloques} from '../services/rutinas.service.js';
 import { validationResult } from 'express-validator';
 import { mensajeError, mensajeExito } from '../utils/responseHandler.util.js';
 import HTTP_STATUS from '../constants/httpStatusCodes.js';
@@ -150,7 +150,7 @@ const getBloques = async (req, res,next) => {
             return next(mensajeError('No se encontro la rutina', HTTP_STATUS.NOT_FOUND));
         }
 
-        const bloques =  await getAllBloques(Number(id));
+        const bloques =  await getRutinasBloques(Number(id));
 
         res.json(mensajeExito('Datos encontrados', HTTP_STATUS.OK, bloques));
     }catch(error){
@@ -169,34 +169,34 @@ const addBloques = async (req, res,next) => {
     try {
         const {id} = req.params;
         const {gimnasioId} = req.payload;
-        const {bloquesId} = req.body;
+        const {bloques} = req.body;
 
         const rutina = await commonService.getById(model,id,gimnasioId);
 
         if(!rutina){
             return next(mensajeError('No se encontro la rutina', HTTP_STATUS.NOT_FOUND));
         }
-
-        if(!Array.isArray(bloquesId) || bloquesId.length === 0){
+       
+        if(!Array.isArray(bloques) || bloques.length === 0){
             return next(mensajeError('Se esperaba un array de datos', HTTP_STATUS.BAD_REQUEST));
         }
         
         const errores = [];
-        await Promise.all(bloquesId.map(async (bloqueId) => {
-            const bloque = await commonService.getById('Bloque', bloqueId, gimnasioId);
-            if (!bloque) {
-                errores.push(`No se encontró el bloque ${bloqueId}`);
+        await Promise.all(bloques.map(async (bloque) => {
+            const bloqueCargado = await commonService.getById('Bloque', bloque.id, gimnasioId);
+            if (!bloqueCargado) {
+                errores.push(`No se encontró el bloque ${bloque.id}`);
             }
         }));    
-
+ 
         if (errores.length > 0) {
             return next(mensajeError(`Errores: ${errores.join(', ')}`, HTTP_STATUS.BAD_REQUEST));
         }
 
         //Inserto unicamente los bloques que no esten asociados a la rutina
-        const bloques =  await getAllBloques(Number(id));
-        const bloquesAInsertar =  bloquesId.filter(bloqueId => !bloques.some(bloque => bloque.id === bloqueId));
-        
+        const bloquesCargados =  await getAllBloques(Number(id));
+        const bloquesAInsertar =  bloques.filter(bloqueNuevo => !bloquesCargados.some(bloque => bloque.id === bloqueNuevo.id));
+
         const bloquesInsertados = await asociarBloques(Number(id),bloquesAInsertar);
         res.json(mensajeExito(`Se agregaron ${bloquesInsertados.count} bloques a la rutina`, HTTP_STATUS.OK));
     } catch (error) {
