@@ -15,15 +15,12 @@ const create = async (req, res,next) => {
     }
 
     try {
-        const { descripcion,orden,series,descanso,activo = true } = req.body;
+        const { descripcion,activo = true } = req.body;
         const { usuarioId,gimnasioId } = req.payload;
 
         const data = {
             descripcion,
             activo,
-            orden: orden ?? null,
-            series: series ?? null,
-            descanso: descanso ?? null,
             gimnasioId: gimnasioId,
             creadoPor: usuarioId
         };
@@ -92,7 +89,7 @@ const update = async (req, res,next) => {
 
     try {
         const { id } = req.params;
-        const { descripcion,orden,series,descanso,activo} = req.body;
+        const { descripcion,activo} = req.body;
         const { gimnasioId } = req.payload;
 
         const datoExistente = await commonService.getById(model,id,gimnasioId);
@@ -103,10 +100,7 @@ const update = async (req, res,next) => {
 
         const data = {
             descripcion,
-            activo,
-            orden: orden ?? null,
-            series: series ?? null,
-            descanso: descanso ?? null
+            activo
         };
 
         await commonService.update(model,id,data);

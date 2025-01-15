@@ -56,15 +56,12 @@ export const getAllBloques = async (rutinaId) => {
             where: {
                 rutinaBloques: {
                     some: { rutinaId: rutinaId }
-                }
+                }                
             },
             select: {
                 id: true,
                 descripcion: true,
                 activo: true,
-                orden: true,
-                series: true,
-                descanso: true,
                 creadoPor: true,
                 gimnasioId: true,
                 createdAt: true,
@@ -74,17 +71,57 @@ export const getAllBloques = async (rutinaId) => {
 
         return bloques;
     } catch (error) {
+        console.log(error);
         throw error;
     }
 };
 
-export const asociarBloques = async (rutinaId,bloquesId) => {
+export const getRutinasBloques = async (rutinaId) => {
+    try {
+        const data = await prisma.rutinaBloques.findMany({
+            where: {
+                rutinaId: rutinaId // Filtrar por ID de la rutina
+            },
+            include: {
+                bloque: {
+                    select: {
+                        descripcion: true,
+                        activo: true
+                    }
+                }
+            },
+            orderBy: {
+                orden: 'asc' // Ordenar por el campo orden
+            }
+        });
+
+        // Mapear para estructurar el resultado similar a la consulta SQL
+        return data.map(item => ({
+            rutina_id: item.rutinaId,
+            bloque_id: item.bloqueId,
+            orden: item.orden,
+            series: item.series,
+            descanso: item.descanso,
+            descripcion: item.bloque.descripcion,
+            activo: item.bloque.activo
+        }));
+    } catch (error) {
+        throw error;
+    }
+};
+
+
+
+export const asociarBloques = async (rutinaId,bloques) => {
     try {
         const bloquesInsertados = await prisma.rutinaBloques.createMany({
-            data: bloquesId.map(bloque => {
+            data: bloques.map(bloque => {
                 return {
-                    bloqueId: bloque,
-                    rutinaId: rutinaId
+                    bloqueId: bloque.id,
+                    rutinaId: rutinaId,
+                    series: bloque.series ?? "",
+                    orden: bloque.orden ?? 1,
+                    descanso: bloque.descanso ?? "60",
                 }
             })
         });

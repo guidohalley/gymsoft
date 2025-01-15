@@ -121,6 +121,9 @@ CREATE TABLE "rutinas" (
 CREATE TABLE "rutinas_bloques" (
     "rutina_id" INTEGER NOT NULL,
     "bloque_id" INTEGER NOT NULL,
+    "orden" INTEGER,
+    "series" VARCHAR(80),
+    "descanso" VARCHAR(80),
 
     CONSTRAINT "rutinas_bloques_pkey" PRIMARY KEY ("rutina_id","bloque_id")
 );
@@ -130,9 +133,6 @@ CREATE TABLE "bloques" (
     "id" SERIAL NOT NULL,
     "descripcion" VARCHAR(128) NOT NULL,
     "activo" BOOLEAN NOT NULL DEFAULT true,
-    "orden" INTEGER,
-    "series" VARCHAR(80),
-    "descanso" VARCHAR(80),
     "creado_por" INTEGER,
     "gimnasio_id" INTEGER,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

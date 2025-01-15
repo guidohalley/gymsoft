@@ -165,6 +165,9 @@ model Rutina {
 model RutinaBloques {
   rutinaId Int @map("rutina_id")
   bloqueId Int @map("bloque_id")
+  orden             Int?
+  series            String?           @db.VarChar(80)
+  descanso          String?           @db.VarChar(80)
 
   rutina Rutina @relation(fields: [rutinaId], references: [id])
   bloque Bloque @relation(fields: [bloqueId], references: [id])
@@ -177,9 +180,6 @@ model Bloque {
   id                Int               @id @default(autoincrement())
   descripcion       String            @db.VarChar(128)
   activo            Boolean           @default(true)
-  orden             Int?
-  series            String?           @db.VarChar(80)
-  descanso          String?           @db.VarChar(80)
   creadoPor         Int?              @map("creado_por")
   gimnasioId        Int?              @map("gimnasio_id")
   createdAt         DateTime          @default(now()) @map("created_at")
