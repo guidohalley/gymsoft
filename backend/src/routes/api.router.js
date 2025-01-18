@@ -10,6 +10,7 @@ import clasesRouter from './clases.router.js'
 import rutinasRouter from './rutinas.router.js';
 import bloquesRouter from './bloques.router.js';
 import bloquesEjerciciosRouter from './bloquesEjercicios.router.js';
+import estadosRouter from './estados.router.js';
 
 const apiRouter = Router();
 
@@ -30,6 +31,7 @@ apiRouter.use('/clases', validarToken, clasesRouter);
 apiRouter.use('/rutinas', validarToken, rutinasRouter);
 apiRouter.use('/bloques', validarToken, bloquesRouter);
 apiRouter.use('/bloques-ejercicios', validarToken, bloquesEjerciciosRouter);
+apiRouter.use('/estados', validarToken, estadosRouter);
 
 
 export default apiRouter;
