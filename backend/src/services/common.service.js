@@ -24,6 +24,16 @@ const create = async (model, data) => {
     }
 }
 
+const getAllGeneric = async(model) => {
+    try {
+        const rows = await prisma[model].findMany();
+
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+}
+
 const getAll = async (model, gimnasioId, params) => {
     const { nombre, descripcion,activo,page, limit } = params;
 
@@ -129,5 +139,6 @@ export default {
     getAll,
     getById,
     update,
-    create
+    create,
+    getAllGeneric
 }
