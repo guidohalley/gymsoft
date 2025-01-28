@@ -1,7 +1,13 @@
 import React from 'react';
 import Table from '@/components/ui/Table';
 import Button from '@/components/ui/Button';
-import { useReactTable, getCoreRowModel, ColumnDef, flexRender } from '@tanstack/react-table';
+import Spinner from '@/components/ui/Spinner'; // ✅ Importar Spinner
+import {
+    useReactTable,
+    getCoreRowModel,
+    ColumnDef,
+    flexRender,
+} from '@tanstack/react-table';
 import { HiOutlinePencilAlt, HiOutlineTrash } from 'react-icons/hi';
 
 const { Tr, Th, Td, THead, TBody } = Table;
@@ -17,9 +23,16 @@ interface BloquesTableProps {
     data: Bloque[];
     onEdit: (id: number) => void;
     onDelete: (id: number) => void;
+    deleting?: number | null; // ✅ ID del bloque en proceso de eliminación
 }
 
-const BloquesTable: React.FC<BloquesTableProps> = ({ data, onEdit, onDelete }) => {
+const BloquesTable: React.FC<BloquesTableProps> = ({
+    data,
+    onEdit,
+    onDelete,
+    deleting,
+}) => {
+    console.log('Datos recibidos en BloquesTable:', data);
     const columns: ColumnDef<Bloque>[] = [
         {
             header: 'ID',
@@ -29,11 +42,6 @@ const BloquesTable: React.FC<BloquesTableProps> = ({ data, onEdit, onDelete }) =
         {
             header: 'Descripción',
             accessorKey: 'descripcion',
-            cell: (info) => info.getValue(),
-        },
-        {
-            header: 'Orden',
-            accessorKey: 'orden',
             cell: (info) => info.getValue(),
         },
         {
@@ -50,25 +58,39 @@ const BloquesTable: React.FC<BloquesTableProps> = ({ data, onEdit, onDelete }) =
         },
         {
             header: 'Acciones',
-            cell: ({ row }) => (
-                <div className="flex space-x-2">
-                    <Button
-                        variant="plain"
-                        icon={<HiOutlinePencilAlt />}
-                        onClick={() => onEdit(row.original.id)}
-                    >
-                        Editar
-                    </Button>
-                    <Button
-                        variant="plain"
-                        className="text-red-500"
-                        icon={<HiOutlineTrash />}
-                        onClick={() => onDelete(row.original.id)}
-                    >
-                        Eliminar
-                    </Button>
-                </div>
-            ),
+            cell: ({ row }) => {
+                const bloqueId = row.original.id;
+                const isDeleting = deleting === bloqueId; // ✅ Comprobar si el bloque está siendo eliminado
+
+                return (
+                    <div className="flex space-x-2">
+                        <Button
+                            variant="plain"
+                            icon={<HiOutlinePencilAlt />}
+                            onClick={() =>
+                                 onEdit(bloqueId)}
+                            disabled={isDeleting} // ✅ Deshabilitar si está eliminando
+                        >
+                            Editar
+                        </Button>
+                        <Button
+                            variant="plain"
+                            className="text-red-500"
+                            icon={
+                                isDeleting ? (
+                                    <Spinner size="sm" /> // ✅ Mostrar Spinner si está eliminando
+                                ) : (
+                                    <HiOutlineTrash />
+                                )
+                            }
+                            onClick={() => onDelete(bloqueId)}
+                            disabled={isDeleting} // ✅ Deshabilitar si está eliminando
+                        >
+                            {isDeleting ? 'Eliminando...' : 'Eliminar'}
+                        </Button>
+                    </div>
+                );
+            },
         },
     ];
 
@@ -77,6 +99,8 @@ const BloquesTable: React.FC<BloquesTableProps> = ({ data, onEdit, onDelete }) =
         columns,
         getCoreRowModel: getCoreRowModel(),
     });
+
+    
 
     return (
         <Table>

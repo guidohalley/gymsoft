@@ -93,11 +93,11 @@ const navigationConfig: NavigationTree[] = [
     {
         key: 'bloquesEjercicios',
         path: '/bloques',
-        title: 'Bloques de Ejercicios',
+        title: 'Bloques',
         translateKey: 'nav.bloquesEjercicios',
         icon: 'bloques',
         type: NAV_ITEM_TYPE_ITEM,
-        authority: [ADMIN, ENTRENADOR],
+        authority: [ADMIN, DUENIO, ENTRENADOR],
         subMenu: [],
     },
 ];
