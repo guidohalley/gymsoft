@@ -1,70 +1,63 @@
 // frontend/src/views/BloquesEjercicios/BloquesListPage.tsx
 import React, { useEffect, useState } from 'react'
-import { getBloques, deleteBloque } from '@/services/BloquesService' // ✅ Importamos deleteBloque
+import { getBloques, deleteBloque } from '@/services/BloquesService'
 import BloquesTable from './components/BloquesTable'
 import BloquesTableTools from './components/BloquesTableTools'
 import Card from '@/components/ui/Card'
 import Spinner from '@/components/ui/Spinner'
 import Notification from '@/components/ui/Notification'
 import toast from '@/components/ui/toast'
-import { useNavigate } from 'react-router-dom' // ✅ Usamos para la redirección
+import { useNavigate } from 'react-router-dom' // Usamos para redirección
 
 const BloquesListPage: React.FC = () => {
     const [bloques, setBloques] = useState<any[]>([])
     const [filteredBloques, setFilteredBloques] = useState<any[]>([])
     const [loading, setLoading] = useState<boolean>(true)
-    const [deleting, setDeleting] = useState<number | null>(null) // ✅ Estado de eliminación en proceso
+    const [deleting, setDeleting] = useState<number | null>(null) // ID del bloque en proceso de eliminación
     const [error, setError] = useState<string | null>(null)
 
+    // React Router: para navegar a rutas de creación/edición
     const navigate = useNavigate()
 
+    // 1. Maneja la edición: navega a la ruta /bloques/:id/editar
     const handleEdit = (bloqueId: number) => {
-        console.log('Redirigiendo para editar el bloque con ID:', bloqueId);
         navigate(`/bloques/${bloqueId}/editar`)
     }
 
+    // 2. Maneja la eliminación (DELETE)
     const handleDelete = async (bloqueId: number) => {
-        if (
-            !window.confirm('¿Estás seguro de que deseas eliminar este bloque?')
-        ) {
+        if (!window.confirm('¿Estás seguro de que deseas eliminar este bloque?')) {
             return
         }
 
-        setDeleting(bloqueId) // ✅ Marca el bloque como "eliminando"
+        setDeleting(bloqueId)
         try {
-            await deleteBloque(bloqueId) // ✅ Llama al servicio de eliminación
-            setBloques((prev) =>
-                prev.filter((bloque) => bloque.id !== bloqueId),
-            )
-            setFilteredBloques((prev) =>
-                prev.filter((bloque) => bloque.id !== bloqueId),
-            )
+            await deleteBloque(bloqueId) // Llama al servicio (DELETE /bloques/:id)
+            // Actualiza la lista local
+            setBloques((prev) => prev.filter((bloque) => bloque.id !== bloqueId))
+            setFilteredBloques((prev) => prev.filter((bloque) => bloque.id !== bloqueId))
+
             toast.push(
-                <Notification
-                    title="Eliminación exitosa"
-                    type="success"
-                    duration={3000}
-                >
+                <Notification title="Eliminación exitosa" type="success" duration={3000}>
                     El bloque se ha eliminado correctamente.
                 </Notification>,
             )
         } catch (error) {
-            console.error('Error al eliminar el bloque:', error)
             toast.push(
                 <Notification title="Error" type="danger" duration={5000}>
                     No se pudo eliminar el bloque. Intenta de nuevo más tarde.
                 </Notification>,
             )
         } finally {
-            setDeleting(null) // ✅ Reinicia el estado de eliminación
+            setDeleting(null)
         }
     }
 
+    // 3. Carga inicial de bloques (GET /bloques)
     useEffect(() => {
         const fetchBloques = async () => {
             try {
                 const response = await getBloques()
-                console.log('Datos cargados desde API:', response.data.data);
                 if (Array.isArray(response.data.data)) {
                     setBloques(response.data.data)
                     setFilteredBloques(response.data.data)
@@ -72,7 +65,6 @@ const BloquesListPage: React.FC = () => {
                     throw new Error('Formato de datos incorrecto')
                 }
             } catch (error) {
-                console.error('Error al cargar los bloques:', error)
                 setError('No se pudieron cargar los bloques.')
                 toast.push(
                     <Notification title="Error" type="danger">
@@ -87,6 +79,7 @@ const BloquesListPage: React.FC = () => {
         fetchBloques()
     }, [])
 
+    // 4. Maneja la búsqueda filtrando bloques en memoria
     const handleSearch = (searchTerm: string) => {
         const lowercasedTerm = searchTerm.toLowerCase()
         const filtered = bloques.filter((bloque) =>
@@ -96,10 +89,7 @@ const BloquesListPage: React.FC = () => {
                     return value.toLowerCase().includes(lowercasedTerm)
                 }
                 if (value && typeof value === 'number') {
-                    return value
-                        .toString()
-                        .toLowerCase()
-                        .includes(lowercasedTerm)
+                    return value.toString().toLowerCase().includes(lowercasedTerm)
                 }
                 return false
             }),
@@ -107,8 +97,9 @@ const BloquesListPage: React.FC = () => {
         setFilteredBloques(filtered)
     }
 
+    // 5. Maneja la creación: navega a /bloques/nuevo (ruta para formulario de creación)
     const handleCreate = () => {
-        navigate('/bloques/nuevo') // ✅ Redirección para crear nuevo bloque
+        navigate('/bloques/nuevo')
     }
 
     return (
@@ -122,6 +113,8 @@ const BloquesListPage: React.FC = () => {
                     onCreate={handleCreate}
                 />
             </div>
+
+            {/* 6. Mostrar Spinner, error o la tabla según el estado */}
             {loading ? (
                 <Spinner />
             ) : error ? (
@@ -141,9 +134,9 @@ const BloquesListPage: React.FC = () => {
             ) : (
                 <BloquesTable
                     data={filteredBloques}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                    deleting={deleting} // ✅ Pasa el estado al componente de la tabla
+                    onEdit={handleEdit}     // Llama navigate('/bloques/:id/editar')
+                    onDelete={handleDelete} // Llama a deleteBloque
+                    deleting={deleting}     // Para mostrar spinner en el que se está eliminando
                 />
             )}
         </Card>

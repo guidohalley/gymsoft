@@ -1,3 +1,4 @@
+//frontend/src/views/BloquesEjercicios/components/BloquesTable.tsx
 import React from 'react';
 import Table from '@/components/ui/Table';
 import Button from '@/components/ui/Button';
@@ -32,7 +33,6 @@ const BloquesTable: React.FC<BloquesTableProps> = ({
     onDelete,
     deleting,
 }) => {
-    console.log('Datos recibidos en BloquesTable:', data);
     const columns: ColumnDef<Bloque>[] = [
         {
             header: 'ID',
