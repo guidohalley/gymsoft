@@ -15,8 +15,10 @@ import {
   Bloque,
 } from '@/services/BloquesService'
 import {
-  apiCreateBloqueEjercicios,
-  apiGetEjerciciosByBloque,
+    apiGetEjerciciosByBloque,
+    apiCreateBloqueEjercicios,
+    apiUpdateBloqueEjercicio,
+    apiDeleteBloqueEjercicio,
 } from '@/services/BloqueEjerciciosService'
 import SelectEjercicios from './SelectEjercicios'
 import { HiOutlineCheckCircle, HiOutlineExclamationCircle } from 'react-icons/hi'
@@ -69,7 +71,6 @@ const BloquesForm: React.FC = () => {
           // Petición 2: Ejercicios asociados al bloque
           const respEjercicios = await apiGetEjerciciosByBloque(bloqueId)
           const ejerciciosDelBloque = respEjercicios.data.data || []
-          console.log('ejerciciosDelBloque:', ejerciciosDelBloque)
           // Mapeamos los datos de ejercicios para Formik
           const ejerciciosMapeados = ejerciciosDelBloque.map((ej) => ({
             ejercicioId: ej.ejercicioId,
@@ -100,12 +101,11 @@ const BloquesForm: React.FC = () => {
 
   // 2. Manejo del submit
   const handleSubmit = async (values: Partial<Bloque>) => {
-    setLoading(true)
+    setLoading(true);
     try {
-      let bloqueResponse
+      let bloqueResponse;
       if (isEditing && bloqueId) {
-        // Editar
-        bloqueResponse = await updateBloque(bloqueId, values)
+        bloqueResponse = await updateBloque(bloqueId, values);
         toast.push(
           <Notification
             title="Actualización exitosa"
@@ -114,10 +114,9 @@ const BloquesForm: React.FC = () => {
           >
             El bloque ha sido actualizado correctamente.
           </Notification>,
-        )
+        );
       } else {
-        // Crear
-        bloqueResponse = await addBloque(values)
+        bloqueResponse = await addBloque(values);
         toast.push(
           <Notification
             title="Creación exitosa"
@@ -126,9 +125,10 @@ const BloquesForm: React.FC = () => {
           >
             Se ha creado un nuevo bloque.
           </Notification>,
-        )
+        );
+        bloqueId = bloqueResponse.data.data.id; // Update bloqueId if new
       }
-
+  
       // Actualizar/crear la lista de ejercicios
       const ejerciciosFormateados = (values.ejercicios || []).map((ej) => ({
         ejercicioId: ej.ejercicioId,
@@ -137,16 +137,41 @@ const BloquesForm: React.FC = () => {
         series: ej.series || 1,
         descanso: ej.descanso || 30,
         peso: ej.peso || 0,
-      }))
-
-      if (bloqueResponse?.data?.data?.id && ejerciciosFormateados.length) {
-        await apiCreateBloqueEjercicios(
-          bloqueResponse.data.data.id,
-          ejerciciosFormateados,
-        )
+      }));
+  
+      if (bloqueId && ejerciciosFormateados.length) {
+        const respEjercicios = await apiGetEjerciciosByBloque(bloqueId);
+        const ejerciciosExistentes = respEjercicios.data.data || [];
+  
+        // vemos si add, update, delete
+        const toDelete = ejerciciosExistentes.filter(ex => !ejerciciosFormateados.some(ne => ne.ejercicioId === ex.ejercicioId));
+        const toAdd = ejerciciosFormateados.filter(ne => !ejerciciosExistentes.some(ex => ex.ejercicioId === ne.ejercicioId));
+        const toUpdate = ejerciciosFormateados.filter(ne => ejerciciosExistentes.some(ex => ex.ejercicioId === ne.ejercicioId));
+  
+        // Delete 
+        toDelete.forEach(async ex => {
+          await apiDeleteBloqueEjercicio(bloqueId, ex.ejercicioId);
+        });
+  
+        // Agrega new exercises
+        if (toAdd.length > 0) {
+          await apiCreateBloqueEjercicios(bloqueId, toAdd);
+        }
+  
+        // Update 
+        toUpdate.forEach(async ne => {
+          const data = {
+            ...ne,
+            repeticiones: ne.repeticiones,
+            series: ne.series,
+            descanso: ne.descanso,
+            peso: ne.peso,
+          };
+          await apiUpdateBloqueEjercicio(bloqueId, ne.ejercicioId, data);
+        });
       }
-
-      navigate('/bloques')
+  
+      navigate('/bloques');
     } catch (error) {
       toast.push(
         <Notification
@@ -156,12 +181,12 @@ const BloquesForm: React.FC = () => {
         >
           {String(error)}
         </Notification>,
-      )
-      console.error('Error al guardar el bloque:', error)
+      );
+      console.error('Error al guardar el bloque:', error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <Card>
