@@ -1,5 +1,5 @@
 import commonService from '../services/common.service.js';
-import { getAll as getAllClases } from '../services/clases.service.js'
+import { getAll as getAllClases,getRutina } from '../services/clases.service.js'
 import { validationResult } from 'express-validator';
 import { mensajeError, mensajeExito } from '../utils/responseHandler.util.js';
 import HTTP_STATUS from '../constants/httpStatusCodes.js';
@@ -145,7 +145,24 @@ const remove = async (req, res,next) => {
     } catch (error) {
         return next(mensajeError("Error al eliminar los datos", HTTP_STATUS.INTERNAL_SERVER_ERROR, null, __fileName, 'remove', error));
     }
-    
+}
+
+const getRutinaVideos = async (req, res,next) => {
+    try {
+        const { id } = req.params;
+        const { gimnasioId } = req.payload;
+        const datoExistente = await commonService.getById(model,id,gimnasioId);
+
+        if(datoExistente === null) {
+            return next(mensajeError('No se encontraron datos', HTTP_STATUS.NOT_FOUND));
+        }
+
+        const rutina = await getRutina(id);
+
+        res.json(mensajeExito('Datos encontrados', HTTP_STATUS.OK, rutina));
+    } catch (error) {
+        return next(mensajeError("Error al obtener los datos", HTTP_STATUS.INTERNAL_SERVER_ERROR, null, __fileName, 'getRutina', error));
+    }
 }
 
 export default {
@@ -153,5 +170,6 @@ export default {
     getById,
     create,
     update,
-    remove
+    remove,
+    getRutinaVideos
 }
