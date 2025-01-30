@@ -49,7 +49,7 @@ const BloquesForm: React.FC = () => {
   const navigate = useNavigate()
 
   const isEditing = Boolean(id)
-  const bloqueId = id ? Number(id) : undefined
+  let bloqueId = id ? Number(id) : undefined
 
   const [loadingData, setLoadingData] = useState(isEditing) // Cargamos datos solo si es edición
   const [loading, setLoading] = useState(false)
