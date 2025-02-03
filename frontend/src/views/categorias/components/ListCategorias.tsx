@@ -3,7 +3,7 @@ import React from 'react';
 import Table from '@/components/ui/Table';
 import Button from '@/components/ui/Button';
 import { useReactTable, getCoreRowModel, ColumnDef, flexRender } from '@tanstack/react-table';
-import { deleteCategoriaEjercicio, updateCategoriaEjercicio } from '@/services/CategoriaEjerciciosService';
+import { deleteCategoriaEjercicio } from '@/services/CategoriaEjerciciosService';
 import toast from '@/components/ui/toast';
 import Notification from '@/components/ui/Notification';
 import { HiOutlineCheckCircle, HiOutlineExclamationCircle, HiOutlineTrash } from 'react-icons/hi';
@@ -24,7 +24,7 @@ interface Categoria {
 interface ListCategoriasProps {
     categorias: Categoria[];
     onDelete: (id: number) => void;
-    onEdit: (id: number, data: Partial<Categoria>) => void;
+    onEdit: (categoria: Categoria) => void;
 }
 
 const ListCategorias: React.FC<ListCategoriasProps> = ({ categorias, onDelete, onEdit }) => {
@@ -47,38 +47,12 @@ const ListCategorias: React.FC<ListCategoriasProps> = ({ categorias, onDelete, o
         {
             header: 'Creado el',
             accessorKey: 'createdAt',
-            cell: (info) => {
-                const date = new Date(info.getValue());
-                const formattedDate = date.toLocaleDateString('es-ES', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                });
-                const formattedTime = date.toLocaleTimeString('es-ES', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false,
-                });
-                return `${formattedDate} ${formattedTime}`;
-            },
+            cell: (info) => new Date(info.getValue()).toLocaleString('es-ES'),
         },
         {
             header: 'Actualizado el',
             accessorKey: 'updatedAt',
-            cell: (info) => {
-                const date = new Date(info.getValue());
-                const formattedDate = date.toLocaleDateString('es-ES', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                });
-                const formattedTime = date.toLocaleTimeString('es-ES', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false,
-                });
-                return `${formattedDate} ${formattedTime}`;
-            },
+            cell: (info) => new Date(info.getValue()).toLocaleString('es-ES'),
         },
         {
             header: 'Acción',
@@ -86,7 +60,7 @@ const ListCategorias: React.FC<ListCategoriasProps> = ({ categorias, onDelete, o
                 <div className="flex space-x-2">
                     <Button
                         variant="link"
-                        onClick={() => handleEdit(row.original.id, row.original)}
+                        onClick={() => onEdit(row.original)}
                     >
                         Modificar
                     </Button>
@@ -108,14 +82,11 @@ const ListCategorias: React.FC<ListCategoriasProps> = ({ categorias, onDelete, o
         getCoreRowModel: getCoreRowModel(),
     });
 
-    // Función para manejar la eliminación de una categoría
     const handleDelete = async (id: number) => {
         if (window.confirm('¿Estás seguro de que deseas eliminar esta categoría?')) {
             try {
                 await deleteCategoriaEjercicio(id);
-                onDelete(id); // Actualiza la lista de categorías en el componente padre
-
-                // Mostrar notificación de éxito
+                onDelete(id);
                 toast.push(
                     <Notification
                         title="Categoría eliminada"
@@ -126,8 +97,6 @@ const ListCategorias: React.FC<ListCategoriasProps> = ({ categorias, onDelete, o
                 );
             } catch (error) {
                 console.error('Error al eliminar la categoría:', error);
-
-                // Mostrar notificación de error
                 toast.push(
                     <Notification
                         title="Error"
@@ -138,11 +107,6 @@ const ListCategorias: React.FC<ListCategoriasProps> = ({ categorias, onDelete, o
                 );
             }
         }
-    };
-
-    // Función para manejar la edición de una categoría
-    const handleEdit = async (id: number, data: Partial<Categoria>) => {
-        onEdit(id, data);
     };
 
     return (

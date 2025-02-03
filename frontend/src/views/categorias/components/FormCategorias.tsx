@@ -115,14 +115,14 @@ const FormCategorias: React.FC<FormCategoriasProps> = ({
                                     onClick={() => resetForm()}
                                     disabled={loading}
                                 >
-                                    Reset
+                                    Recargar
                                 </Button>
                                 <Button
                                     variant="solid"
                                     type="submit"
                                     loading={loading}
                                 >
-                                    Submit
+                                    Enviar
                                 </Button>
                             </FormItem>
                         </FormContainer>
