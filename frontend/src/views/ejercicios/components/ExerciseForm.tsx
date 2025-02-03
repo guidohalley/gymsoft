@@ -1,43 +1,42 @@
-import React, { useState } from 'react';
-import { Formik, Form, Field } from 'formik';
-import * as Yup from 'yup';
-import Input from '@/components/ui/Input';
-import Button from '@/components/ui/Button';
-import { FormContainer, FormItem } from '@/components/ui/Form';
-import Select from '@/components/ui/Select';
-import Checkbox from '@/components/ui/Checkbox';
-import toast from '@/components/ui/toast';
-import Notification from '@/components/ui/Notification';
-import ExerciseUpload from './ExerciseUpload';
+import React, { useState } from 'react'
+import { Formik, Form, Field } from 'formik'
+import * as Yup from 'yup'
+import Input from '@/components/ui/Input'
+import Button from '@/components/ui/Button'
+import { FormContainer, FormItem } from '@/components/ui/Form'
+import Select from '@/components/ui/Select'
+import Checkbox from '@/components/ui/Checkbox'
+import toast from '@/components/ui/toast'
+import Notification from '@/components/ui/Notification'
+import ExerciseUpload from './ExerciseUpload'
 import {
     HiOutlineCheckCircle,
     HiOutlineExclamationCircle,
-} from 'react-icons/hi';
+} from 'react-icons/hi'
 
 // Validación del formulario
 const validationSchema = Yup.object().shape({
     nombre: Yup.string().required('El nombre es requerido'),
     descripcion: Yup.string().required('La descripción es requerida'),
-    categoriaEjercicioId: Yup.string().required(
-        'Debes seleccionar una categoría'
-    ),
+    categoriaEjercicioId: Yup.string()
+        .required('Debes seleccionar una categoría')
+        .notOneOf([''], 'Selecciona un valor válido'),
     esGlobal: Yup.boolean(),
-    video: Yup.array()
-        .min(1, 'Debes subir al menos un archivo')
-        .max(1, 'Solo se permite un archivo'),
-});
+    video: Yup.array().max(1, 'Solo se permite un archivo'),
+})
 
 interface ExerciseFormProps {
-    onSubmit: (values: FormData) => Promise<void>;
-    categorias: { value: string; label: string }[];
+    onSubmit: (values: FormData) => Promise<void>
+    categorias: { value: string; label: string }[]
     initialValues: {
-        nombre: string;
-        descripcion: string;
-        categoriaEjercicioId: string;
-        esGlobal: boolean;
-        video: File[];
-    };
-    enableReinitialize?: boolean;
+        nombre: string
+        descripcion: string
+        categoriaEjercicioId: string
+        esGlobal: boolean
+        video: File[]
+        videoUrl?: string // Nueva propiedad para la URL del video
+    }
+    enableReinitialize?: boolean
 }
 
 const ExerciseForm: React.FC<ExerciseFormProps> = ({
@@ -46,7 +45,7 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
     initialValues,
     enableReinitialize = false,
 }) => {
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false)
 
     return (
         <Formik
@@ -54,24 +53,25 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
             enableReinitialize={enableReinitialize}
             validationSchema={validationSchema}
             onSubmit={async (values, { resetForm }) => {
-                setLoading(true);
+                setLoading(true)
                 try {
-                    const formData = new FormData();
-                    formData.append('nombre', values.nombre);
-                    formData.append('descripcion', values.descripcion);
+                    const formData = new FormData()
+                    formData.append('nombre', values.nombre)
+                    formData.append('descripcion', values.descripcion)
                     formData.append(
                         'categoriaEjercicioId',
-                        values.categoriaEjercicioId
-                    );
+                        values.categoriaEjercicioId,
+                    )
                     formData.append(
                         'esGlobal',
-                        values.esGlobal ? 'true' : 'false'
-                    );
+                        values.esGlobal ? 'true' : 'false',
+                    )
+
                     if (values.video.length > 0) {
-                        formData.append('video', values.video[0]);
+                        formData.append('video', values.video[0])
                     }
 
-                    await onSubmit(formData);
+                    await onSubmit(formData)
 
                     toast.push(
                         <Notification
@@ -81,10 +81,11 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                             }
                         >
                             Ejercicio creado o actualizado exitosamente.
-                        </Notification>
-                    );
-                    resetForm();
-                } catch {
+                        </Notification>,
+                    )
+                    resetForm()
+                } catch (error) {
+                    console.error('Error al guardar el ejercicio:', error)
                     toast.push(
                         <Notification
                             title="Error"
@@ -92,11 +93,12 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                                 <HiOutlineExclamationCircle className="text-2xl text-red-500" />
                             }
                         >
-                            Ocurrió un problema al guardar el ejercicio.
-                        </Notification>
-                    );
+                            {(error as any).response?.data?.message ||
+                                'Ocurrió un problema desconocido.'}
+                        </Notification>,
+                    )
                 } finally {
-                    setLoading(false);
+                    setLoading(false)
                 }
             }}
         >
@@ -119,7 +121,9 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                         <FormItem
                             label="Descripción"
                             asterisk
-                            invalid={!!errors.descripcion && touched.descripcion}
+                            invalid={
+                                !!errors.descripcion && touched.descripcion
+                            }
                             errorMessage={errors.descripcion}
                         >
                             <Field
@@ -144,7 +148,7 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                                     <Select
                                         value={categorias.find(
                                             (option) =>
-                                                option.value === field.value
+                                                option.value === field.value,
                                         )}
                                         placeholder="Seleccione una categoría..."
                                         options={categorias}
@@ -152,7 +156,7 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                                             option &&
                                             form.setFieldValue(
                                                 field.name,
-                                                option.value
+                                                option.value,
                                             )
                                         }
                                     />
@@ -171,40 +175,47 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                             </Checkbox>
                         </FormItem>
 
-                        <FormItem
-                            label="Video"
-                            invalid={!!errors.video && !!touched.video}
-                            errorMessage={
-                                Array.isArray(errors.video)
-                                    ? errors.video[0]
-                                    : (errors.video as string)
-                            }
-                        >
+                        <FormItem label="Video">
+                            {values.video?.length > 0 ? (
+                                <div className="mb-4">
+                                    <video
+                                        controls
+                                        src={URL.createObjectURL(
+                                            values.video[0],
+                                        )}
+                                        className="w-128 h-72 rounded-md"
+                                    />
+                                    <Button
+                                        variant="default"
+                                        className="text-red-500 mt-2"
+                                        onClick={() =>
+                                            setFieldValue('video', [])
+                                        }
+                                    >
+                                        Quitar video
+                                    </Button>
+                                </div>
+                            ) : initialValues.videoUrl ? (
+                                <div className="mb-4">
+                                    <video
+                                        controls
+                                        src={initialValues.videoUrl}
+                                        className="w-128 h-72 rounded-md"
+                                    />
+                                </div>
+                            ) : (
+                                <p className="text-gray-500 mb-4">
+                                    No hay un video cargado.
+                                </p>
+                            )}
                             <ExerciseUpload
-                                value={
-                                    Array.isArray(values.video) &&
-                                    values.video.length > 0
-                                        ? values.video[0]
-                                        : null
-                                }
+                                value={values.video}
                                 onChange={(file) =>
-                                    setFieldValue(
-                                        'video',
-                                        file ? [file] : []
-                                    )
+                                    setFieldValue('video', file ? [file] : [])
                                 }
                                 maxFileSizeMB={5}
-                                renameFile={(originalName) =>
-                                    `ejercicio-${values.nombre.replace(
-                                        /\s+/g,
-                                        '_'
-                                    )}-${Date.now()}.${originalName
-                                        .split('.')
-                                        .pop()}`
-                                }
                             />
                         </FormItem>
-
                         <FormItem>
                             <Button
                                 variant="solid"
@@ -221,7 +232,7 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                 </Form>
             )}
         </Formik>
-    );
-};
+    )
+}
 
-export default ExerciseForm;
+export default ExerciseForm

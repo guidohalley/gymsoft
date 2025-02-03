@@ -2,33 +2,28 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Card from '@/components/ui/Card';
 import ExerciseForm from './components/ExerciseForm';
-import {
-    apiCreateEjercicio,
-    apiGetEjercicioDetails,
-    apiUpdateEjercicio,
-} from '@/services/ExerciseService';
+import { useExercises } from '@/hooks/useExercises';
 import { getCategoriasEjercicios } from '@/services/CategoriaEjerciciosService';
-import toast from '@/components/ui/toast';
 import Spinner from '@/components/ui/Spinner';
+import toast from '@/components/ui/toast';
 import Notification from '@/components/ui/Notification';
-import {
-    HiOutlineCheckCircle,
-    HiOutlineExclamationCircle,
-} from 'react-icons/hi';
+import { apiGetEjercicioDetails } from '@/services/ExerciseService';
 
 const ExerciseFormPage: React.FC = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+
+    const { createExercise, updateExercise } = useExercises();
 
     const [categorias, setCategorias] = useState<
         { value: string; label: string }[]
     >([]);
     const [initialValues, setInitialValues] = useState({
         nombre: '',
-        categoriaEjercicioId: '',
         descripcion: '',
+        categoriaEjercicioId: '',
         esGlobal: false,
-        video: [],
+        videoUrl: '',
     });
     const [loading, setLoading] = useState(true);
 
@@ -36,66 +31,77 @@ const ExerciseFormPage: React.FC = () => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-
+    
                 // Cargar categorías
                 const categoriasResponse = await getCategoriasEjercicios();
                 const formattedCategorias = categoriasResponse.data.data.map(
                     (categoria) => ({
                         value: categoria.id.toString(),
                         label: categoria.nombre,
-                    }),
+                    })
                 );
                 setCategorias(formattedCategorias);
-
+    
                 // Cargar datos del ejercicio si hay un ID
                 if (id) {
-                    const ejercicioResponse = await apiGetEjercicioDetails(
-                        parseInt(id),
-                    );
-                    setInitialValues({
-                        nombre: ejercicioResponse.data.data.nombre,
-                        categoriaEjercicioId:
-                            ejercicioResponse.data.data.categoriaEjercicioId.toString(),
-                        descripcion: ejercicioResponse.data.data.descripcion,
-                        esGlobal: ejercicioResponse.data.data.activo,
-                        video: [],
-                    });
+                    const ejercicioResponse = await apiGetEjercicioDetails(parseInt(id));
+                    const ejercicio = ejercicioResponse.data.data;
+    
+                    if (ejercicio) {
+                        setInitialValues({
+                            nombre: ejercicio.nombre || '',
+                            categoriaEjercicioId: ejercicio.categoriaEjercicioId.toString() || '',
+                            descripcion: ejercicio.descripcion || '',
+                            esGlobal: ejercicio.activo || false,
+                            videoUrl: ejercicio.url || '',
+                        });
+                    }
                 }
-            } catch {
+            } catch (error) {
+                console.error('Error al cargar los datos:', error);
                 toast.push(
                     <Notification title="Error" type="danger">
                         Hubo un problema al cargar los datos.
-                    </Notification>,
+                    </Notification>
                 );
             } finally {
                 setLoading(false);
             }
         };
-
+    
         fetchData();
     }, [id]);
 
     const handleSubmit = async (formData: FormData) => {
         try {
-            const payload: Record<string, any> = {};
+            const payload = new FormData();
+
+            // Agrega todos los campos al FormData
             formData.forEach((value, key) => {
-                payload[key] = value;
+                payload.append(key, value);
             });
 
+            // Si no se selecciona un archivo nuevo, conservar la URL actual
+            if (!formData.get("video") && initialValues.videoUrl) {
+                payload.append("videoUrl", initialValues.videoUrl);
+            }
+
+            let response;
             if (id) {
-                await apiUpdateEjercicio({
-                    id: parseInt(id),
-                    ...payload,
-                });
+                response = await updateExercise(parseInt(id), payload);
             } else {
-                await apiCreateEjercicio(payload);
+                response = await createExercise(payload);
+            }
+
+            // Actualizar valores iniciales con la nueva URL si la API devuelve una
+            if (response.data?.url) {
+                setInitialValues((prev) => ({ ...prev, videoUrl: response.data.url }));
             }
 
             toast.push(
                 <Notification
                     title="Éxito"
                     type="success"
-                    icon={<HiOutlineCheckCircle />}
                 >
                     Ejercicio {id ? 'actualizado' : 'creado'} correctamente.
                 </Notification>
@@ -103,13 +109,13 @@ const ExerciseFormPage: React.FC = () => {
 
             navigate('/ejercicios/listado');
         } catch (error) {
+            console.error('Error al guardar el ejercicio:', error);
             const errorMessage =
                 error.response?.data?.message || 'Ocurrió un problema.';
             toast.push(
                 <Notification
                     title="Error"
                     type="danger"
-                    icon={<HiOutlineExclamationCircle />}
                 >
                     {errorMessage}
                 </Notification>
@@ -120,12 +126,14 @@ const ExerciseFormPage: React.FC = () => {
     if (loading) {
         return <Spinner />;
     }
-
     return (
         <Card>
             <h2 className="text-xl font-bold mb-4">
                 {id ? 'Editar Ejercicio' : 'Nuevo Ejercicio'}
             </h2>
+
+
+
             <ExerciseForm
                 initialValues={initialValues}
                 categorias={categorias}
