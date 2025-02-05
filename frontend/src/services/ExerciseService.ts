@@ -17,7 +17,7 @@ interface Ejercicio {
 // Función para obtener todos los ejercicios
 export async function apiGetEjercicios() {
     return ApiService.fetchData<Ejercicio[], void>({
-        url: '/ejercicios',
+        url: '/ejercicios?activo=true',
         method: 'get',
     });
 }
