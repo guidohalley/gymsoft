@@ -65,9 +65,9 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                     formData.append(
                         'esGlobal',
                         values.esGlobal ? 'true' : 'false',
-                    )
-
-                    if (values.video.length > 0) {
+                    )   
+                    
+                    if (values.video?.length > 0) {
                         formData.append('video', values.video[0])
                     }
 

@@ -51,6 +51,7 @@ export const ExercisesProvider = ({ children }) => {
                     Ejercicio creado exitosamente.
                 </Notification>
             );
+            return response;
         } catch (error) {
             toast.push(
                 <Notification
@@ -65,7 +66,7 @@ export const ExercisesProvider = ({ children }) => {
 
     const updateExercise = async (id: number, data: FormData) => {
         try {
-            await apiUpdateEjercicio({ id, ...data });
+            const response = await apiUpdateEjercicio(id,data);
             setExercises((prev) => prev.map((ex) => (ex.id === id ? { ...ex, ...data } : ex)));
             toast.push(
                 <Notification
@@ -75,6 +76,7 @@ export const ExercisesProvider = ({ children }) => {
                     Ejercicio actualizado exitosamente.
                 </Notification>
             );
+            return response;
         } catch (error) {
             toast.push(
                 <Notification

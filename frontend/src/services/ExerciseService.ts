@@ -48,9 +48,9 @@ export async function apiGetEjercicioDetails(id: number) {
 }
 
 // Función para actualizar un ejercicio
-export async function apiUpdateEjercicio(data: { id: number; [key: string]: any }) {
+export async function apiUpdateEjercicio(id:number, data: Partial<Ejercicio>) {
     return ApiService.fetchData<void, Partial<Ejercicio>>({
-        url: `/ejercicios/${data.id}`, // El ID se interpolará correctamente
+        url: `/ejercicios/${id}`, // El ID se interpolará correctamente
         method: 'put',
         data: data, // El cuerpo de la solicitud contiene el resto de los valores
     });
