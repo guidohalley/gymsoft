@@ -108,7 +108,7 @@ const update = async (req, res,next) => {
 
     try {
         const { id } = req.params;
-        const { nombre,activo,descripcion,categoriaEjercicioId,path,url,esGlobal } = req.body;
+        const { nombre,activo = true,descripcion,categoriaEjercicioId,path,url,esGlobal } = req.body;
         const { gimnasioId } = req.payload;
 
         const datoExistente = await commonService.getById(model,id,gimnasioId);
