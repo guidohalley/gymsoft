@@ -2,9 +2,9 @@ import {
     NAV_ITEM_TYPE_TITLE,
     NAV_ITEM_TYPE_ITEM,
     NAV_ITEM_TYPE_COLLAPSE
-} from '@/constants/navigation.constant';;
-import type { NavigationTree } from '@/@types/navigation';;
-import {  ADMIN,  DUENIO,  ENTRENADOR  } from '@/constants/roles.constant';
+} from '@/constants/navigation.constant';
+import type { NavigationTree } from '@/@types/navigation';
+import { ADMIN, DUENIO, ENTRENADOR } from '@/constants/roles.constant';
 
 const navigationConfig: NavigationTree[] = [
     {
@@ -16,7 +16,7 @@ const navigationConfig: NavigationTree[] = [
         type: NAV_ITEM_TYPE_ITEM,
         authority: [],
         subMenu: [],
-    },    
+    },
     {
         key: 'categoriasEjercicios',
         path: '/categorias-ejercicios',
@@ -26,27 +26,6 @@ const navigationConfig: NavigationTree[] = [
         type: NAV_ITEM_TYPE_ITEM,
         authority: [ADMIN, DUENIO],
         subMenu: [],
-    },
-    {
-        key: 'ajustes',
-        path: '/ajustes',
-        title: '⚙️ Ajustes',
-        translateKey: 'nav.ajustes',
-        icon: 'settings',
-        type: NAV_ITEM_TYPE_COLLAPSE,
-        authority: [ADMIN,  DUENIO],
-        subMenu: [
-            {
-                key: 'tiposDeClases',
-                path: '/ajustes/tipos-de-clases',
-                title: '📌 Tipos de Clases',
-                translateKey: 'nav.tiposDeClases',
-                icon: '',
-                type: NAV_ITEM_TYPE_ITEM,
-                authority: [ADMIN, DUENIO],
-                subMenu: [],
-            },
-        ],
     },
     {
         key: 'ejercicios',
@@ -75,6 +54,37 @@ const navigationConfig: NavigationTree[] = [
                 icon: '',
                 type: NAV_ITEM_TYPE_ITEM,
                 authority: [ADMIN, DUENIO],
+                subMenu: [],
+            },
+        ],
+    },
+    {
+        key: 'bloquesEjercicios',
+        path: '/bloques-ejercicios',
+        title: '🧩 Bloques de Ejercicios',
+        translateKey: 'nav.bloquesEjercicios',
+        icon: 'blocks',
+        type: NAV_ITEM_TYPE_COLLAPSE,
+        authority: [ADMIN, DUENIO, ENTRENADOR],
+        subMenu: [
+            {
+                key: 'listado-bloques',
+                path: '/bloques-ejercicios/listado',
+                title: '📋 Listado de Bloques',
+                translateKey: 'nav.listadoBloques',
+                icon: '',
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: [ADMIN, DUENIO, ENTRENADOR],
+                subMenu: [],
+            },
+            {
+                key: 'nuevo-bloque',
+                path: '/bloques-ejercicios/nuevo',
+                title: '➕ Nuevo Bloque',
+                translateKey: 'nav.nuevoBloque',
+                icon: '',
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: [ADMIN, DUENIO, ENTRENADOR],
                 subMenu: [],
             },
         ],
@@ -109,17 +119,6 @@ const navigationConfig: NavigationTree[] = [
                 subMenu: [],
             },
         ],
-    },
-        //  Nueva entrada: Bloques de Ejercicios
-    {
-        key: 'bloquesEjercicios',
-        path: '/bloques',
-        title: 'Bloques',
-        translateKey: 'nav.bloquesEjercicios',
-        icon: 'bloques',
-        type: NAV_ITEM_TYPE_ITEM,
-        authority: [ADMIN, DUENIO, ENTRENADOR],
-        subMenu: [],
     },
     {
         key: 'dispositivos',

@@ -59,8 +59,7 @@ export const protectedRoutes = [
         path: '/ejercicios/editar/:id',
         component: lazy(() => import('@/views/ejercicios/ExerciseFormPage')), // Reutiliza el formulario para editar
         authority: [ADMIN, DUENIO],
-    },
-    // ✅ Bloques de ejercicios
+    },    
     {
         key: 'bloques-list',
         path: '/bloques',
@@ -103,8 +102,7 @@ export const protectedRoutes = [
         component: lazy(() => import('@/views/dispositivos/DeviceNewPage')),
         authority: [DUENIO],
     },
-]
-
+    
     {
         key: 'rutinas',
         path: '/rutinas',
