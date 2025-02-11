@@ -2,9 +2,9 @@ import {
     NAV_ITEM_TYPE_TITLE,
     NAV_ITEM_TYPE_ITEM,
     NAV_ITEM_TYPE_COLLAPSE
-} from '@/constants/navigation.constant'
-import type { NavigationTree } from '@/@types/navigation'
-import {ADMIN,DUENIO,ENTRENADOR} from '@/constants/roles.constant';
+} from '@/constants/navigation.constant';
+import type { NavigationTree } from '@/@types/navigation';
+import { ADMIN, DUENIO, ENTRENADOR } from '@/constants/roles.constant';
 
 const navigationConfig: NavigationTree[] = [
     {
@@ -24,33 +24,34 @@ const navigationConfig: NavigationTree[] = [
         translateKey: 'nav.ajustes',
         icon: 'ajustes',
         type: NAV_ITEM_TYPE_COLLAPSE,
-        authority: [ADMIN,DUENIO],
+        authority: [ADMIN, DUENIO],
         subMenu: [
-        {
-            key: 'tiposDeClases',
-            path: '/ajustes/tipos-de-clases',
-            title: 'Tipos de clases ',
-            translateKey: 'nav.tiposDeClases',
-            icon: '',
-            type: NAV_ITEM_TYPE_ITEM,
-            authority: [ADMIN,DUENIO],
-            subMenu: [],
-        }]
+            {
+                key: 'tiposDeClases',
+                path: '/ajustes/tipos-de-clases',
+                title: 'Tipos de Clases',
+                translateKey: 'nav.tiposDeClases',
+                icon: '',
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: [ADMIN, DUENIO],
+                subMenu: [],
+            },
+        ],
     },
     {
         key: 'categoriaEjercicios',
         path: '/categorias-ejercicios',
-        title: 'Categoria de Ejercicios',
+        title: 'Categoría de Ejercicios',
         translateKey: 'nav.categoriasEjercicios',
         icon: 'exercise',
         type: NAV_ITEM_TYPE_ITEM,
-        authority: [ADMIN,DUENIO],
+        authority: [ADMIN, DUENIO],
         subMenu: [],
     },
     {
         key: 'musculos',
         path: '/musculos',
-        title: 'Musculos',
+        title: 'Músculos',
         translateKey: 'nav.musculos',
         icon: 'musculos',
         type: NAV_ITEM_TYPE_ITEM,
@@ -88,6 +89,17 @@ const navigationConfig: NavigationTree[] = [
             },
         ],
     },
-]
+        //  Nueva entrada: Bloques de Ejercicios
+    {
+        key: 'bloquesEjercicios',
+        path: '/bloques',
+        title: 'Bloques',
+        translateKey: 'nav.bloquesEjercicios',
+        icon: 'bloques',
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: [ADMIN, DUENIO, ENTRENADOR],
+        subMenu: [],
+    },
+];
 
-export default navigationConfig
+export default navigationConfig;

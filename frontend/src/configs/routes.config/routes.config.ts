@@ -1,35 +1,36 @@
+// frontend/src/configs/routes.config/routes.config.ts
 import { lazy } from 'react'
 import authRoute from './authRoute'
 import type { Routes } from '@/@types/routes'
 
 export const publicRoutes: Routes = [...authRoute]
-import {ADMIN,ENTRENADOR,DUENIO} from '@/constants/roles.constant';
-import path from 'path';
+import { ADMIN, ENTRENADOR, DUENIO } from '@/constants/roles.constant'
+import path from 'path'
 
 export const protectedRoutes = [
     {
         key: 'home',
         path: '/home',
         component: lazy(() => import('@/views/Home')),
-        authority: [ADMIN,ENTRENADOR,DUENIO],
+        authority: [ADMIN, ENTRENADOR, DUENIO],
     },
     {
         key: 'tiposDeClases',
         path: '/ajustes/tipos-de-clases',
         component: lazy(() => import('@/views/ajustes/TiposDeClases')),
-        authority: [ADMIN,DUENIO],
+        authority: [ADMIN, DUENIO],
     },
     {
         key: 'categoriasEjercicios',
         path: '/categorias-ejercicios',
         component: lazy(() => import('@/views/categorias/Categorias')),
-        authority: [ADMIN,DUENIO],
+        authority: [ADMIN, DUENIO],
     },
     {
         key: 'musculos',
         path: '/musculos',
         component: lazy(() => import('@/views/musculos')),
-        authority: [ADMIN,DUENIO],
+        authority: [ADMIN, DUENIO],
     },
     {
         component: lazy(() => import('@/views/ejercicios/ExerciseListPage')), // Ruta principal para ejercicios
@@ -59,5 +60,29 @@ export const protectedRoutes = [
         component: lazy(() => import('@/views/ejercicios/ExerciseFormPage')), // Reutiliza el formulario para editar
         authority: [ADMIN, DUENIO],
     },
-
+    // ✅ Bloques de ejercicios
+    {
+        key: 'bloques-list',
+        path: '/bloques',
+        component: lazy(() => import('@/views/BloquesEjercicios/BloquesListPage')),
+        authority: [ADMIN, DUENIO],
+    },
+    {
+        key: 'bloque-detail',
+        path: '/bloques/:id',
+        component: lazy(() => import('@/views/BloquesEjercicios/BloquesDetailPage')),
+        authority: [ADMIN, DUENIO],
+    },
+    {
+        key: 'bloque-new',
+        path: '/bloques/nuevo',
+        component: lazy(() => import('@/views/BloquesEjercicios/components/BloquesForm')),
+        authority: [ADMIN, DUENIO],
+    },
+    {
+        key: 'bloque-edit',
+        path: '/bloques/:id/editar',
+        component: lazy(() => import('@/views/BloquesEjercicios/components/BloquesForm')),
+        authority: [ADMIN, DUENIO],
+    },
 ]

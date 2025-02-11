@@ -1,3 +1,4 @@
+//frontend/src/services/BaseService.ts
 import axios from 'axios'
 import appConfig from '@/configs/app.config'
 import { TOKEN_TYPE, REQUEST_HEADER_AUTH_KEY } from '@/constants/api.constant'
