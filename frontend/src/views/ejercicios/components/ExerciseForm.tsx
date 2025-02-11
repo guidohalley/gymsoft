@@ -46,6 +46,8 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
     enableReinitialize = false,
 }) => {
     const [loading, setLoading] = useState(false)
+    const [videoFile, setVideoFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState(initialValues.videoUrl || '');
 
     return (
         <Formik
@@ -67,8 +69,10 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                         values.esGlobal ? 'true' : 'false',
                     )   
                     
-                    if (values.video?.length > 0) {
-                        formData.append('video', values.video[0])
+                    if (videoFile) {
+                        formData.append("video", videoFile);
+                    } else if (initialValues.videoUrl) {
+                        formData.append("videoUrl", initialValues.videoUrl);
                     }
 
                     await onSubmit(formData)
@@ -176,43 +180,19 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                         </FormItem>
 
                         <FormItem label="Video">
-                            {values.video?.length > 0 ? (
+                            {previewUrl ? (
                                 <div className="mb-4">
-                                    <video
-                                        controls
-                                        src={URL.createObjectURL(
-                                            values.video[0],
-                                        )}
-                                        className="w-128 h-72 rounded-md"
-                                    />
-                                    <Button
-                                        variant="default"
-                                        className="text-red-500 mt-2"
-                                        onClick={() =>
-                                            setFieldValue('video', [])
-                                        }
-                                    >
-                                        Quitar video
-                                    </Button>
-                                </div>
-                            ) : initialValues.videoUrl ? (
-                                <div className="mb-4">
-                                    <video
-                                        controls
-                                        src={initialValues.videoUrl}
-                                        className="w-128 h-72 rounded-md"
-                                    />
+                                    <video controls src={previewUrl} className="w-128 h-72 rounded-md" />
                                 </div>
                             ) : (
-                                <p className="text-gray-500 mb-4">
-                                    No hay un video cargado.
-                                </p>
+                                <p className="text-gray-500 mb-4">No hay un video cargado.</p>
                             )}
                             <ExerciseUpload
-                                value={values.video}
-                                onChange={(file) =>
-                                    setFieldValue('video', file ? [file] : [])
-                                }
+                                value={videoFile}
+                                onChange={(file) => {
+                                    setVideoFile(file);
+                                    setPreviewUrl(file ? URL.createObjectURL(file) : initialValues.videoUrl || '');
+                                }}
                                 maxFileSizeMB={5}
                             />
                         </FormItem>
