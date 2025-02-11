@@ -36,12 +36,17 @@ const ExerciseUpload: React.FC<ExerciseUploadProps> = ({
                 );
                 return;
             }
-
+    
+            // Verificar si el nuevo archivo es el mismo que el actual
+            if (value && file.name === value.name && file.size === value.size) {
+                return; // Evita actualizar si es el mismo archivo
+            }
+    
             const newName = renameFile
                 ? renameFile(file.name)
                 : `archivo-${Date.now()}.${file.name.split('.').pop()}`;
             const renamedFile = new File([file], newName, { type: file.type });
-
+    
             setFileName(renamedFile.name);
             onChange(renamedFile);
         }

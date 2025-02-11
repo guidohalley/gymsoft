@@ -11,7 +11,17 @@ const ExerciseListPage: React.FC = () => {
     const [filteredExercises, setFilteredExercises] = useState<any[]>([]);
 
     useEffect(() => {
-        setFilteredExercises(exercises);
+        fetchExercises();
+    }, []);
+    
+
+    useEffect(() => {
+        if (exercises.length > 0) {
+
+            console.log("Actualizando filteredExercises:", exercises);
+            setFilteredExercises(exercises);
+            
+        }
     }, [exercises]);
 
     const handleSearch = (searchTerm: string) => {
@@ -45,7 +55,7 @@ const ExerciseListPage: React.FC = () => {
         <Card>
             <div className="flex justify-between items-center mb-4">
                 <h1 className="text-xl font-bold">Listado de Ejercicios</h1>
-                <ExerciseTableTools onSearch={handleSearch} />
+                <ExerciseTableTools onSearch={handleSearch} />            
             </div>
             {loading ? (
                 <Spinner />
