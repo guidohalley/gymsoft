@@ -60,16 +60,16 @@ const navigationConfig: NavigationTree[] = [
     },
     {
         key: 'bloquesEjercicios',
-        path: '/bloques-ejercicios',
+        path: '/bloques',
         title: '🧩 Bloques de Ejercicios',
         translateKey: 'nav.bloquesEjercicios',
-        icon: 'blocks',
+        icon: '',
         type: NAV_ITEM_TYPE_COLLAPSE,
         authority: [ADMIN, DUENIO, ENTRENADOR],
         subMenu: [
             {
                 key: 'listado-bloques',
-                path: '/bloques-ejercicios/listado',
+                path: '/bloques',
                 title: '📋 Listado de Bloques',
                 translateKey: 'nav.listadoBloques',
                 icon: '',
@@ -79,7 +79,7 @@ const navigationConfig: NavigationTree[] = [
             },
             {
                 key: 'nuevo-bloque',
-                path: '/bloques-ejercicios/nuevo',
+                path: '/bloques/nuevo',
                 title: '➕ Nuevo Bloque',
                 translateKey: 'nav.nuevoBloque',
                 icon: '',
