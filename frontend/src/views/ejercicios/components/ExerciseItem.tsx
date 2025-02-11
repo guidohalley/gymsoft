@@ -8,6 +8,7 @@ interface ExerciseItemProps {
 }
 
 const ExerciseItem: React.FC<ExerciseItemProps> = ({ exercise, onEdit, onDelete }) => {
+    console.log(exercise);
     return (
         <tr>
             <td>{exercise.nombre}</td>
@@ -15,10 +16,10 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({ exercise, onEdit, onDelete 
             <td>{exercise.estado}</td>
             <td>
                 <div className="flex gap-2">
-                    <Button size="sm" variant="outline" onClick={() => onEdit(exercise.id)}>
+                    <Button size="sm" variant="plain" onClick={() => onEdit(exercise.id)}>
                         Editar
                     </Button>
-                    <Button size="sm" variant="danger" onClick={() => onDelete(exercise.id)}>
+                    <Button size="sm" variant="solid" onClick={() => onDelete(exercise.id)}>
                         Eliminar
                     </Button>
                 </div>

@@ -62,12 +62,8 @@ const Categorias: React.FC = () => {
     const handleEditSave = async (updatedData: Partial<Categoria>) => {
         if (selectedCategoria && selectedCategoria.id) {
             try {
-                await updateCategoriaEjercicio(selectedCategoria, updatedData);
-                setCategorias((prevCategorias) =>
-                    prevCategorias.map((categoria) =>
-                        categoria.id === selectedCategoria ? { ...categoria, ...updatedData } : categoria
-                    )
-                );
+                await updateCategoriaEjercicio(selectedCategoria.id, updatedData);
+                await fetchCategorias();
                 setEditModalOpen(false);
                 setSelectedCategoria(null);
                 toast.push(

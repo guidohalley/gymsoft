@@ -57,7 +57,7 @@ const ExerciseUpload: React.FC<ExerciseUploadProps> = ({
             {fileName ? (
                 <div className="flex items-center gap-2">
                     <span className="text-sm truncate max-w-xs">{fileName}</span>
-                    <Button variant="outline" size="sm" onClick={handleRemoveFile}>
+                    <Button variant="default" size="sm" onClick={handleRemoveFile}>
                         Quitar
                     </Button>
                 </div>
