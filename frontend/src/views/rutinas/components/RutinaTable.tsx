@@ -1,111 +1,120 @@
-import React from 'react';
-import Table from '@/components/ui/Table';
-import Button from '@/components/ui/Button';
-import Spinner from '@/components/ui/Spinner';
-import { HiOutlinePencilAlt, HiOutlineTrash } from 'react-icons/hi';
-import { useReactTable, getCoreRowModel, ColumnDef, flexRender } from '@tanstack/react-table';
+import React, { useMemo, useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import Table from '@/components/ui/Table'
+import { HiOutlinePencilAlt, HiOutlineTrash } from 'react-icons/hi'
+import Button from '@/components/ui/Button'
+import { HiOutlinePencil} from 'react-icons/hi'
 
-const { Tr, Th, Td, THead, TBody } = Table;
+import { apiGetRutinas } from '@/services/RutinasService'
+
+const { Tr, Th, Td, THead, TBody } = Table
 
 interface Rutina {
-    id: number;
-    nombre: string;
-    descripcion: string;
-    estado: string;
-    createdAt: string;
+    id: number
+    nombre: string
+    descripcion: string
+    estadoId: number
+    creadoPor: number
+    createdAt: string
 }
 
-interface RutinaTableProps {
-    data: Rutina[];
-    onEdit: (id: number) => void;
-    onDelete: (id: number) => void;
-    deleting?: number | null;
-}
+const RutinaTable: React.FC = () => {
+    const [rutinas, setRutinas] = useState<Rutina[]>([])
+    const navigate = useNavigate()
 
-const RutinaTable: React.FC<RutinaTableProps> = ({ data, onEdit, onDelete, deleting }) => {
-    const columns: ColumnDef<Rutina>[] = [
-        {
-            header: 'ID',
-            accessorKey: 'id',
-            cell: (info) => info.getValue(),
-        },
-        {
-            header: 'Nombre',
-            accessorKey: 'nombre',
-            cell: (info) => info.getValue(),
-        },
-        {
-            header: 'Descripción',
-            accessorKey: 'descripcion',
-            cell: (info) => info.getValue(),
-        },
-        {
-            header: 'Estado',
-            accessorKey: 'estado',
-            cell: (info) => info.getValue(),
-        },
-        {
-            header: 'Creado el',
-            accessorKey: 'createdAt',
-            cell: (info) => {
-                const date = new Date(info.getValue());
-                return date.toLocaleDateString('es-ES', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                });
-            },
-        },
-        {
-            header: 'Acciones',
-            cell: ({ row }) => {
-                const rutinaId = row.original.id;
-                const isDeleting = deleting === rutinaId;
+    useEffect(() => {
+        const fetchRutinas = async () => {
+            try {
+                const response = await apiGetRutinas()
+                setRutinas(response.data.data)
+            } catch (err) {
+            }
+        }
+        fetchRutinas()
+    }, [])
 
-                return (
+    const handleEdit = (rutinaId: number) => {
+        navigate(`/rutinas/editar/${rutinaId}`) // 🔹 Redirige al formulario de edición
+    }
+
+    const handleDelete = (rutinaId: number) => {
+        console.log(`Eliminar rutina ${rutinaId}`)
+    }
+
+    const columns = useMemo(
+        () => [
+            { header: 'ID', accessorKey: 'id' },
+            { header: 'Nombre', accessorKey: 'nombre' },
+            { header: 'Descripción', accessorKey: 'descripcion' },
+            { header: 'Estado', accessorKey: 'estadoId' },
+            {
+                id: 'actions',
+                header: 'Acciones',
+                cell: ({ row }: { row: any }) => (
                     <div className="flex space-x-2">
-                        <Button variant="plain" icon={<HiOutlinePencilAlt />} onClick={() => onEdit(rutinaId)} disabled={isDeleting}>
-                            Editar
+                        <Button
+                            size="xs"
+                            variant="outline"
+                            onClick={() => handleEdit(row.original.id)}
+                        >
+                            <HiOutlinePencilAlt /> Editar
                         </Button>
                         <Button
-                            variant="plain"
-                            className="text-red-500"
-                            icon={isDeleting ? <Spinner size="sm" /> : <HiOutlineTrash />}
-                            onClick={() => onDelete(rutinaId)}
-                            disabled={isDeleting}
+                            size="xs"
+                            variant="destructive"
+                            onClick={() => handleDelete(row.original.id)}
                         >
-                            {isDeleting ? 'Eliminando...' : 'Eliminar'}
+                            <HiOutlineTrash /> Eliminar
                         </Button>
                     </div>
-                );
+                ),
             },
-        },
-    ];
-
-    const table = useReactTable({ data, columns, getCoreRowModel: getCoreRowModel() });
+        ],
+        [],
+    )
 
     return (
         <Table>
             <THead>
-                {table.getHeaderGroups().map((headerGroup) => (
-                    <Tr key={headerGroup.id}>
-                        {headerGroup.headers.map((header) => (
-                            <Th key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</Th>
-                        ))}
-                    </Tr>
-                ))}
+                <Tr>
+                    {columns.map((col) => (
+                        <Th key={col.id || col.accessorKey}>{col.header}</Th>
+                    ))}
+                </Tr>
             </THead>
             <TBody>
-                {table.getRowModel().rows.map((row) => (
-                    <Tr key={row.id}>
-                        {row.getVisibleCells().map((cell) => (
-                            <Td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</Td>
-                        ))}
+                {rutinas.map((rutina) => (
+                    <Tr key={rutina.id}>
+                        <Td>{rutina.id}</Td>
+                        <Td>{rutina.nombre}</Td>
+                        <Td>{rutina.descripcion}</Td>
+                        <Td>{rutina.estadoId}</Td>
+                        <Td>
+                            <div className="flex gap-2">
+                                <Button
+                                    className="mr-2"
+                                    variant="twoTone"
+                                    color="blue-600"
+                                    icon={<HiOutlinePencil />}
+                                    onClick={() => handleEdit(rutina.id)}
+                                >
+                                    Editar
+                                </Button>
+                                <Button
+                                    variant="twoTone"
+                                    color="red-600"
+                                    icon={<HiOutlineTrash />}
+                                    onClick={() => handleDelete(rutina.id)}
+                                >
+                                    Eliminar
+                                </Button>
+                            </div>
+                        </Td>
                     </Tr>
                 ))}
             </TBody>
         </Table>
-    );
-};
+    )
+}
 
-export default RutinaTable;
+export default RutinaTable

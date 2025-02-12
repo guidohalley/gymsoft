@@ -31,7 +31,7 @@ interface SelectEjerciciosProps {
 const SelectEjercicios: React.FC<SelectEjerciciosProps> = ({
     // bloqueId,
     selectedEjercicios,
-    onChange
+    onChange,
 }) => {
     const [ejercicios, setEjercicios] = useState<Ejercicio[]>([])
 
@@ -48,7 +48,10 @@ const SelectEjercicios: React.FC<SelectEjerciciosProps> = ({
         fetchEjercicios()
     }, [])
 
-    const handleSelectEjercicio = (ejercicio: Ejercicio, isSelected: boolean) => {
+    const handleSelectEjercicio = (
+        ejercicio: Ejercicio,
+        isSelected: boolean,
+    ) => {
         // Si está "desmarcando" (quitar), pides confirmación
         if (!isSelected) {
             if (!window.confirm('¿Estás seguro de eliminar este ejercicio?')) {
@@ -88,122 +91,167 @@ const SelectEjercicios: React.FC<SelectEjerciciosProps> = ({
                     </Tr>
                 </THead>
                 <TBody>
-                    {ejercicios.map((ejercicio) => {
-                        const isSelected = selectedEjercicios.some(
-                            (e) => e.ejercicioId === ejercicio.id
-                        )
-                        return (
-                            <Tr key={ejercicio.id}>
-                                <Td>
-                                    <Checkbox
-                                        checked={isSelected}
-                                        onChange={(checked) =>
-                                            handleSelectEjercicio(ejercicio, checked)
-                                        }
-                                    />
-                                </Td>
-                                <Td>{ejercicio.nombre}</Td>
-                                <Td>{ejercicio.descripcion}</Td>
+                    {Array.isArray(ejercicios) && ejercicios.length > 0 ? (
+                        ejercicios.map((ejercicio) => {
+                            const isSelected = Array.isArray(selectedEjercicios)
+                                ? selectedEjercicios.some(
+                                      (e) => e.ejercicioId === ejercicio.id,
+                                  )
+                                : false
 
-                                {/* Si está seleccionado, mostramos los inputs de configuración */}
-                                {isSelected && (
-                                    <>
-                                        <Td>
-                                            <Input
-                                                value={
-                                                    selectedEjercicios.find(
-                                                        (e) => e.ejercicioId === ejercicio.id
-                                                    )?.repeticiones || ''
-                                                }
-                                                onChange={(e) =>
-                                                    onChange(
-                                                        selectedEjercicios.map((ej) =>
-                                                            ej.ejercicioId === ejercicio.id
-                                                                ? {
-                                                                      ...ej,
-                                                                      repeticiones: e.target.value,
-                                                                  }
-                                                                : ej
+                            return (
+                                <Tr key={ejercicio.id}>
+                                    <Td>
+                                        <Checkbox
+                                            checked={isSelected}
+                                            onChange={(checked) =>
+                                                handleSelectEjercicio(
+                                                    ejercicio,
+                                                    checked,
+                                                )
+                                            }
+                                        />
+                                    </Td>
+                                    <Td>{ejercicio.nombre}</Td>
+                                    <Td>{ejercicio.descripcion}</Td>
+
+                                    {/* Si está seleccionado, mostramos los inputs de configuración */}
+                                    {isSelected && (
+                                        <>
+                                            <Td>
+                                                <Input
+                                                    value={
+                                                        selectedEjercicios?.find(
+                                                            (e) =>
+                                                                e.ejercicioId ===
+                                                                ejercicio.id,
+                                                        )?.repeticiones || ''
+                                                    }
+                                                    onChange={(e) =>
+                                                        onChange(
+                                                            selectedEjercicios?.map(
+                                                                (ej) =>
+                                                                    ej.ejercicioId ===
+                                                                    ejercicio.id
+                                                                        ? {
+                                                                              ...ej,
+                                                                              repeticiones:
+                                                                                  e
+                                                                                      .target
+                                                                                      .value,
+                                                                          }
+                                                                        : ej,
+                                                            ) || [],
                                                         )
-                                                    )
-                                                }
-                                            />
-                                        </Td>
-                                        <Td>
-                                            <Input
-                                                type="number"
-                                                value={
-                                                    selectedEjercicios.find(
-                                                        (e) => e.ejercicioId === ejercicio.id
-                                                    )?.series || 1
-                                                }
-                                                onChange={(e) =>
-                                                    onChange(
-                                                        selectedEjercicios.map((ej) =>
-                                                            ej.ejercicioId === ejercicio.id
-                                                                ? {
-                                                                      ...ej,
-                                                                      series: Number(e.target.value),
-                                                                  }
-                                                                : ej
+                                                    }
+                                                />
+                                            </Td>
+                                            <Td>
+                                                <Input
+                                                    type="number"
+                                                    value={
+                                                        selectedEjercicios?.find(
+                                                            (e) =>
+                                                                e.ejercicioId ===
+                                                                ejercicio.id,
+                                                        )?.series || 1
+                                                    }
+                                                    onChange={(e) =>
+                                                        onChange(
+                                                            selectedEjercicios?.map(
+                                                                (ej) =>
+                                                                    ej.ejercicioId ===
+                                                                    ejercicio.id
+                                                                        ? {
+                                                                              ...ej,
+                                                                              series: Number(
+                                                                                  e
+                                                                                      .target
+                                                                                      .value,
+                                                                              ),
+                                                                          }
+                                                                        : ej,
+                                                            ) || [],
                                                         )
-                                                    )
-                                                }
-                                            />
-                                        </Td>
-                                        <Td>
-                                            <Input
-                                                type="number"
-                                                value={
-                                                    selectedEjercicios.find(
-                                                        (e) => e.ejercicioId === ejercicio.id
-                                                    )?.descanso || 0
-                                                }
-                                                onChange={(e) =>
-                                                    onChange(
-                                                        selectedEjercicios.map((ej) =>
-                                                            ej.ejercicioId === ejercicio.id
-                                                                ? {
-                                                                      ...ej,
-                                                                      descanso: Number(
-                                                                          e.target.value
-                                                                      ),
-                                                                  }
-                                                                : ej
+                                                    }
+                                                />
+                                            </Td>
+                                            <Td>
+                                                <Input
+                                                    type="number"
+                                                    value={
+                                                        selectedEjercicios?.find(
+                                                            (e) =>
+                                                                e.ejercicioId ===
+                                                                ejercicio.id,
+                                                        )?.descanso || 0
+                                                    }
+                                                    onChange={(e) =>
+                                                        onChange(
+                                                            selectedEjercicios?.map(
+                                                                (ej) =>
+                                                                    ej.ejercicioId ===
+                                                                    ejercicio.id
+                                                                        ? {
+                                                                              ...ej,
+                                                                              descanso:
+                                                                                  Number(
+                                                                                      e
+                                                                                          .target
+                                                                                          .value,
+                                                                                  ),
+                                                                          }
+                                                                        : ej,
+                                                            ) || [],
                                                         )
-                                                    )
-                                                }
-                                            />
-                                        </Td>
-                                        <Td>
-                                            <Input
-                                                type="number"
-                                                value={
-                                                    selectedEjercicios.find(
-                                                        (e) => e.ejercicioId === ejercicio.id
-                                                    )?.peso || 0
-                                                }
-                                                onChange={(e) =>
-                                                    onChange(
-                                                        selectedEjercicios.map((ej) =>
-                                                            ej.ejercicioId === ejercicio.id
-                                                                ? {
-                                                                      ...ej,
-                                                                      peso: Number(
-                                                                          e.target.value
-                                                                      ),
-                                                                  }
-                                                                : ej
+                                                    }
+                                                />
+                                            </Td>
+                                            <Td>
+                                                <Input
+                                                    type="number"
+                                                    value={
+                                                        selectedEjercicios?.find(
+                                                            (e) =>
+                                                                e.ejercicioId ===
+                                                                ejercicio.id,
+                                                        )?.peso || 0
+                                                    }
+                                                    onChange={(e) =>
+                                                        onChange(
+                                                            selectedEjercicios?.map(
+                                                                (ej) =>
+                                                                    ej.ejercicioId ===
+                                                                    ejercicio.id
+                                                                        ? {
+                                                                              ...ej,
+                                                                              peso: Number(
+                                                                                  e
+                                                                                      .target
+                                                                                      .value,
+                                                                              ),
+                                                                          }
+                                                                        : ej,
+                                                            ) || [],
                                                         )
-                                                    )
-                                                }
-                                            />
-                                        </Td>
-                                    </>
-                                )}
-                            </Tr>
-                        )
-                    })}
+                                                    }
+                                                />
+                                            </Td>
+                                        </>
+                                    )}
+                                </Tr>
+                            )
+                        })
+                    ) : (
+                        <Tr>
+                            <Td
+                                colSpan={7}
+                                className="text-center text-gray-500"
+                            >
+                                No hay ejercicios disponibles.
+                            </Td>
+                        </Tr>
+                    )}
                 </TBody>
             </Table>
         </div>

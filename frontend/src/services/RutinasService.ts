@@ -56,11 +56,19 @@ export async function apiDeleteRutina(id: number) {
 }
 
 // **Agregar bloques a una rutina**
-export async function apiAddBloquesToRutina(rutinaId: number, bloques: { id: number; orden: number; series: string; descanso: string }[]) {
-    return ApiService.fetchData<void, { bloques: { id: number; orden: number; series: string; descanso: string }[] }>({
+export async function apiAddBloquesToRutina(rutinaId: number, bloques: { bloqueId: number; orden: number; series?: string; descanso?: string }[]) {
+    // Transformar bloques asegurando que no asignamos valores por defecto
+    const bloquesFormateados = bloques.map(({ bloqueId, orden, series, descanso }) => ({
+        id: bloqueId, 
+        orden,
+        ...(series ? { series } : {}), // Solo incluir si está definido
+        ...(descanso ? { descanso } : {}), // Solo incluir si está definido
+    }));
+
+    return ApiService.fetchData<void, { bloques: { id: number; orden: number; series?: string; descanso?: string }[] }>({
         url: `/rutinas/${rutinaId}/bloques`,
         method: 'post',
-        data: { bloques },
+        data: { bloques: bloquesFormateados },
     });
 }
 
