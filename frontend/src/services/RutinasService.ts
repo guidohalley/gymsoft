@@ -16,7 +16,7 @@ interface Rutina {
 // **Obtener todas las rutinas**
 export async function apiGetRutinas() {
     return ApiService.fetchData<Rutina[], void>({
-        url: '/rutinas?activo=true',
+        url: '/rutinas',
         method: 'get',
     });
 }
