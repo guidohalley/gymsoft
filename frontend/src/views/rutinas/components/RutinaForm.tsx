@@ -9,7 +9,7 @@ import { FormContainer, FormItem } from '@/components/ui/Form';
 import Checkbox from '@/components/ui/Checkbox';
 import toast from '@/components/ui/toast';
 import Notification from '@/components/ui/Notification';
-import { apiCreateRutina, apiUpdateRutina, apiGetRutinaDetails, apiAddBloquesToRutina, apiGetBloquesByRutina } from '@/services/RutinasService';
+import { apiCreateRutina, apiUpdateRutina, apiGetRutinaDetails, apiAddBloquesToRutina, apiGetBloquesByRutina, apiRemoveBloquesFromRutina } from '@/services/RutinasService';
 import { apiGetEjerciciosByBloque } from '@/services/BloqueEjerciciosService';
 import Card from '@/components/ui/Card';
 import SelectBloques from './SelectBloques';
@@ -28,6 +28,9 @@ const validationSchema = Yup.object().shape({
 
 const RutinaForm: React.FC<{ rutinaId?: number; onSuccess?: () => void }> = ({ rutinaId, onSuccess }) => {
     const navigate = useNavigate();
+
+    // ✅ Usamos useState para almacenar rutinaIdFinal y evitar errores de referencia
+    const [rutinaIdFinal, setRutinaIdFinal] = useState<number | null>(rutinaId || null);
 
     const [initialValues, setInitialValues] = useState({
         nombre: '',
@@ -60,9 +63,14 @@ const RutinaForm: React.FC<{ rutinaId?: number; onSuccess?: () => void }> = ({ r
                         estadoId: rutina.activo || false,
                         bloques: bloquesAsignados,
                     });
+
+                    // ✅ Almacenar rutinaId en el estado
+                    setRutinaIdFinal(rutinaId);
                 } catch (error) {
                     toast.push(
-                        <Notification title="Error" type="danger" duration={3000}>❌ Error al cargar la rutina.</Notification>
+                        <Notification title="Error" type="danger" duration={3000}>
+                            ❌ Error al cargar la rutina.
+                        </Notification>
                     );
                 }
             };
@@ -70,53 +78,24 @@ const RutinaForm: React.FC<{ rutinaId?: number; onSuccess?: () => void }> = ({ r
         }
     }, [rutinaId]);
 
-    useEffect(() => {
-        const fetchEjercicios = async () => {
-            if (bloqueSeleccionado !== null) {
-                try {
-                    const response = await apiGetEjerciciosByBloque(bloqueSeleccionado);
-                    const ejerciciosLimpios = response.data.data.map((item) => ({
-                        id: item.ejercicio.id,
-                        nombre: item.ejercicio.nombre,
-                        url: item.ejercicio.url,
-                        series: item.series,
-                        repeticiones: item.repeticiones,
-                        descanso: item.descanso,
-                        peso: item.peso,
-                    }));
-                    setEjercicios(ejerciciosLimpios);
-                } catch (error) {
-                    toast.push(
-                        <Notification title="Error" type="danger" duration={3000}>❌ Error al cargar los ejercicios.</Notification>
-                    );
-                }
-            }
-        };
-        if (dialogEjerciciosOpen) {
-            fetchEjercicios();
-        }
-    }, [bloqueSeleccionado, dialogEjerciciosOpen]);
-
     const handleSubmit = async (values) => {
         try {
             let rutinaResponse;
-            let rutinaIdFinal = rutinaId;
-    
+
             // 🔹 1. Crear o actualizar la rutina
-            if (rutinaId) {
-                await apiUpdateRutina({ id: rutinaId, ...values });
+            if (rutinaIdFinal) {
+                await apiUpdateRutina({ id: rutinaIdFinal, ...values });
             } else {
                 rutinaResponse = await apiCreateRutina({
                     nombre: values.nombre,
                     descripcion: values.descripcion,
                     estadoId: values.estadoId, 
                 });
-    
-                rutinaIdFinal = rutinaResponse.data.data.id; 
-                console.log(`📡 Rutina creada con ID: ${rutinaIdFinal}`);
+
+                setRutinaIdFinal(rutinaResponse.data.data.id); // ✅ Guardar en estado
+                console.log(`📡 Rutina creada con ID: ${rutinaResponse.data.data.id}`);
             }
-    
-            // 🔹 2. Validar que `rutinaIdFinal` sea correcto antes de asociar bloques
+
             if (!rutinaIdFinal) {
                 console.error("❌ No se pudo obtener el ID de la rutina.");
                 toast.push(
@@ -126,20 +105,20 @@ const RutinaForm: React.FC<{ rutinaId?: number; onSuccess?: () => void }> = ({ r
                 );
                 return;
             }
-    
-            // 🔹 3. Si hay bloques seleccionados, asociarlos a la rutina
+
+            // 🔹 2. Asociar bloques solo si hay una rutina creada
             if (Array.isArray(values.bloques) && values.bloques.length > 0) {
                 const bloquesFormateados = values.bloques.map((bloque) => ({
                     id: bloque.bloqueId,
                     orden: bloque.orden,
-                    series: bloque.series ? bloque.series : "0",
-                    descanso: bloque.descanso ? bloque.descanso : "0",
+                    series: bloque.series || "0",
+                    descanso: bloque.descanso || "0",
                 }));
-    
+
                 console.log(`📡 Asociando bloques a rutina ${rutinaIdFinal}...`, JSON.stringify({ bloques: bloquesFormateados }, null, 2));
-    
+
                 await apiAddBloquesToRutina(rutinaIdFinal, bloquesFormateados);
-    
+
                 setTimeout(() => {
                     toast.push(
                         <Notification title="Éxito" type="success" duration={3000}>
@@ -147,12 +126,9 @@ const RutinaForm: React.FC<{ rutinaId?: number; onSuccess?: () => void }> = ({ r
                         </Notification>
                     );
                 }, 500);
-            } else {
-                console.warn("⚠️ No hay bloques seleccionados para asociar.");
-                toast.push(<Notification title="Advertencia" type="warning" duration={3000}>⚠️ No hay bloques seleccionados para asociar.</Notification>);
             }
-    
-            // 🔹 4. Confirmación final y redirección
+
+            // 🔹 3. Confirmación final y redirección
             setTimeout(() => {
                 toast.push(
                     <Notification title="Rutina guardada" type="success" duration={3000}>
@@ -199,6 +175,7 @@ const RutinaForm: React.FC<{ rutinaId?: number; onSuccess?: () => void }> = ({ r
 
                             <FormItem label="Bloques" asterisk>
                                 <SelectBloques
+                                    rutinaId={rutinaIdFinal} // ✅ Pasamos rutinaIdFinal a SelectBloques
                                     selectedBloques={values.bloques}
                                     onChange={(bloques) => setFieldValue('bloques', bloques)}
                                     onOpenEjercicios={(bloqueId) => {
