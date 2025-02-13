@@ -28,6 +28,7 @@ const validationSchema = Yup.object().shape({
 
 const RutinaForm: React.FC<{ rutinaId?: number; onSuccess?: () => void }> = ({ rutinaId, onSuccess }) => {
     const navigate = useNavigate();
+
     const [initialValues, setInitialValues] = useState({
         nombre: '',
         descripcion: '',
@@ -131,32 +132,35 @@ const RutinaForm: React.FC<{ rutinaId?: number; onSuccess?: () => void }> = ({ r
                 const bloquesFormateados = values.bloques.map((bloque) => ({
                     id: bloque.bloqueId,
                     orden: bloque.orden,
-                    series: bloque.series ? bloque.series : "0",  // ✅ Asegurar valores correctos
-                    descanso: bloque.descanso ? bloque.descanso : "0",  // ✅ Asegurar valores correctos
+                    series: bloque.series ? bloque.series : "0",
+                    descanso: bloque.descanso ? bloque.descanso : "0",
                 }));
     
                 console.log(`📡 Asociando bloques a rutina ${rutinaIdFinal}...`, JSON.stringify({ bloques: bloquesFormateados }, null, 2));
     
-                await apiAddBloquesToRutina(rutinaIdFinal, bloquesFormateados); // ✅ Enviar el array directamente
+                await apiAddBloquesToRutina(rutinaIdFinal, bloquesFormateados);
     
-                toast.push(
-                    <Notification title="Éxito" type="success" duration={3000}>
-                        ✅ Bloques asociados correctamente a la rutina.
-                    </Notification>
-                );
+                setTimeout(() => {
+                    toast.push(
+                        <Notification title="Éxito" type="success" duration={3000}>
+                            ✅ Bloques asociados correctamente a la rutina.
+                        </Notification>
+                    );
+                }, 500);
             } else {
                 console.warn("⚠️ No hay bloques seleccionados para asociar.");
+                toast.push(<Notification title="Advertencia" type="warning" duration={3000}>⚠️ No hay bloques seleccionados para asociar.</Notification>);
             }
     
-            // 🔹 4. Confirmación final
-            toast.push(
-                <Notification title="Rutina guardada" type="success" duration={3000}>
-                    ✅ Rutina guardada con éxito.
-                </Notification>
-            );
-    
-            if (onSuccess) onSuccess();
-            setTimeout(() => navigate('/rutinas'), 2000);
+            // 🔹 4. Confirmación final y redirección
+            setTimeout(() => {
+                toast.push(
+                    <Notification title="Rutina guardada" type="success" duration={3000}>
+                        ✅ Rutina guardada con éxito.
+                    </Notification>
+                );
+                navigate('/rutinas/listado');  // ✅ Redirección después de mostrar el mensaje
+            }, 1000);
 
         } catch (error) {
             console.error("❌ Error al guardar rutina:", error);
@@ -167,6 +171,7 @@ const RutinaForm: React.FC<{ rutinaId?: number; onSuccess?: () => void }> = ({ r
             );
         }
     };
+    
     return (
         <Card header={rutinaId ? 'Editar Rutina' : 'Crear Rutina'}>
             <Formik
@@ -187,21 +192,20 @@ const RutinaForm: React.FC<{ rutinaId?: number; onSuccess?: () => void }> = ({ r
                             </FormItem>
 
                             <FormItem>
-                            <Checkbox checked={values.estadoId === 1} onChange={(checked) => setFieldValue('estadoId', checked ? 1 : 2)}>
-
+                                <Checkbox checked={values.estadoId === 1} onChange={(checked) => setFieldValue('estadoId', checked ? 1 : 2)}>
                                     Activo
                                 </Checkbox>
                             </FormItem>
 
                             <FormItem label="Bloques" asterisk>
-                            <SelectBloques
-                                selectedBloques={values.bloques}
-                                onChange={(bloques) => setFieldValue('bloques', bloques)}
-                                onOpenEjercicios={(bloqueId) => {
-                                    setBloqueSeleccionado(bloqueId);
-                                    setDialogEjerciciosOpen(true);
-                                }}
-                            />
+                                <SelectBloques
+                                    selectedBloques={values.bloques}
+                                    onChange={(bloques) => setFieldValue('bloques', bloques)}
+                                    onOpenEjercicios={(bloqueId) => {
+                                        setBloqueSeleccionado(bloqueId);
+                                        setDialogEjerciciosOpen(true);
+                                    }}
+                                />
                             </FormItem>
 
                             <Button variant="solid" type="submit">
