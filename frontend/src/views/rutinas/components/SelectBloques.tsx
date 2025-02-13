@@ -31,10 +31,8 @@ const SelectBloques: React.FC<SelectBloquesProps> = ({ selectedBloques, onChange
     useEffect(() => {
         const fetchBloques = async () => {
             try {
-                console.log('📡 Cargando bloques desde la API...');
                 const response = await getBloques();
-                console.log('✅ Bloques obtenidos:', response.data.data);
-                setBloquesDisponibles(response.data.data || []);
+                setBloquesDisponibles(response.data.data);
             } catch (error) {
                 console.error('❌ Error al cargar los bloques:', error);
             } finally {
@@ -45,28 +43,41 @@ const SelectBloques: React.FC<SelectBloquesProps> = ({ selectedBloques, onChange
         fetchBloques();
     }, []);
 
-    const handleSelectBloque = (bloque: Bloque, isSelected: boolean) => {
+    const handleSelectBloque = async (bloque: Bloque, isSelected: boolean) => {
         let updatedBloques = [...selectedBloques];
     
         if (isSelected) {
-            // Evitar duplicados
             if (!updatedBloques.some((b) => b.bloqueId === bloque.id)) {
-                updatedBloques.push({ bloqueId: bloque.id, orden: updatedBloques.length + 1 });
+                updatedBloques.push({ bloqueId: bloque.id, orden: updatedBloques.length + 1, series: "", descanso: "" });
             }
         } else {
             updatedBloques = updatedBloques.filter((b) => b.bloqueId !== bloque.id);
         }
     
-        console.log('🛠 Bloques seleccionados:', updatedBloques);
+        // 🔹 Actualizar el estado local
         onChange(updatedBloques);
+    
+        // 🔹 Llamar a la API si hay una rutina creada
+        if (rutinaId) {
+            try {
+                console.log(`📡 Asociando bloques a la rutina ${rutinaId}...`);
+                await apiAddBloquesToRutina(rutinaId, updatedBloques);
+                toast.push(
+                    <Notification title="Éxito" type="success">
+                        ✅ Bloques actualizados en la rutina
+                    </Notification>
+                );
+            } catch (error) {
+                console.error("❌ Error al asociar bloques:", error);
+                toast.push(
+                    <Notification title="Error" type="danger">
+                        ❌ No se pudo asociar el bloque a la rutina
+                    </Notification>
+                );
+            }
+        }
     };
-
-    const handleOrdenChange = (bloqueId: number, orden: number) => {
-        const updatedBloques = selectedBloques.map((b) =>
-            b.bloqueId === bloqueId ? { ...b, orden } : b
-        );
-        onChange(updatedBloques);
-    };
+    
 
     return (
         <div className="bg-white p-4 rounded shadow mt-4">
@@ -108,21 +119,21 @@ const SelectBloques: React.FC<SelectBloquesProps> = ({ selectedBloques, onChange
                                             )}
                                         </Td>
                                         <Td>
-                                            {isSelected && (
-                                                <Button
-                                                    size="xs"
-                                                    variant="twoTone"
-                                                    color="blue-600"
-                                                    onClick={() => {
-                                                        console.log(`🔹 Clic en "Ver Ejercicios" para bloque: ${bloque.id}`);
-                                                        onOpenEjercicios(bloque.id);
-                                                    }}
-                                                >
-                                                    Ver Ejercicios
-                                                </Button>
-                                            )}
-                                        </Td>
-                                    </Tr>
+                                        <Button
+                                            size="xs"
+                                            variant="twoTone"
+                                            color="blue-600"
+                                            onClick={(e) => {
+                                                e.preventDefault(); // 🔹 Evita que Formik tome esto como un envío de formulario
+                                                e.stopPropagation(); // 🔹 Evita la propagación del evento
+                                                console.log(`🔹 Clic en "Ver Ejercicios" para bloque: ${bloque.id}`);
+                                                onOpenEjercicios(bloque.id);
+                                            }}
+                                        >
+                                            Ver Ejercicios
+                                        </Button>
+                                    </Td>
+                                </Tr>
                                 );
                             })
                         ) : (
