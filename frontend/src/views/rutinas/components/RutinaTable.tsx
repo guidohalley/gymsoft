@@ -4,8 +4,10 @@ import Table from '@/components/ui/Table'
 import { HiOutlinePencilAlt, HiOutlineTrash } from 'react-icons/hi'
 import Button from '@/components/ui/Button'
 import { HiOutlinePencil} from 'react-icons/hi'
-
 import { apiGetRutinas } from '@/services/RutinasService'
+import { apiDeleteRutina } from '@/services/RutinasService';
+import toast from '@/components/ui/toast';
+import Notification from '@/components/ui/Notification';
 
 const { Tr, Th, Td, THead, TBody } = Table
 
@@ -37,19 +39,42 @@ const RutinaTable: React.FC = () => {
         navigate(`/rutinas/editar/${rutinaId}`) // 🔹 Redirige al formulario de edición
     }
 
-    const handleDelete = (rutinaId: number) => {
-        console.log(`Eliminar rutina ${rutinaId}`)
-    }
+    const handleDelete = async (rutinaId: number) => {
+        if (!window.confirm("⚠️ ¿Estás seguro de que deseas eliminar esta rutina? Esta acción no se puede deshacer.")) {
+            return;
+        }
+    
+        try {
+            console.log(`🗑 Eliminando rutina ${rutinaId}`);
+            await apiDeleteRutina(rutinaId); // 🔥 Llamamos a la API para eliminar la rutina
+    
+            // 🔹 Actualizamos la lista eliminando la rutina borrada
+            setRutinas((prev) => prev.filter((rutina) => rutina.id !== rutinaId));
+    
+            toast.push(
+                <Notification title="Éxito" type="success">
+                    ✅ Rutina eliminada correctamente.
+                </Notification>
+            );
+        } catch (error) {
+            console.error("❌ Error al eliminar la rutina:", error);
+            toast.push(
+                <Notification title="Error" type="danger">
+                    ❌ No se pudo eliminar la rutina. Verifica que no esté en uso.
+                </Notification>
+            );
+        }
+    };
 
     const columns = useMemo(
         () => [
-            { header: 'ID', accessorKey: 'id' },
-            { header: 'Nombre', accessorKey: 'nombre' },
-            { header: 'Descripción', accessorKey: 'descripcion' },
-            { header: 'Estado', accessorKey: 'estadoId' },
+            { header: "ID", accessorKey: "id" },
+            { header: "Nombre", accessorKey: "nombre" },
+            { header: "Descripción", accessorKey: "descripcion" },
+            { header: "Estado", accessorKey: "estadoId" },
             {
-                id: 'actions',
-                header: 'Acciones',
+                id: "actions",
+                header: "Acciones",
                 cell: ({ row }: { row: any }) => (
                     <div className="flex space-x-2">
                         <Button
@@ -70,8 +95,8 @@ const RutinaTable: React.FC = () => {
                 ),
             },
         ],
-        [],
-    )
+        []
+    );
 
     return (
         <Table>

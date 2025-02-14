@@ -1,67 +1,34 @@
-import React from 'react'
-import Card from '@/components/ui/Card'
-import Tag from '@/components/ui/Tag'
+import React from "react";
+import { useExercises } from "@/hooks/useExercises";
+import Card from "@/components/ui/Card";
+import Tag from "@/components/ui/Tag";
 
-interface Ejercicio {
-    id: number;
-    nombre: string;
-    url: string;
-    series: number;
-    repeticiones: string;
-    descanso: number;
-    peso: number;
-}
+const ListaEjerciciosBloque: React.FC<{ bloqueId: number | null }> = ({ bloqueId }) => {
+    const { exercises } = useExercises();
 
-interface ListaEjerciciosBloqueProps {
-    ejercicios: Ejercicio[];
-}
+    // 🔹 Filtrar solo los ejercicios del bloque seleccionado
+    const ejerciciosBloque = exercises.filter((ej) => ej.bloqueId === bloqueId);
 
-const ListaEjerciciosBloque: React.FC<ListaEjerciciosBloqueProps> = ({ ejercicios }) => {
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
-            {ejercicios.length > 0 ? (
-                ejercicios.map((ejercicio) => (
-                    <Card
-                        key={ejercicio.id}
-                        clickable
-                        className="hover:shadow-lg transition duration-150 ease-in-out dark:border dark:border-blue-600 dark:border-solid"
-                        header={
-                            <div className="flex justify-center">
-                                <div className="rounded-lg overflow-hidden max-w-xs mx-auto mt-2 shadow-lg">
-                                    <video controls className="w-full h-40 object-cover">
-                                        <source src={ejercicio.url} type="video/mp4" />
-                                        Tu navegador no soporta la reproducción de videos.
-                                    </video>
-                                </div>
-                            </div>
-
-                        }
-                        headerClass="p-0"
-                        footerBorder={false}
-                        headerBorder={false}
-                    >
-                        {/* 🔹 Nombre del ejercicio */}
+            {ejerciciosBloque.length > 0 ? (
+                ejerciciosBloque.map((ejercicio) => (
+                    <Card key={ejercicio.id} className="hover:shadow-lg transition duration-150 ease-in-out">
+                        <video controls className="w-full h-40 object-cover">
+                            <source src={ejercicio.url} type="video/mp4" />
+                            Tu navegador no soporta la reproducción de videos.
+                        </video>
                         <h4 className="text-base font-bold my-1 text-center">{ejercicio.nombre}</h4>
-
-                        {/* 🔹 Etiquetas en dos columnas */}
                         <div className="grid grid-cols-2 gap-2 mt-2">
-                            <Tag className="bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-100 border-0 rounded">
-                                {ejercicio.series} Series
-                            </Tag>
-                            <Tag className="bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-100 border-0 rounded">
-                                {ejercicio.repeticiones} Reps
-                            </Tag>
-                            <Tag className="bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-100 border-0 rounded">
-                                {ejercicio.descanso} seg descanso
-                            </Tag>
-                            <Tag className="bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-100 border-0 rounded">
-                                {ejercicio.peso} kg
-                            </Tag>
+                            <Tag>{ejercicio.series} Series</Tag>
+                            <Tag>{ejercicio.repeticiones} Reps</Tag>
+                            <Tag>{ejercicio.descanso} seg descanso</Tag>
+                            <Tag>{ejercicio.peso} kg</Tag>
                         </div>
                     </Card>
                 ))
             ) : (
-                <p className="text-gray-500 text-center col-span-3">No hay ejercicios asignados a este bloque.</p>
+                <p className="text-gray-500 text-center col-span-3">No hay ejercicios en este bloque.</p>
             )}
         </div>
     );

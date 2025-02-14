@@ -64,29 +64,28 @@ const RutinaListPage: React.FC = () => {
     };
 
     const handleDelete = async (rutinaId: number) => {
-        if (!window.confirm('¿Estás seguro de que deseas eliminar esta rutina?')) {
+        console.log("📡 Intentando eliminar rutina con ID:", rutinaId);
+        if (!window.confirm("⚠️ ¿Estás seguro de que deseas eliminar esta rutina? Esta acción no se puede deshacer.")) {
             return;
         }
-
-        setDeleting(rutinaId);
+    
         try {
             await apiDeleteRutina(rutinaId);
             setRutinas((prev) => prev.filter((rutina) => rutina.id !== rutinaId));
             setFilteredRutinas((prev) => prev.filter((rutina) => rutina.id !== rutinaId));
+    
             toast.push(
-                <Notification title="Rutina eliminada" type="success">
-                    La rutina se ha eliminado correctamente.
+                <Notification title="Éxito" type="success">
+                    ✅ Rutina eliminada correctamente.
                 </Notification>
             );
         } catch (error) {
-            console.error('Error al eliminar la rutina:', error);
+            console.error("❌ Error al eliminar la rutina:", error);
             toast.push(
-                <Notification title="Error" type="  ">
-                    No se pudo eliminar la rutina.
+                <Notification title="Error" type="danger">
+                    ❌ No se pudo eliminar la rutina. Verifica que no esté en uso.
                 </Notification>
             );
-        } finally {
-            setDeleting(null);
         }
     };
 

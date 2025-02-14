@@ -49,6 +49,7 @@ export async function apiUpdateRutina(data: { id: number; [key: string]: any }) 
 
 // **Eliminar una rutina**
 export async function apiDeleteRutina(id: number) {
+    console.log("🗑 Intentando eliminar rutina con ID:", id);
     return ApiService.fetchData<void, void>({
         url: `/rutinas/${id}`,
         method: 'delete',
@@ -77,15 +78,18 @@ export async function apiGetBloquesByRutina(rutinaId: number) {
     });
 }
 
-// **Eliminar bloques de una rutina**
 export async function apiRemoveBloquesFromRutina(rutinaId: number, bloquesId: number[]) {
+    if (!bloquesId || bloquesId.length === 0) {
+        console.warn("⚠️ No hay bloques para eliminar.");
+        return;
+    }
+
     return ApiService.fetchData<void, { bloquesId: number[] }>({
         url: `/rutinas/${rutinaId}/bloques`,
         method: 'delete',
-        data: { bloques },
+        data: { bloquesId }, // ✅ Se asegura que envíe bloquesId correctamente
     });
 }
-
 export default {
     apiGetRutinas,
     apiCreateRutina,
