@@ -132,4 +132,5 @@ const navigationConfig: NavigationTree[] = [
     },
 ];
 
+
 export default navigationConfig;
