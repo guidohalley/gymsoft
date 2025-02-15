@@ -8,7 +8,6 @@ interface ExerciseItemProps {
 }
 
 const ExerciseItem: React.FC<ExerciseItemProps> = ({ exercise, onEdit, onDelete }) => {
-    console.log(exercise);
     return (
         <tr>
             <td>{exercise.nombre}</td>

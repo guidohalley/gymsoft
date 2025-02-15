@@ -57,7 +57,6 @@ const FormMusculos = ({
                 }}
                 validationSchema={validationSchema}
                 onSubmit={async (values, { resetForm, setSubmitting }) => {
-                    console.log(values)
                     try {
                         if (onEditarMusculo) {
                             onEditarMusculo(values)

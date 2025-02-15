@@ -17,8 +17,6 @@ const ExerciseListPage: React.FC = () => {
 
     useEffect(() => {
         if (exercises.length > 0) {
-
-            console.log("Actualizando filteredExercises:", exercises);
             setFilteredExercises(exercises);
             
         }

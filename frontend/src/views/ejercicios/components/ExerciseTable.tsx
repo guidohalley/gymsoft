@@ -3,7 +3,7 @@ import Table from '@/components/ui/Table';
 import Button from '@/components/ui/Button';
 import Pagination from '@/components/ui/Pagination';
 import Modal from '@/components/ui/Modal/Modal';
-import { HiOutlineEye, HiOutlinePencilAlt, HiOutlineTrash } from 'react-icons/hi';
+import { HiOutlineEye, HiOutlinePencilAlt, HiOutlineTrash,HiOutlineEyeOff  } from 'react-icons/hi';
 import { 
     useReactTable, 
     getCoreRowModel, 
@@ -11,6 +11,8 @@ import {
     flexRender, 
     ColumnDef 
 } from '@tanstack/react-table';
+import { useAppSelector } from '@/store';
+import { ADMIN } from '@/constants/roles.constant'
 
 const { Tr, Th, Td, THead, TBody } = Table;
 
@@ -19,6 +21,7 @@ interface Exercise {
     nombre: string;
     descripcion: string;
     activo: boolean;
+    esGlobal: boolean;
     categoriaEjercicioId: number;
     creadoPor: number;
     gimnasioId: number | null;
@@ -34,18 +37,17 @@ interface ExerciseTableProps {
 }
 
 const ExerciseTable: React.FC<ExerciseTableProps> = ({ data, onDelete, onEdit }) => {
-    const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 7 }); // Tamaño fijo de página: 5
-
+    const { authority } = useAppSelector((state) => state.auth.user)  
+    const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 }); // Tamaño fijo de página: 5
     const columns: ColumnDef<Exercise>[] = [
         { header: 'ID', accessorKey: 'id', cell: (info) => info.getValue() },
         { header: 'Nombre', accessorKey: 'nombre', cell: (info) => info.getValue() },
         {
-            header: 'Ejercicio',
+            header: 'Video',
             accessorKey: 'url',
             cell: (info) => {
                 const videoUrl = info.getValue<string>();
                 const [isModalOpen, setIsModalOpen] = useState(false);
-        
                 return (
                     <>
                         {videoUrl ? (
@@ -54,16 +56,15 @@ const ExerciseTable: React.FC<ExerciseTableProps> = ({ data, onDelete, onEdit })
                                 color="blue-600"
                                 icon={<HiOutlineEye />}
                                 onClick={() => setIsModalOpen(true)}
-                            >
-                                Ver Ejercicio
+                            >                                
                             </Button>
                         ) : (
                             <Button
                                 variant="plain"
                                 className="text-gray-500 cursor-not-allowed"
+                                icon={<HiOutlineEyeOff />}                                 
                                 disabled
-                            >
-                                No se cargó video
+                            >                                
                             </Button>
                         )}
         
@@ -83,6 +84,7 @@ const ExerciseTable: React.FC<ExerciseTableProps> = ({ data, onDelete, onEdit })
         },
         { header: 'Descripción', accessorKey: 'descripcion', cell: (info) => info.getValue() },
         { header: 'Activo', accessorKey: 'activo', cell: (info) => (info.getValue() ? 'Sí' : 'No') },
+        { header: 'Es global', accessorKey: 'esGlobal', cell: (info) => (info.getValue() ? 'Sí' : 'No') },
         {
             header: 'Creado el',
             accessorKey: 'createdAt',
@@ -106,6 +108,7 @@ const ExerciseTable: React.FC<ExerciseTableProps> = ({ data, onDelete, onEdit })
             <div className="flex space-x-2">
                 {/* Botón Modificar */}
                 <Button
+                    disabled={row.original.esGlobal && !authority?.includes(ADMIN)}
                     variant="twoTone"
                     color="blue-600"
                     icon={<HiOutlinePencilAlt />}
@@ -116,6 +119,7 @@ const ExerciseTable: React.FC<ExerciseTableProps> = ({ data, onDelete, onEdit })
 
                 {/* Botón Borrar */}
                 <Button
+                    disabled={row.original.esGlobal && !authority?.includes(ADMIN)}
                     variant="twoTone"
                     color="red-600"
                     icon={<HiOutlineTrash />}
@@ -141,7 +145,7 @@ const ExerciseTable: React.FC<ExerciseTableProps> = ({ data, onDelete, onEdit })
 
     return (
         <div className="bg-white p-4 rounded shadow mt-4">
-            <Table>
+            <Table compact>
                 <THead>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <Tr key={headerGroup.id}>

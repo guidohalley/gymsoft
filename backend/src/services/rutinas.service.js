@@ -71,7 +71,6 @@ export const getAllBloques = async (rutinaId) => {
 
         return bloques;
     } catch (error) {
-        console.log(error);
         throw error;
     }
 };

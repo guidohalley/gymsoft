@@ -22,6 +22,7 @@ const ExerciseFormPage: React.FC = () => {
         nombre: '',
         descripcion: '',
         categoriaEjercicioId: '',
+        activo: true,
         esGlobal: false,
         videoUrl: '',
     });
@@ -46,13 +47,14 @@ const ExerciseFormPage: React.FC = () => {
                 if (id) {
                     const ejercicioResponse = await apiGetEjercicioDetails(parseInt(id));
                     const ejercicio = ejercicioResponse.data.data;
-    
+              
                     if (ejercicio) {
                         setInitialValues({
                             nombre: ejercicio.nombre || '',
                             categoriaEjercicioId: ejercicio.categoriaEjercicioId.toString() || '',
                             descripcion: ejercicio.descripcion || '',
-                            esGlobal: ejercicio.activo || false,
+                            esGlobal: ejercicio.esGlobal || false,
+                            activo: ejercicio.activo || false,
                             videoUrl: ejercicio.url || '',
                         });
                     }
