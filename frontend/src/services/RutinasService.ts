@@ -84,12 +84,15 @@ export async function apiRemoveBloquesFromRutina(rutinaId: number, bloquesId: nu
         return;
     }
 
+    console.log("📡 Eliminando bloques:", JSON.stringify({ bloquesId })); // ✅ Verificamos antes de la petición
+
     return ApiService.fetchData<void, { bloquesId: number[] }>({
         url: `/rutinas/${rutinaId}/bloques`,
-        method: 'delete',
-        data: { bloquesId }, // ✅ Se asegura que envíe bloquesId correctamente
+        method: "delete",
+        data: { bloquesId },
     });
 }
+
 export default {
     apiGetRutinas,
     apiCreateRutina,

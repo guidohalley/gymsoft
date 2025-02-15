@@ -8,16 +8,21 @@ const ListaEjerciciosBloque: React.FC<{ bloqueId: number | null }> = ({ bloqueId
 
     // 🔹 Filtrar solo los ejercicios del bloque seleccionado
     const ejerciciosBloque = exercises.filter((ej) => ej.bloqueId === bloqueId);
+    console.log("🔹 Ejercicios del bloque:", ejerciciosBloque);
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
             {ejerciciosBloque.length > 0 ? (
                 ejerciciosBloque.map((ejercicio) => (
                     <Card key={ejercicio.id} className="hover:shadow-lg transition duration-150 ease-in-out">
-                        <video controls className="w-full h-40 object-cover">
-                            <source src={ejercicio.url} type="video/mp4" />
-                            Tu navegador no soporta la reproducción de videos.
-                        </video>
+                        {ejercicio.url ? (
+                            <video controls className="w-full h-40 object-cover">
+                                <source src={ejercicio.url} type="video/mp4" />
+                                Tu navegador no soporta la reproducción de videos.
+                            </video>
+                        ) : (
+                            <p className="text-gray-500">Sin video disponible.</p>
+                        )}
                         <h4 className="text-base font-bold my-1 text-center">{ejercicio.nombre}</h4>
                         <div className="grid grid-cols-2 gap-2 mt-2">
                             <Tag>{ejercicio.series} Series</Tag>

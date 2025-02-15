@@ -20,16 +20,12 @@ interface BloqueEjercicio {
     peso?: number
 }
 
-// Quitamos bloqueId si no lo necesitas para nada en particular
-// (A menos que uses bloqueId para otra lógica en este componente)
 interface SelectEjerciciosProps {
-    // bloqueId?: number  // Ya no es indispensable
     selectedEjercicios: BloqueEjercicio[]
     onChange: (selectedEjercicios: BloqueEjercicio[]) => void
 }
 
 const SelectEjercicios: React.FC<SelectEjerciciosProps> = ({
-    // bloqueId,
     selectedEjercicios,
     onChange,
 }) => {
@@ -52,7 +48,6 @@ const SelectEjercicios: React.FC<SelectEjerciciosProps> = ({
         ejercicio: Ejercicio,
         isSelected: boolean,
     ) => {
-        // Si está "desmarcando" (quitar), pides confirmación
         if (!isSelected) {
             if (!window.confirm('¿Estás seguro de eliminar este ejercicio?')) {
                 return
@@ -115,7 +110,6 @@ const SelectEjercicios: React.FC<SelectEjerciciosProps> = ({
                                     <Td>{ejercicio.nombre}</Td>
                                     <Td>{ejercicio.descripcion}</Td>
 
-                                    {/* Si está seleccionado, mostramos los inputs de configuración */}
                                     {isSelected && (
                                         <>
                                             <Td>
