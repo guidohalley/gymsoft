@@ -85,4 +85,22 @@ export const protectedRoutes = [
         component: lazy(() => import('@/views/BloquesEjercicios/components/BloquesForm')),
         authority: [ADMIN, DUENIO],
     },
+    {
+        key: 'dispositivos',
+        path: '/dispositivos',
+        component: lazy(() => import('@/views/dispositivos')),
+        authority: [DUENIO],
+    },
+    {
+        key: 'dispositivos',
+        path: '/dispositivos/nuevo',
+        component: lazy(() => import('@/views/dispositivos/DeviceNewPage')),
+        authority: [DUENIO],
+    },
+    {
+        key: 'dispositivos',
+        path: '/dispositivos/editar/:id',
+        component: lazy(() => import('@/views/dispositivos/DeviceNewPage')),
+        authority: [DUENIO],
+    },
 ]

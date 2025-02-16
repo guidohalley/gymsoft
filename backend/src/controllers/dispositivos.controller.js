@@ -15,12 +15,13 @@ const create = async (req, res,next) => {
     }
 
     try {
-        const { nombre,descripcion } = req.body;
+        const { nombre,descripcion,activo = true } = req.body;
         const { gimnasioId } = req.payload;
 
         const data = {
             nombre: nombre,
             descripcion:descripcion,
+            activo:activo,
             gimnasioId: gimnasioId
         };
 
