@@ -6,7 +6,8 @@ interface Ejercicio {
     nombre: string;
     categoria: string;
     descripcion: string;
-    estado: string;
+    esGlobal: boolean;
+    activo: boolean;
     video: string | null; // URL o nombre del archivo del video, o null si no hay video
     creadoPor: number;
     gimnasioId: number | null;
@@ -48,8 +49,8 @@ export async function apiGetEjercicioDetails(id: number) {
 }
 
 // Función para actualizar un ejercicio
-export async function apiUpdateEjercicio(id:number, data: Partial<Ejercicio>) {
-    return ApiService.fetchData<void, Partial<Ejercicio>>({
+export async function apiUpdateEjercicio(id:number, data: FormData) {
+    return ApiService.fetchData<void,FormData>({
         url: `/ejercicios/${id}`, // El ID se interpolará correctamente
         method: 'put',
         data: data, // El cuerpo de la solicitud contiene el resto de los valores

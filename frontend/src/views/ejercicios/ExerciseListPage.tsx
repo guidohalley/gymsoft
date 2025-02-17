@@ -5,10 +5,13 @@ import ExerciseTableTools from '@/views/ejercicios/components/ExerciseTableTools
 import Card from '@/components/ui/Card';
 import Spinner from '@/components/ui/Spinner';
 import Notification from '@/components/ui/Notification';
+import { useNavigate } from 'react-router-dom';
+
 
 const ExerciseListPage: React.FC = () => {
     const { exercises, loading, error, fetchExercises, deleteExercise } = useExercises();
     const [filteredExercises, setFilteredExercises] = useState<any[]>([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchExercises();
@@ -17,8 +20,6 @@ const ExerciseListPage: React.FC = () => {
 
     useEffect(() => {
         if (exercises.length > 0) {
-
-            console.log("Actualizando filteredExercises:", exercises);
             setFilteredExercises(exercises);
             
         }
@@ -48,7 +49,7 @@ const ExerciseListPage: React.FC = () => {
     };
 
     const handleEdit = (id: number) => {
-        window.location.href = `/ejercicios/editar/${id}`;
+        navigate(`/ejercicios/editar/${id}`);
     };
 
     return (

@@ -11,7 +11,6 @@ const InputBusqueda = (props: Props) => {
     const searchInput = useRef(null)
  
     const handleEdit = debounce(() => {
-        console.log();
         props.onInputChange(searchInput.current?.value);
     }, 500) 
 

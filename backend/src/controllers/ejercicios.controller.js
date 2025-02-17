@@ -24,7 +24,7 @@ const create = async (req, res,next) => {
             path:path,
             url:url,
             categoriaEjercicioId: Number(categoriaEjercicioId),
-            esGlobal:Boolean(esGlobal),
+            esGlobal: esGlobal === 'true',
             gimnasioId: gimnasioId,
             creadoPor: usuarioId
         };
@@ -119,17 +119,16 @@ const update = async (req, res,next) => {
 
         const data = {
             nombre,
-            activo: Boolean(activo),
+            activo: activo === 'true',
             descripcion,
             categoriaEjercicioId: Number(categoriaEjercicioId),
             path,
             url,
-            esGlobal: Boolean(esGlobal),
+            esGlobal: esGlobal === 'true',
         }
 
         if(req.file){
             const s3 = await upLoadFile(req.file);
-            console.log(req.file);
             if(s3.imageUrl){
                 data.url = s3.imageUrl;
                 data.nombreArchivo = req.file.filename ;

@@ -9,6 +9,11 @@ import Checkbox from '@/components/ui/Checkbox'
 import toast from '@/components/ui/toast'
 import Notification from '@/components/ui/Notification'
 import ExerciseUpload from './ExerciseUpload'
+import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from '@/store';
+import { ADMIN } from '@/constants/roles.constant'
+
+
 import {
     HiOutlineCheckCircle,
     HiOutlineExclamationCircle,
@@ -21,6 +26,7 @@ const validationSchema = Yup.object().shape({
     categoriaEjercicioId: Yup.string()
         .required('Debes seleccionar una categoría')
         .notOneOf([''], 'Selecciona un valor válido'),
+    activo: Yup.boolean(),
     esGlobal: Yup.boolean(),
     video: Yup.array().max(1, 'Solo se permite un archivo'),
 })
@@ -32,6 +38,7 @@ interface ExerciseFormProps {
         nombre: string
         descripcion: string
         categoriaEjercicioId: string
+        activo: boolean
         esGlobal: boolean
         video: File[]
         videoUrl?: string // Nueva propiedad para la URL del video
@@ -45,15 +52,18 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
     initialValues,
     enableReinitialize = false,
 }) => {
+    const navigate = useNavigate();    
+    const { authority } = useAppSelector((state) => state.auth.user)    
     const [loading, setLoading] = useState(false)
     const [videoFile, setVideoFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState(initialValues.videoUrl || '');
-
+    
     return (
         <Formik
             initialValues={initialValues}
             enableReinitialize={enableReinitialize}
             validationSchema={validationSchema}
+            onReset={() => navigate('/ejercicios/listado')}
             onSubmit={async (values, { resetForm }) => {
                 setLoading(true)
                 try {
@@ -68,13 +78,18 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                         'esGlobal',
                         values.esGlobal ? 'true' : 'false',
                     )   
+
+                    formData.append(
+                        'activo',
+                        values.activo ? 'true' : 'false',
+                    )   
                     
                     if (videoFile) {
                         formData.append("video", videoFile);
                     } else if (initialValues.videoUrl) {
                         formData.append("videoUrl", initialValues.videoUrl);
                     }
-
+                    
                     await onSubmit(formData)
 
                     toast.push(
@@ -168,16 +183,31 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                             </Field>
                         </FormItem>
 
-                        <FormItem label="Es Global">
+                        <FormItem >
                             <Checkbox
-                                checked={values.esGlobal}
+                                checked={values.activo}
                                 onChange={(checked: boolean) =>
-                                    setFieldValue('esGlobal', checked)
+                                    setFieldValue('activo', checked)
                                 }
                             >
-                                Marcar como global
+                                Activo
                             </Checkbox>
                         </FormItem>
+                        {authority?.includes(ADMIN) ? (
+                              <FormItem>
+                              <Checkbox
+                                  checked={values.esGlobal}
+                                  onChange={(checked: boolean) =>
+                                      setFieldValue('esGlobal', checked)
+                                  }
+                              >
+                                Es global
+                              </Checkbox>
+                          </FormItem>
+                            ) : (
+                                ''
+                            )}
+                        
 
                         <FormItem label="Video">
                             {previewUrl ? (
@@ -205,13 +235,14 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                                 Guardar
                             </Button>
                             <Button variant="plain" type="reset">
-                                Limpiar
+                                Cancelar
                             </Button>
                         </FormItem>
                     </FormContainer>
                 </Form>
             )}
         </Formik>
+        
     )
 }
 
