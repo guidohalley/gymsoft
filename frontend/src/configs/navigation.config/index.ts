@@ -102,34 +102,13 @@ const navigationConfig: NavigationTree[] = [
     },
     {
         key: 'dispositivos',
-        path: '',
+        path: '/dispositivos',
         title: '📺 Dispositivos',
         translateKey: 'nav.dispositivos',
         icon: 'exercise',
-        type: NAV_ITEM_TYPE_COLLAPSE, // Cambiado a COLLAPSE para incluir submenús
+        type: NAV_ITEM_TYPE_ITEM, // Cambiado a COLLAPSE para incluir submenús
         authority: [DUENIO],
-        subMenu: [
-            {
-                key: 'listado-dispositivos',
-                path: '/dispositivos',
-                title: 'Listado de Dispositivos',
-                translateKey: 'nav.listadoDispositivos',
-                icon: '',
-                type: NAV_ITEM_TYPE_ITEM,
-                authority: [DUENIO],
-                subMenu: [],
-            },
-            {
-                key: 'nuevo-dispositivo',
-                path: '/dispositivos/nuevo',
-                title: 'Nuevo dispositivo',
-                translateKey: 'nav.nuevoDispositivo',
-                icon: '',
-                type: NAV_ITEM_TYPE_ITEM,
-                authority: [ DUENIO],
-                subMenu: [],
-            },
-        ],
+        subMenu: [],
     },
 ];
 

@@ -75,7 +75,7 @@ const DeviceForm = ({onEditDevice,onNewDevice,initialValues}: Props) => {
                             `Se ${operacion} el dispositivo correctamente`,
                         )
                         resetForm();
-                        navigate('/dispositivos');
+                        navigate('/dispositivos', { replace: true });
                     } catch (error: any) {
                         openNotification(
                             'Algo salio mal',

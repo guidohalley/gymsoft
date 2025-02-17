@@ -107,7 +107,7 @@ const DeviceListPage = () => {
                 cancelText="Cancelar"
                 confirmText="Eliminar"
             >
-                <p>¿Estás seguro que deseas eliminar el musculo?</p>
+                <p>¿Estás seguro que deseas eliminar el dispositivo?</p>
             </ConfirmDialog>
         </>
     );
