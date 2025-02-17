@@ -84,7 +84,7 @@ export async function apiRemoveBloquesFromRutina(rutinaId: number, bloquesId: nu
         return;
     }
 
-    console.log("📡 Eliminando bloques:", JSON.stringify({ bloquesId })); // ✅ Verificamos antes de la petición
+    // console.log("📡 Eliminando bloques:", JSON.stringify({ bloquesId })); // ✅ Verificamos antes de la petición
 
     return ApiService.fetchData<void, { bloquesId: number[] }>({
         url: `/rutinas/${rutinaId}/bloques`,
@@ -92,6 +92,23 @@ export async function apiRemoveBloquesFromRutina(rutinaId: number, bloquesId: nu
         data: { bloquesId },
     });
 }
+
+export async function apiUpdateBloquesInRutina(
+    rutinaId: number,
+    bloques: { id: number; orden: number; series: string; descanso: string }[]
+) {
+    // console.log(`📡 Intentando actualizar bloques en: /api/rutinas/${rutinaId}/bloques`);
+    // console.log("📤 Datos enviados:", JSON.stringify({ bloques }, null, 2));
+
+    return ApiService.fetchData<void, { bloques: { id: number; orden: number; series: string; descanso: string }[] }>(
+        {
+            url: `/rutinas/${rutinaId}/bloques`,
+            method: 'put',
+            data: { bloques },
+        }
+    );
+}
+
 
 export default {
     apiGetRutinas,
@@ -102,4 +119,5 @@ export default {
     apiAddBloquesToRutina,
     apiGetBloquesByRutina,
     apiRemoveBloquesFromRutina,
+    apiUpdateBloquesInRutina,
 };

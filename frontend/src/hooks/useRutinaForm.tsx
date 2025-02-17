@@ -6,7 +6,8 @@ import {
     apiAddBloquesToRutina, 
     apiRemoveBloquesFromRutina, 
     apiGetRutinaDetails, 
-    apiGetBloquesByRutina 
+    apiGetBloquesByRutina, 
+    apiUpdateBloquesInRutina
 } from "@/services/RutinasService";
 import toast from "@/components/ui/toast";
 import Notification from "@/components/ui/Notification";
@@ -42,7 +43,7 @@ export const useRutinaForm = (rutinaId?: number) => {
 
                 const rutina = response.data.data;
                 const bloquesResponse = await apiGetBloquesByRutina(rutinaId);
-                console.log("✅ Bloques obtenidos:", bloquesResponse);
+                console.log("  Bloques obtenidos:", bloquesResponse);
 
                 const bloquesAsignados = bloquesResponse.data?.data.map((bloque) => ({
                     id: bloque.bloque_id,
@@ -71,18 +72,17 @@ export const useRutinaForm = (rutinaId?: number) => {
         fetchRutina();
     }, [rutinaId]);
 
-    // ✅ **Definiendo `handleSubmit` correctamente**
-    const handleSubmit = async (values: any) => {
+    const handleSubmit = async (values) => {
         try {
             let rutinaIdActual = rutinaId;
-
+    
             if (!rutinaIdActual) {
                 const rutinaResponse = await apiCreateRutina({
                     nombre: values.nombre,
                     descripcion: values.descripcion,
-                    estadoId: values.estadoId ?? 1, 
+                    estadoId: values.estadoId ?? 1,
                 });
-
+    
                 rutinaIdActual = rutinaResponse.data.data.id;
                 if (!rutinaIdActual) throw new Error("No se pudo obtener el ID de la rutina");
             } else {
@@ -93,55 +93,41 @@ export const useRutinaForm = (rutinaId?: number) => {
                     estadoId: values.estadoId ?? 1,
                 });
             }
-
+    
+            // 1️⃣ Formatear los bloques para la API
             const bloquesFormateados = values.bloques.map((bloque, index) => ({
                 id: bloque.id,
                 orden: index + 1,
                 series: bloque.series || "3x8x2",
                 descanso: bloque.descanso || "1s"
             }));
-
-            if (bloquesOriginales.length > 0) {
-                try {
-                    console.log("📡 Eliminando bloques:", bloquesOriginales);
-
-                    await apiRemoveBloquesFromRutina(rutinaIdActual, bloquesOriginales);
-
-                    console.log("✅ Bloques eliminados correctamente.");
-
-                    const updatedResponse = await apiGetBloquesByRutina(rutinaIdActual);
-                    console.log("🔄 Nueva lista de bloques después del DELETE:", updatedResponse.data.data);
-
-                    setInitialValues((prevValues) => ({
-                        ...prevValues,
-                        bloques: updatedResponse.data.data.map(b => ({
-                            id: b.bloque_id,
-                            orden: b.orden,
-                            series: b.series || "3x8x2",
-                            descanso: b.descanso || "1s"
-                        }))
-                    }));
-                } catch (error) {
-                    console.error("❌ Error al eliminar bloques:", error);
-                }
-            }
-
-            if (bloquesFormateados.length > 0) {
-                await apiAddBloquesToRutina(rutinaIdActual, bloquesFormateados);
-            }
-
+    
+            console.log("📡 Enviando bloques actualizados:", JSON.stringify({ bloques: bloquesFormateados }, null, 2));
+    
+            await apiUpdateBloquesInRutina(rutinaIdActual, bloquesFormateados);
+    
             toast.push(
                 <Notification title="Éxito" type="success" duration={3000}>
-                    ✅ Rutina guardada con éxito.
+                    Bloques de la rutina actualizados correctamente.
                 </Notification>
             );
-
+    
+            const updatedRutina = await apiGetRutinaDetails(rutinaIdActual);
+            setInitialValues({
+                id: updatedRutina.data.data.id,
+                nombre: updatedRutina.data.data.nombre || "",
+                descripcion: updatedRutina.data.data.descripcion || "",
+                estadoId: updatedRutina.data.data.estadoId ?? 1,
+                bloques: updatedRutina.data.data.bloques || []
+            });
+    
             navigate("/rutinas/listado");
+    
         } catch (error) {
-            console.error("❌ Error al actualizar rutina:", error);
+            console.error(" Error al actualizar los bloques de la rutina:", error);
             toast.push(
                 <Notification title="Error" type="danger" duration={3000}>
-                    ❌ Error al actualizar la rutina.
+                     No se pudieron actualizar los bloques.
                 </Notification>
             );
         }

@@ -66,7 +66,7 @@ const RutinaForm: React.FC<{ rutinaId?: number }> = ({ rutinaId }) => {
                                             descanso: b.descanso || "1s"
                                         }));
 
-                                        // ✅ Evita actualizaciones innecesarias
+                                        //   Evita actualizaciones innecesarias
                                         if (JSON.stringify(nuevosBloques) !== JSON.stringify(values.bloques)) {
                                             setFieldValue("bloques", nuevosBloques);
                                         }

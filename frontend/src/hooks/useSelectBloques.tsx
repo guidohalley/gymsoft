@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { apiGetBloquesByRutina } from "@/services/RutinasService";
+import { getBloques } from "@/services/BloquesService";
 
 export const useSelectBloques = (rutinaId?: number) => {
     const [bloquesDisponibles, setBloquesDisponibles] = useState<any[]>([]);
@@ -7,43 +8,49 @@ export const useSelectBloques = (rutinaId?: number) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!rutinaId) {
-            setLoading(false);
-            return;
-        }
-    
-        const fetchRutinaBloques = async () => {
+        const fetchBloques = async () => {
             setLoading(true);
             try {
-                console.log(`📡 Solicitando bloques de la rutina ID: ${rutinaId}`);
-    
-                const response = await apiGetBloquesByRutina(rutinaId);
-                console.log("✅ Bloques obtenidos:", response.data?.data);
-    
-                const bloquesRutina = response.data?.data || [];
-    
-                const bloquesAsignados = bloquesRutina.map(b => ({
-                    id: b.bloque_id,
-                    orden: b.orden,
-                    series: b.series || "3x8x2",
-                    descanso: b.descanso || "1s",
+                console.log("📡 Cargando TODOS los bloques disponibles...");
+                const responseTodos = await getBloques();
+                const todosLosBloques = responseTodos.data?.data || [];
+                
+                // console.log("✅ Bloques disponibles:", todosLosBloques);
+
+                let bloquesAsignados = [];
+                if (rutinaId) {
+                    // console.log(`📡 Cargando bloques asignados a la rutina ID: ${rutinaId}`);
+                    const responseAsignados = await apiGetBloquesByRutina(rutinaId);
+                    bloquesAsignados = responseAsignados.data?.data || [];
+                    // console.log("✅ Bloques asignados a la rutina:", bloquesAsignados);
+                }
+
+                const bloquesFormateados = todosLosBloques.map((b) => ({
+                    id: b.id,
+                    descripcion: b.descripcion,
+                    orden: 1,
+                    series: "3x8x2",
+                    descanso: "1s",
                 }));
-    
-                // 🔥 Actualizar solo si los datos realmente cambiaron
-                setSelectedBloques((prev) =>
-                    JSON.stringify(prev) !== JSON.stringify(bloquesAsignados) ? bloquesAsignados : prev
-                );
-    
-                setBloquesDisponibles(bloquesAsignados);
-    
+
+                const bloquesPreseleccionados = bloquesAsignados.map((b) => ({
+                    id: b.bloque_id,
+                    descripcion: b.descripcion,
+                    orden: b.orden,
+                    series: b.series,
+                    descanso: b.descanso,
+                }));
+
+                setBloquesDisponibles(bloquesFormateados);
+                setSelectedBloques(bloquesPreseleccionados);
             } catch (error) {
-                console.error("❌ Error al obtener bloques de la rutina:", error);
+                console.error("  Error al obtener bloques:", error);
             } finally {
                 setLoading(false);
             }
         };
-    
-        fetchRutinaBloques();
+
+        fetchBloques();
     }, [rutinaId]);
 
     return { bloquesDisponibles, selectedBloques, setSelectedBloques, loading };
