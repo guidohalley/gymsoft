@@ -7,44 +7,63 @@ import Dialog from "@/components/ui/Dialog";
 import Pagination from "@/components/ui/Pagination";
 import Input from "@/components/ui/Input";
 import Card from "@/components/ui/Card";
-import {
-    useReactTable,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    flexRender,
-} from "@tanstack/react-table";
 import { useSelectBloques } from "@/hooks/useSelectBloques";
 import { apiGetEjerciciosByBloque } from "@/services/BloqueEjerciciosService";
 
 const { Tr, Th, Td, THead, TBody } = Table;
 
-const SelectBloques = ({ rutinaId, selectedBloques, onChange }) => {
+// 📌 Definir interfaces para TypeScript
+interface Bloque {
+    id: number;
+    descripcion: string;
+    orden: number;
+    series: string;
+    descanso: string;
+}
+
+interface Ejercicio {
+    ejercicio: {
+        id: number;
+        nombre: string;
+        url: string;
+    };
+    series: string;
+    repeticiones: number;
+}
+
+interface SelectBloquesProps {
+    rutinaId?: number;
+    selectedBloques: Bloque[];
+    onChange: (bloques: Bloque[]) => void;
+}
+
+const SelectBloques: React.FC<SelectBloquesProps> = ({ rutinaId, selectedBloques, onChange }) => {
     const { bloquesDisponibles, selectedBloques: preseleccionados, setSelectedBloques, loading } = useSelectBloques(rutinaId);
-    const [dialogIsOpen, setDialogIsOpen] = useState(false);
-    const [ejercicios, setEjercicios] = useState([]);
-    const [bloqueSeleccionado, setBloqueSeleccionado] = useState(null);
-    const [globalFilter, setGlobalFilter] = useState("");
+    const [dialogIsOpen, setDialogIsOpen] = useState<boolean>(false);
+    const [ejercicios, setEjercicios] = useState<Ejercicio[]>([]);
+    const [bloqueSeleccionado, setBloqueSeleccionado] = useState<Bloque | null>(null);
+    const [globalFilter, setGlobalFilter] = useState<string>("");
+    const [page, setPage] = useState<number>(1);
+    const pageSize: number = 5; // 📌 Número de bloques por página
 
-    // 📌 Paginación
-    const [page, setPage] = useState(1);
-    const pageSize = 5; // Cantidad de elementos por página
-
+    // 📌 Filtrar bloques según búsqueda
     const filteredBloques = useMemo(() => {
         return bloquesDisponibles.filter(bloque =>
             bloque.descripcion.toLowerCase().includes(globalFilter.toLowerCase())
         );
     }, [bloquesDisponibles, globalFilter]);
 
-    const totalPages = Math.max(1, Math.ceil(filteredBloques.length / pageSize)); // ✅ Asegurar que no muestre más páginas de las reales
+    // 📌 Calcular el total de páginas correctamente
+    const totalPages: number = Math.max(1, Math.ceil(filteredBloques.length / pageSize));
 
-
+    // 📌 Obtener los bloques de la página actual
     const paginatedBloques = useMemo(() => {
         const start = (page - 1) * pageSize;
         return filteredBloques.slice(start, start + pageSize);
     }, [filteredBloques, page]);
 
-    const handleCheckboxChange = (checked, bloque) => {
+    // 📌 Manejar selección de bloques
+    const handleCheckboxChange = (checked: boolean, bloque: Bloque) => {
         const updated = checked
             ? [...selectedBloques, bloque]
             : selectedBloques.filter((b) => b.id !== bloque.id);
@@ -53,24 +72,36 @@ const SelectBloques = ({ rutinaId, selectedBloques, onChange }) => {
         onChange(updated);
     };
 
-    const handleVerEjercicios = async (bloque) => {
+    // 📌 Manejar vista de ejercicios
+    const handleVerEjercicios = async (bloque: Bloque) => {
         if (!bloque || !bloque.id) {
             console.warn("⚠️ No se puede obtener ejercicios: bloque inválido", bloque);
             return;
         }
-
+    
         try {
             console.log(`📡 Obteniendo ejercicios para bloque ID: ${bloque.id}`);
             const response = await apiGetEjerciciosByBloque(bloque.id);
             console.log("✅ Ejercicios obtenidos:", response.data?.data);
-
-            setEjercicios(response.data?.data || []);
+    
+            const ejerciciosTransformados: Ejercicio[] = response.data?.data.map((e: any) => ({
+                ejercicio: {
+                    id: e.ejercicio.id,
+                    nombre: e.ejercicio.nombre,
+                    url: e.ejercicio.url,
+                },
+                series: e.series || "3x8x2",
+                repeticiones: e.repeticiones || 10,
+            })) || [];
+    
+            setEjercicios(ejerciciosTransformados);
             setBloqueSeleccionado(bloque);
             setDialogIsOpen(true);
         } catch (error) {
             console.error("❌ Error al obtener ejercicios:", error);
         }
     };
+    
 
     return (
         <div>
@@ -79,12 +110,12 @@ const SelectBloques = ({ rutinaId, selectedBloques, onChange }) => {
             {/* 📌 Filtro de búsqueda */}
             <div className="flex justify-end">
                 <div className="flex items-center mb-4">
-                <span className="mr-2">Buscar: </span>
+                    <span className="mr-2">Buscar: </span>
                     <Input
-                        placeholder=" Hit, Crossfit, etc..."
+                        placeholder="🔎 Hit, Crossfit, etc..."
                         value={globalFilter}
                         onChange={(e) => setGlobalFilter(e.target.value)}
-                        />
+                    />
                 </div>
             </div>
 
@@ -115,12 +146,13 @@ const SelectBloques = ({ rutinaId, selectedBloques, onChange }) => {
                                     <Td>{index + 1 + (page - 1) * pageSize}</Td>
                                     <Td>{bloque.descripcion}</Td>
                                     <Td>
-                                        <Tag
-                                            className="bg-blue-500 text-white border-0 cursor-pointer"
-                                            onClick={() => handleVerEjercicios(bloque)}
-                                        >
+                                    <Tag
+                                        as="button" // ✅ Especificamos que el Tag actuará como un botón
+                                        className="bg-blue-500 text-white border-0 cursor-pointer"
+                                        onClick={() => handleVerEjercicios(bloque)}
+                                    >
                                             Ver Ejercicios
-                                        </Tag>
+                                    </Tag>
                                     </Td>
                                 </Tr>
                             ))}
@@ -131,9 +163,9 @@ const SelectBloques = ({ rutinaId, selectedBloques, onChange }) => {
                     {totalPages > 1 && (
                         <Pagination
                             currentPage={page}
-                            pageCount={totalPages}
-                            onChange={(newPage) => {
-                                if (newPage > totalPages) return; // ✅ Evita que pase del máximo de páginas
+                            pageCount={totalPages} // ✅ Cambio de totalPages a pageCount
+                            onChange={(newPage: number) => {
+                                if (newPage > totalPages || newPage < 1) return;
                                 setPage(newPage);
                             }}
                         />
