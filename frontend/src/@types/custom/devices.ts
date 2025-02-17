@@ -27,3 +27,8 @@ export type ApiDeviceReponse = {
     data: Device,
     timestamp: string
 }
+
+export type ApiDeviceFilter = {
+    activo?: boolean
+    nombre?: string
+}

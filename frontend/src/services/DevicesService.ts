@@ -1,13 +1,13 @@
 import ApiService from './ApiService'
-import {ApiDevicesReponse,Device,NewDevice,ApiDeviceReponse} from '@/@types/custom/devices'
+import {ApiDevicesReponse,ApiDeviceFilter,NewDevice,ApiDeviceReponse} from '@/@types/custom/devices'
 
-/* export async function apiGetDevices(filtro: MusculoFiltro) {
+ export async function apiGetDevices(filtro?: ApiDeviceFilter ) {
     return ApiService.fetchData<ApiDevicesReponse>({
         url: '/dispositivos',
         method: 'get',
         params: filtro,
     })
-} */
+} 
 
 export async function apiGetDeviceById(id: number) {
     return ApiService.fetchData<ApiDeviceReponse>({
