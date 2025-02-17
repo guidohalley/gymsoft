@@ -100,6 +100,16 @@ const navigationConfig: NavigationTree[] = [
         authority: [ADMIN, DUENIO, ENTRENADOR],
         subMenu: [],
     },
+    {
+        key: 'dispositivos',
+        path: '/dispositivos',
+        title: '📺 Dispositivos',
+        translateKey: 'nav.dispositivos',
+        icon: 'exercise',
+        type: NAV_ITEM_TYPE_ITEM, // Cambiado a COLLAPSE para incluir submenús
+        authority: [DUENIO],
+        subMenu: [],
+    },
 ];
 
 export default navigationConfig;
