@@ -8,7 +8,7 @@ import { ADMIN, DUENIO, ENTRENADOR } from '@/constants/roles.constant';
 
 const navigationConfig: NavigationTree[] = [
     {
-        key: 'home',
+        key: 'Panel de control',
         path: '/home',
         title: '🏠 Home',
         translateKey: 'nav.home',
@@ -17,23 +17,54 @@ const navigationConfig: NavigationTree[] = [
         authority: [],
         subMenu: [],
     },
+    // {
+    //     key: 'ajustes',
+    //     path: '/ajustes',
+    //     title: 'Ajustes',
+    //     translateKey: 'nav.ajustes',
+    //     icon: 'ajustes',
+    //     type: NAV_ITEM_TYPE_COLLAPSE,
+    //     authority: [ADMIN, DUENIO],
+    //     subMenu: [
+    //         {
+    //             key: 'tiposDeClases',
+    //             path: '/ajustes/tipos-de-clases',
+    //             title: 'Tipos de Clases',
+    //             translateKey: 'nav.tiposDeClases',
+    //             icon: '',
+    //             type: NAV_ITEM_TYPE_ITEM,
+    //             authority: [ADMIN, DUENIO],
+    //             subMenu: [],
+    //         },
+    //     ],
+    // },
     {
-        key: 'categoriasEjercicios',
+        key: 'categoriaEjercicios',
         path: '/categorias-ejercicios',
-        title: '📂 Categorías de Ejercicios',
+        title: '📂Categoría de Ejercicios',
         translateKey: 'nav.categoriasEjercicios',
         icon: '',
         type: NAV_ITEM_TYPE_ITEM,
         authority: [ADMIN, DUENIO],
         subMenu: [],
     },
+    // {
+    //     key: 'musculos',
+    //     path: '/musculos',
+    //     title: 'Músculos',
+    //     translateKey: 'nav.musculos',
+    //     icon: 'musculos',
+    //     type: NAV_ITEM_TYPE_ITEM,
+    //     authority: [],
+    //     subMenu: [],
+    // },
     {
         key: 'ejercicios',
         path: '/ejercicios',
         title: '🏋️ Ejercicios',
         translateKey: 'nav.ejercicios',
         icon: 'exercise',
-        type: NAV_ITEM_TYPE_COLLAPSE,
+        type: NAV_ITEM_TYPE_COLLAPSE, // Cambiado a COLLAPSE para incluir submenús
         authority: [ADMIN, DUENIO],
         subMenu: [
             {
@@ -61,10 +92,10 @@ const navigationConfig: NavigationTree[] = [
     {
         key: 'bloquesEjercicios',
         path: '/bloques',
-        title: '🧩 Bloques de Ejercicios',
+        title: 'Bloques',
         translateKey: 'nav.bloquesEjercicios',
-        icon: '',
-        type: NAV_ITEM_TYPE_COLLAPSE,
+        icon: 'bloques',
+        type: NAV_ITEM_TYPE_ITEM,
         authority: [ADMIN, DUENIO, ENTRENADOR],
         subMenu: [
             {
@@ -126,10 +157,41 @@ const navigationConfig: NavigationTree[] = [
         title: '📺 Dispositivos',
         translateKey: 'nav.dispositivos',
         icon: 'exercise',
-        type: NAV_ITEM_TYPE_ITEM, // Cambiado a COLLAPSE para incluir submenús
+        type: NAV_ITEM_TYPE_ITEM,
         authority: [DUENIO],
         subMenu: [],
     },
+    {
+        key: 'clases',
+        path: '/clases',
+        title: '📅 Clases',
+        translateKey: 'nav.clases',
+        icon: 'clases',
+        type: NAV_ITEM_TYPE_COLLAPSE,
+        authority: [ADMIN, DUENIO, ENTRENADOR],
+        subMenu: [
+            {
+                key: 'listado-clases',
+                path: '/clases/listado',
+                title: '📋 Listado de Clases',
+                translateKey: 'nav.listadoClases',
+                icon: '',
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: [ADMIN, DUENIO, ENTRENADOR],
+                subMenu: [],
+            },
+            {
+                key: 'nueva-clase',
+                path: '/clases/nueva',
+                title: '➕ Nueva Clase',
+                translateKey: 'nav.nuevaClase',
+                icon: '',
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: [ADMIN, DUENIO, ENTRENADOR],
+                subMenu: [],
+            },
+        ],
+    }
 ];
 
 
