@@ -56,7 +56,7 @@ const ClasesListPage: React.FC = () => {
   };
 
   const handleCreate = () => {
-    navigate('/clases/nuevo'); // Ruta para formulario de nueva clase
+    navigate('/clases/nueva'); // Ruta para formulario de nueva clase
   };
 
   const handleEdit = (id: number) => {

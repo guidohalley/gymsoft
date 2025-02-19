@@ -15,7 +15,6 @@ const ClaseTableTools: React.FC<ClaseTableToolsProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('Search term changed:', e.target.value);
     setSearchTerm(e.target.value);
     onSearch(e.target.value);
   };
@@ -27,10 +26,7 @@ const ClaseTableTools: React.FC<ClaseTableToolsProps> = ({
         value={searchTerm}
         onChange={handleSearchChange}
       />
-      <Button variant="solid" icon={<HiOutlinePlus />} onClick={() => {
-        console.log('Creating new class');
-        onCreate();
-      }}>
+      <Button variant="solid" icon={<HiOutlinePlus />} onClick={onCreate}>
         Nueva Clase
       </Button>
     </div>

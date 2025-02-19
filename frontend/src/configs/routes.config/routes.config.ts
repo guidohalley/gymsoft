@@ -74,7 +74,7 @@ export const protectedRoutes = [
     },
     {
         key: 'bloque-new',
-        path: '/bloques/nuevo',
+        path: '/bloques/nueva',
         component: lazy(() => import('@/views/BloquesEjercicios/components/BloquesForm')),
         authority: [ADMIN, DUENIO],
     },

@@ -3,6 +3,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { apiGetClaseById, apiCreateClase, apiUpdateClase } from '@/services/ClasesService';
 import { IClase } from '@/types/clases';
+import dayjs from 'dayjs';
 
 export const useClaseForm = (
   claseId?: number,
@@ -26,9 +27,15 @@ export const useClaseForm = (
         setFetching(true);
         try {
           const res = await apiGetClaseById(claseId);
+          console.log('Clase fetched:', res.data.data); // Debugging
           // Ajusta según la respuesta real del backend
-          setInitialValues(res.data.data);
+          setInitialValues({
+            ...res.data.data,
+            fechaInicio: dayjs(res.data.data.fechaInicio).toDate(),
+            fechaFin: dayjs(res.data.data.fechaFin).toDate(),
+          });
         } catch (err) {
+          console.error('Error fetching clase:', err); // Debugging
           setError('No se pudieron cargar los datos de la clase');
         } finally {
           setFetching(false);
@@ -53,15 +60,27 @@ export const useClaseForm = (
     onSubmit: async (values) => {
       setLoading(true);
       try {
+        // Formatear las fechas antes de enviar
+        const formattedValues = {
+          ...values,
+          fechaInicio: dayjs(values.fechaInicio).format('YYYY-MM-DD'),
+          fechaFin: dayjs(values.fechaFin).format('YYYY-MM-DD'),
+        };
+
+        console.log('Submitting values:', formattedValues); // Debugging
+
         if (claseId) {
           // Editar
-          await apiUpdateClase(claseId, values);
+          await apiUpdateClase(claseId, formattedValues);
+          console.log('Clase updated:', formattedValues); // Debugging
         } else {
           // Crear
-          await apiCreateClase(values);
+          await apiCreateClase(formattedValues);
+          console.log('Clase created:', formattedValues); // Debugging
         }
         if (onSuccess) onSuccess();
       } catch (err) {
+        console.error('Error saving clase:', err); // Debugging
         setError('No se pudo guardar la clase');
       } finally {
         setLoading(false);

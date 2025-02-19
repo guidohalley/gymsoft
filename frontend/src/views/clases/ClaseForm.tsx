@@ -1,15 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useClaseForm } from '@/hooks/useClaseForm';
-import { FormikProvider, Form } from 'formik';
+import { FormikProvider, Form, Field } from 'formik';
 import { useParams, useNavigate } from 'react-router-dom';
 
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
 import { FormContainer, FormItem } from '@/components/ui/Form';
-import SelectRutinas from '@/views/clases/components/SelectRutinas'; // 🔹 Para elegir la rutina a asignar
+import Input from '@/components/ui/Input';
+import Calendar from '@/components/ui/Calendar';
 import Notification from '@/components/ui/Notification';
 import Spinner from '@/components/ui/Spinner';
+import SelectRutinas from '@/views/clases/components/SelectRutinas';
+import * as Yup from 'yup';
+import dayjs from 'dayjs';
+
+const validationSchema = Yup.object().shape({
+  descripcion: Yup.string().required('La descripción es obligatoria'),
+  fechaInicio: Yup.date().required('La fecha de inicio es obligatoria').nullable(),
+  fechaFin: Yup.date().required('La fecha de fin es obligatoria').nullable(),
+  tipoClaseId: Yup.number().required('El tipo de clase es obligatorio'),
+  rutinaId: Yup.number().required('La rutina es obligatoria'),
+});
 
 const ClaseForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -20,6 +31,13 @@ const ClaseForm: React.FC = () => {
     navigate('/clases/listado');
   });
 
+  useEffect(() => {
+    if (!claseId) {
+      formik.setFieldValue('fechaInicio', dayjs().toDate());
+      formik.setFieldValue('fechaFin', dayjs().add(1, 'day').toDate());
+    }
+  }, [claseId, formik]);
+
   if (fetching) return <Spinner />;
   if (error) {
     return (
@@ -29,79 +47,107 @@ const ClaseForm: React.FC = () => {
     );
   }
 
+  const disablePastDates = (date: Date) => {
+    return dayjs(date).isBefore(dayjs(), 'day');
+  };
+
+  console.log('Formik values:', formik.values); // Debugging
+
   return (
-    <Card>
-      <h2 className="text-xl font-bold mb-4">
-        {claseId ? 'Editar Clase' : 'Crear Clase'}
-      </h2>
+    <Card header="Gestión de Clases">
       <FormikProvider value={formik}>
         <Form onSubmit={formik.handleSubmit}>
           <FormContainer>
-            <FormItem label="Descripción" asterisk>
-              <Input
-                name="descripcion"
-                value={formik.values.descripcion}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                placeholder="Ingrese una descripción"
-              />
-              {formik.touched.descripcion && formik.errors.descripcion && (
-                <div className="text-red-500 text-sm">{formik.errors.descripcion}</div>
-              )}
-            </FormItem>
+            <div className="grid grid-cols-1 gap-4">
+              <FormItem
+                asterisk
+                label="Descripción"
+                invalid={formik.touched.descripcion && !!formik.errors.descripcion}
+                errorMessage={formik.errors.descripcion}
+              >
+                <Field
+                  type="text"
+                  name="descripcion"
+                  placeholder="Ingrese una descripción"
+                  component={Input}
+                  className="w-full"
+                />
+              </FormItem>
 
-            <FormItem label="Fecha Inicio" asterisk>
-              <Input
-                type="date"
-                name="fechaInicio"
-                value={formik.values.fechaInicio}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              {formik.touched.fechaInicio && formik.errors.fechaInicio && (
-                <div className="text-red-500 text-sm">{formik.errors.fechaInicio}</div>
-              )}
-            </FormItem>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {/* Card Fecha Inicio */}
+                <Card header="Fecha Inicio" className="p-2 shadow-sm w-fit mx-auto">
+                  <FormItem
+                    asterisk
+                    invalid={formik.touched.fechaInicio && !!formik.errors.fechaInicio}
+                    errorMessage={formik.errors.fechaInicio}
+                    className="p-0 m-0"
+                  >
+                    <div className="scale-90">
+                      <Calendar
+                        value={formik.values.fechaInicio ? new Date(formik.values.fechaInicio) : null}
+                        onChange={(date) => formik.setFieldValue('fechaInicio', date)}
+                        disableDate={disablePastDates}
+                      />
+                    </div>
+                  </FormItem>
+                </Card>
 
-            <FormItem label="Fecha Fin" asterisk>
-              <Input
-                type="date"
-                name="fechaFin"
-                value={formik.values.fechaFin}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              {formik.touched.fechaFin && formik.errors.fechaFin && (
-                <div className="text-red-500 text-sm">{formik.errors.fechaFin}</div>
-              )}
-            </FormItem>
+                {/* Card Fecha Fin */}
+                <Card header="Fecha Fin" className="p-2 shadow-sm w-fit mx-auto">
+                  <FormItem
+                    asterisk
+                    invalid={formik.touched.fechaFin && !!formik.errors.fechaFin}
+                    errorMessage={formik.errors.fechaFin}
+                    className="p-0 m-0"
+                  >
+                    <div className="scale-90">
+                      <Calendar
+                        value={formik.values.fechaFin ? new Date(formik.values.fechaFin) : null}
+                        onChange={(date) => formik.setFieldValue('fechaFin', date)}
+                        disableDate={disablePastDates}
+                      />
+                    </div>
+                  </FormItem>
+                </Card>
+              </div>
+              
 
-            <FormItem label="Tipo de Clase" asterisk>
-              <Input
-                type="number"
-                name="tipoClaseId"
-                value={formik.values.tipoClaseId}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              {formik.touched.tipoClaseId && formik.errors.tipoClaseId && (
-                <div className="text-red-500 text-sm">{formik.errors.tipoClaseId}</div>
-              )}
-            </FormItem>
+              <FormItem
+                asterisk
+                label="Tipo de Clase"
+                invalid={formik.touched.tipoClaseId && !!formik.errors.tipoClaseId}
+                errorMessage={formik.errors.tipoClaseId}
+              >
+                <Field
+                  type="number"
+                  name="tipoClaseId"
+                  placeholder="Ingrese el tipo de clase"
+                  component={Input}
+                  className="w-full"
+                />
+              </FormItem>
 
-            <FormItem label="Rutina" asterisk>
-              <SelectRutinas
-                value={formik.values.rutinaId}
-                onChange={(rutinaId) => formik.setFieldValue('rutinaId', rutinaId)}
-              />
-              {formik.touched.rutinaId && formik.errors.rutinaId && (
-                <div className="text-red-500 text-sm">{formik.errors.rutinaId}</div>
-              )}
-            </FormItem>
+              <FormItem
+                asterisk
+                label="Rutina"
+                invalid={formik.touched.rutinaId && !!formik.errors.rutinaId}
+                errorMessage={formik.errors.rutinaId}
+              >
+                <SelectRutinas
+                  value={formik.values.rutinaId}
+                  onChange={(rutinaId) => formik.setFieldValue('rutinaId', rutinaId)}
+                  className="w-full"
+                />
+              </FormItem>
 
-            <Button variant="solid" type="submit" disabled={loading}>
-              {claseId ? 'Actualizar' : 'Crear'} Clase
-            </Button>
+
+            </div>
+            <div className="flex justify-end mt-4">
+              <Button variant="solid" type="submit" disabled={loading}>
+                {claseId ? 'Actualizar' : 'Crear'} Clase
+              </Button>
+            </div>
           </FormContainer>
         </Form>
       </FormikProvider>

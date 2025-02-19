@@ -3,6 +3,12 @@ import Table from '@/components/ui/Table';
 import Button from '@/components/ui/Button';
 import { HiOutlinePencilAlt, HiOutlineTrash } from 'react-icons/hi';
 import { IClase } from '@/types/clases';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const { Tr, Th, Td, THead, TBody } = Table;
 
@@ -37,8 +43,8 @@ const ClaseTable: React.FC<ClaseTableProps> = ({
           <Tr key={clase.id}>
             <Td>{clase.id}</Td>
             <Td>{clase.descripcion}</Td>
-            <Td>{clase.fechaInicio}</Td>
-            <Td>{clase.fechaFin}</Td>
+            <Td>{dayjs(clase.fechaInicio).tz(dayjs.tz.guess()).format('DD-MM-YYYY')}</Td>
+            <Td>{dayjs(clase.fechaFin).tz(dayjs.tz.guess()).format('DD-MM-YYYY')}</Td>
             <Td>{clase.tipoClaseId}</Td>
             <Td>{clase.rutinaId}</Td>
             <Td>
