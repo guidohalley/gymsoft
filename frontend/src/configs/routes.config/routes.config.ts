@@ -59,8 +59,7 @@ export const protectedRoutes = [
         path: '/ejercicios/editar/:id',
         component: lazy(() => import('@/views/ejercicios/ExerciseFormPage')), // Reutiliza el formulario para editar
         authority: [ADMIN, DUENIO],
-    },
-    // ✅ Bloques de ejercicios
+    },    
     {
         key: 'bloques-list',
         path: '/bloques',
@@ -103,4 +102,36 @@ export const protectedRoutes = [
         component: lazy(() => import('@/views/dispositivos/DeviceNewPage')),
         authority: [DUENIO],
     },
+    
+    {
+        key: 'rutinas',
+        path: '/rutinas',
+        component: lazy(() => import('@/views/rutinas/RutinaListPage')),
+        authority: [ADMIN, ENTRENADOR, DUENIO],
+    },
+    {
+        key: 'listado-rutinas',
+        path: '/rutinas/listado',
+        component: lazy(() => import('@/views/rutinas/RutinaListPage')),
+        authority: [ADMIN, ENTRENADOR, DUENIO],
+    },
+    {
+        key: 'nueva-rutina',
+        path: '/rutinas/nueva',
+        component: lazy(() => import('@/views/rutinas/RutinaFormPage')),
+        authority: [ADMIN, ENTRENADOR, DUENIO],
+    },
+    {
+        key: 'detalle-rutina',
+        path: '/rutinas/:id',
+        component: lazy(() => import('@/views/rutinas/RutinaDetailPage')),
+        authority: [ADMIN, ENTRENADOR, DUENIO],
+    },
+    {
+        key: 'editar-rutina',
+        path: '/rutinas/editar/:id',
+        component: lazy(() => import('@/views/rutinas/RutinaFormPage')),
+        authority: [ADMIN, ENTRENADOR, DUENIO],
+    },
+
 ]

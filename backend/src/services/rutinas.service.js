@@ -131,6 +131,36 @@ export const asociarBloques = async (rutinaId,bloques) => {
     }
 }
 
+export const actualizarBloque = async (rutinaId,bloqueId,datos) => {
+    try {
+        const bloqueActualizado = await prisma.rutinaBloques.update({
+            where: {
+                bloqueId: bloqueId,
+                rutinaId: rutinaId
+            },
+            data: datos
+        });
+
+        return bloqueActualizado;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const desasociarAllBloques = async (rutinaId) => {
+    try {
+        const bloquesEliminados = await prisma.rutinaBloques.deleteMany({
+            where: {
+                rutinaId: rutinaId
+            }
+        });
+
+        return bloquesEliminados;
+    } catch (error) {
+        throw error;
+    }
+}
+
 export const desasociarBloques = async (rutinaId,bloquesId) => {
     try {
         const bloquesEliminados = await prisma.rutinaBloques.deleteMany({

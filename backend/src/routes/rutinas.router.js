@@ -36,6 +36,7 @@ router.put('/:id',validarId.concat(validarActualizacion),rutinasController.updat
 router.delete('/:id',validarId,rutinasController.remove);
 
 router.get('/:id/bloques',validarId,rutinasController.getBloques);
+router.put('/:id/bloques',validarId,rutinasController.updateBloques);
 router.post('/:id/bloques',validarId,rutinasController.addBloques);
 router.delete('/:id/bloques',validarId,rutinasController.deleteBloques);
 

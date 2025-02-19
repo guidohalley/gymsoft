@@ -1,5 +1,5 @@
 import commonService from '../services/common.service.js';
-import { getAll as getAllRutinas,getAllBloques,asociarBloques, desasociarBloques,getRutinasBloques} from '../services/rutinas.service.js';
+import { getAll as getAllRutinas,getAllBloques,asociarBloques,desasociarBloques, desasociarAllBloques,getRutinasBloques} from '../services/rutinas.service.js';
 import { validationResult } from 'express-validator';
 import { mensajeError, mensajeExito } from '../utils/responseHandler.util.js';
 import HTTP_STATUS from '../constants/httpStatusCodes.js';
@@ -204,7 +204,52 @@ const addBloques = async (req, res,next) => {
     }  
 }
 
-const deleteBloques = async (req, res,next) => {
+const updateBloques = async (req, res,next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return next(mensajeError('Solicitud incorrecta', HTTP_STATUS.BAD_REQUEST, errors.array()));
+    }
+
+    try {
+        const {id} = req.params;
+        const {gimnasioId} = req.payload;
+        const {bloques} = req.body;
+
+        const rutina = await commonService.getById(model,id,gimnasioId);
+
+        if(!rutina){
+            return next(mensajeError('No se encontro la rutina', HTTP_STATUS.NOT_FOUND));
+        }
+       
+        if(!Array.isArray(bloques) || bloques.length === 0){
+            return next(mensajeError('Se esperaba un array de datos', HTTP_STATUS.BAD_REQUEST));
+        }
+        
+        const errores = [];
+        await Promise.all(bloques.map(async (bloque) => {
+            const bloqueCargado = await commonService.getById('Bloque', bloque.id, gimnasioId);
+            if (!bloqueCargado) {
+                errores.push(`No se encontró el bloque ${bloque.id}`);
+            }
+        }));    
+ 
+        if (errores.length > 0) {
+            return next(mensajeError(`Errores: ${errores.join(', ')}`, HTTP_STATUS.BAD_REQUEST));
+        }
+
+        //Borramos todos los bloques asociados a la rutina
+        await desasociarAllBloques(Number(id));
+
+        //Cargamos los nuevos bloques
+        const bloquesInsertados = await asociarBloques(Number(id),bloques);
+        res.json(mensajeExito(`Se agregaron ${bloquesInsertados.count} bloques a la rutina`, HTTP_STATUS.OK));
+    } catch (error) {
+        return next(mensajeError(`Error al agregar bloques a la rutina` , HTTP_STATUS.INTERNAL_SERVER_ERROR, null, __fileName, 'addBloques', error));
+    }  
+}
+
+ const deleteBloques = async (req, res,next) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -230,9 +275,9 @@ const deleteBloques = async (req, res,next) => {
         res.json(mensajeExito(`Se eliminaron ${bloquesEliminados.count} bloques de la rutina`, HTTP_STATUS.OK));
 
     } catch (error) {
-        return next(mensajeError(`Error al agregar bloques a la rutina` , HTTP_STATUS.INTERNAL_SERVER_ERROR, null, __fileName, 'addBloques', error));
+        return next(mensajeError(`Error al eliminar bloques de la rutina` , HTTP_STATUS.INTERNAL_SERVER_ERROR, null, __fileName, 'addBloques', error));
     }
-}
+} 
 
 export default {
     getAll,
@@ -241,6 +286,7 @@ export default {
     update,
     remove,
     addBloques,
+    updateBloques,
     deleteBloques,
     getBloques
 }
