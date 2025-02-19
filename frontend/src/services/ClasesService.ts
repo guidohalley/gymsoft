@@ -4,7 +4,7 @@ import { IClase } from '@/types/clases';
 // Función para obtener todas las clases
 export async function apiGetClases() {
     return ApiService.fetchData<IClase[], void>({
-        url: '/clases',
+        url: '/clases?activo=true',
         method: 'get',
     });
 }

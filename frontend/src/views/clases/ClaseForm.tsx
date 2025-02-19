@@ -32,11 +32,11 @@ const ClaseForm: React.FC = () => {
   });
 
   useEffect(() => {
-    if (!claseId) {
+    if (!claseId && !formik.values.fechaInicio && !formik.values.fechaFin) {
       formik.setFieldValue('fechaInicio', dayjs().toDate());
       formik.setFieldValue('fechaFin', dayjs().add(1, 'day').toDate());
     }
-  }, [claseId, formik]);
+  }, [claseId, formik.values.fechaInicio, formik.values.fechaFin, formik]);
 
   if (fetching) return <Spinner />;
   if (error) {
@@ -50,8 +50,6 @@ const ClaseForm: React.FC = () => {
   const disablePastDates = (date: Date) => {
     return dayjs(date).isBefore(dayjs(), 'day');
   };
-
-  console.log('Formik values:', formik.values); // Debugging
 
   return (
     <Card header="Gestión de Clases">
