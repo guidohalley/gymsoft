@@ -45,7 +45,7 @@ const TipoClaseFormPage: React.FC = () => {
     if (!tipoClaseId && formik.values.esGlobal !== false) {
       formik.setFieldValue('esGlobal', false);
     }
-  }, [tipoClaseId, formik]);
+  }, [tipoClaseId, formik.values.esGlobal]);
 
   if (loading) return <Spinner />;
   if (error) {

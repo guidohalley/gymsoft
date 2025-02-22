@@ -13,7 +13,9 @@ import Spinner from '@/components/ui/Spinner';
 import SelectRutinas from '@/views/clases/components/SelectRutinas';
 import * as Yup from 'yup';
 import dayjs from 'dayjs';
-import CreatableSelect from 'react-select/creatable';
+
+// Importamos el componente creatable para Tipo de Clase
+import CreatableSelect from '@/views/tiposDeClases/components/CreatableSelect';
 import { useTipoClase } from '@/hooks/useTipoClase';
 
 const validationSchema = Yup.object().shape({
@@ -33,14 +35,19 @@ const ClaseForm: React.FC = () => {
     navigate('/clases/listado');
   });
 
-  const { tiposClases, loading: loadingTiposClases } = useTipoClase();
+  const { 
+    tiposClases, 
+    loading: loadingTiposClases,
+    createTipoClase, // Función para crear un nuevo Tipo de Clase
+    fetchTiposClases // Función para recargar los tipos de clase
+  } = useTipoClase();
 
   useEffect(() => {
     if (!claseId && !formik.values.fechaInicio && !formik.values.fechaFin) {
       formik.setFieldValue('fechaInicio', dayjs().toDate());
       formik.setFieldValue('fechaFin', dayjs().add(1, 'day').toDate());
     }
-  }, [claseId, formik.values.fechaInicio, formik.values.fechaFin, formik]);
+  }, [claseId, formik.values.fechaInicio, formik.values.fechaFin]);
 
   if (fetching) return <Spinner />;
   if (error) {
@@ -51,8 +58,24 @@ const ClaseForm: React.FC = () => {
     );
   }
 
-  const disablePastDates = (date: Date) => {
-    return dayjs(date).isBefore(dayjs(), 'day');
+  const disablePastDates = (date: Date) => dayjs(date).isBefore(dayjs(), 'day');
+
+  // Función que se dispara al crear una nueva opción en el select
+  const handleCreateOption = async (inputValue: string) => {
+    try {
+      // Se crea el nuevo Tipo de Clase en la API con la lógica definida (por ejemplo, esGlobal true)
+      const nuevoTipo = await createTipoClase({
+        descripcion: inputValue,
+        esGlobal: true,
+      });
+      // Se recargan los tipos de clase
+      await fetchTiposClases();
+      // Se actualiza el campo en el formulario para que contenga el nuevo id
+      formik.setFieldValue('tipoClaseId', nuevoTipo.id);
+    } catch (error) {
+      console.error('Error al crear el tipo de clase:', error);
+      // Aquí podrías agregar una notificación de error para el usuario
+    }
   };
 
   return (
@@ -61,6 +84,7 @@ const ClaseForm: React.FC = () => {
         <Form onSubmit={formik.handleSubmit}>
           <FormContainer>
             <div className="grid grid-cols-1 gap-4">
+              {/* Campo Descripción */}
               <FormItem
                 asterisk
                 label="Descripción"
@@ -76,14 +100,13 @@ const ClaseForm: React.FC = () => {
                 />
               </FormItem>
 
+              {/* Fechas */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {/* Card Fecha Inicio */}
                 <Card header="Fecha Inicio" className="p-2 shadow-sm w-fit mx-auto">
                   <FormItem
                     asterisk
                     invalid={formik.touched.fechaInicio && !!formik.errors.fechaInicio}
                     errorMessage={formik.errors.fechaInicio}
-                    className="p-0 m-0"
                   >
                     <div className="scale-90">
                       <Calendar
@@ -94,14 +117,11 @@ const ClaseForm: React.FC = () => {
                     </div>
                   </FormItem>
                 </Card>
-
-                {/* Card Fecha Fin */}
                 <Card header="Fecha Fin" className="p-2 shadow-sm w-fit mx-auto">
                   <FormItem
                     asterisk
                     invalid={formik.touched.fechaFin && !!formik.errors.fechaFin}
                     errorMessage={formik.errors.fechaFin}
-                    className="p-0 m-0"
                   >
                     <div className="scale-90">
                       <Calendar
@@ -113,26 +133,37 @@ const ClaseForm: React.FC = () => {
                   </FormItem>
                 </Card>
               </div>
-              
 
+              {/* Campo Tipo de Clase con CreatableSelect */}
               <FormItem
                 asterisk
                 label="Tipo de Clase"
                 invalid={formik.touched.tipoClaseId && !!formik.errors.tipoClaseId}
                 errorMessage={formik.errors.tipoClaseId}
               >
-                <CreatableSelect
-                  isClearable
-                  placeholder="Seleccione o cree un tipo de clase"
-                  onChange={(newValue) => {
-                    const valueUpper = newValue ? newValue.value.toUpperCase() : '';
-                    formik.setFieldValue('tipoClaseId', valueUpper);
-                  }}
-                  options={tiposClases.map(tc => ({ value: tc.descripcion, label: tc.descripcion }))}
-                  isLoading={loadingTiposClases}
-                />
+                {Array.isArray(tiposClases) ? (
+                  <CreatableSelect
+                    isClearable
+                    placeholder="Seleccione o cree un tipo de clase"
+                    onChange={(option) => {
+                      // Si se selecciona un tipo existente, asigna su id
+                      formik.setFieldValue('tipoClaseId', option ? Number(option.value) : '');
+                    }}
+                    options={tiposClases.map(tc => ({
+                      value: tc.id,
+                      label: tc.descripcion,
+                    }))}
+                    isLoading={loadingTiposClases}
+                    onCreateOption={handleCreateOption}
+                  />
+                ) : (
+                  <Notification title="Error" type="danger">
+                    tiposClases no es un array válido.
+                  </Notification>
+                )}
               </FormItem>
 
+              {/* Campo Rutina */}
               <FormItem
                 asterisk
                 label="Rutina"
@@ -145,9 +176,9 @@ const ClaseForm: React.FC = () => {
                   className="w-full"
                 />
               </FormItem>
-
-
             </div>
+
+            {/* Botón para enviar el formulario */}
             <div className="flex justify-end mt-4">
               <Button variant="solid" type="submit" disabled={loading}>
                 {claseId ? 'Actualizar' : 'Crear'} Clase

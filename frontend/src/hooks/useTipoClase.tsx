@@ -7,33 +7,53 @@ export const useTipoClase = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    setLoading(true);
-    apiGetTiposClases()
-      .then(setTiposClases)
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, []);
-
-  const createTipoClase = async (tipoClase: TipoClase) => {
+  const fetchTiposClases = async () => {
     setLoading(true);
     try {
-      const newTipoClase = await apiCreateTipoClase(tipoClase);
-      setTiposClases([...tiposClases, newTipoClase]);
+      const response = await apiGetTiposClases();
+      console.log('Response from apiGetTiposClases:', response);
+      setTiposClases(response.data.data);
     } catch (err) {
+      console.error('Error fetching tiposClases:', err);
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchTiposClases();
+  }, []);
+
+  const createTipoClase = async (tipoClase: TipoClase) => {
+    setLoading(true);
+    try {
+      const response = await apiCreateTipoClase(tipoClase);
+      console.log('Response from apiCreateTipoClase:', response);
+      const newTipoClase = response.data.data;
+      setTiposClases([...tiposClases, newTipoClase]);
+      return newTipoClase;
+    } catch (err) {
+      console.error('Error creating tipoClase:', err);
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   const updateTipoClase = async (id: number, tipoClase: TipoClase) => {
     setLoading(true);
     try {
-      const updatedTipoClase = await apiUpdateTipoClase(id, tipoClase);
+      const response = await apiUpdateTipoClase(id, tipoClase);
+      console.log('Response from apiUpdateTipoClase:', response);
+      const updatedTipoClase = response.data.data;
       setTiposClases(tiposClases.map(tc => (tc.id === id ? updatedTipoClase : tc)));
+      return updatedTipoClase;
     } catch (err) {
+      console.error('Error updating tipoClase:', err);
       setError(err.message);
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -45,11 +65,13 @@ export const useTipoClase = () => {
       await apiDeleteTipoClase(id);
       setTiposClases(tiposClases.filter(tc => tc.id !== id));
     } catch (err) {
+      console.error('Error deleting tipoClase:', err);
       setError(err.message);
+      throw err;
     } finally {
       setLoading(false);
     }
   };
 
-  return { tiposClases, loading, error, createTipoClase, updateTipoClase, deleteTipoClase };
+  return { tiposClases, loading, error, createTipoClase, updateTipoClase, deleteTipoClase, fetchTiposClases };
 };
