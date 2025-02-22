@@ -2,10 +2,9 @@
 import { lazy } from 'react'
 import authRoute from './authRoute'
 import type { Routes } from '@/@types/routes'
+import { ADMIN, ENTRENADOR, DUENIO } from '@/constants/roles.constant'
 
 export const publicRoutes: Routes = [...authRoute]
-import { ADMIN, ENTRENADOR, DUENIO } from '@/constants/roles.constant'
-import path from 'path'
 
 export const protectedRoutes = [
     {
@@ -13,12 +12,6 @@ export const protectedRoutes = [
         path: '/home',
         component: lazy(() => import('@/views/Home')),
         authority: [ADMIN, ENTRENADOR, DUENIO],
-    },
-    {
-        key: 'tiposDeClases',
-        path: '/ajustes/tipos-de-clases',
-        component: lazy(() => import('@/views/ajustes/TiposDeClases')),
-        authority: [ADMIN, DUENIO],
     },
     {
         key: 'categoriasEjercicios',
@@ -33,31 +26,27 @@ export const protectedRoutes = [
         authority: [ADMIN, DUENIO],
     },
     {
-        component: lazy(() => import('@/views/ejercicios/ExerciseListPage')), // Ruta principal para ejercicios
-        authority: [ADMIN, DUENIO],
-    },
-    {
         key: 'listado-ejercicios',
         path: '/ejercicios/listado',
-        component: lazy(() => import('@/views/ejercicios/ExerciseListPage')), // Ruta para el listado
+        component: lazy(() => import('@/views/ejercicios/ExerciseListPage')),
         authority: [ADMIN, DUENIO],
     },
     {
         key: 'nuevo-ejercicio',
         path: '/ejercicios/nueva',
-        component: lazy(() => import('@/views/ejercicios/ExerciseFormPage')), // Ruta para crear un nuevo ejercicio
+        component: lazy(() => import('@/views/ejercicios/ExerciseFormPage')),
         authority: [ADMIN, DUENIO],
     },
     {
         key: 'detalle-ejercicio',
         path: '/ejercicios/:id',
-        component: lazy(() => import('@/views/ejercicios/ExerciseDetailPage')), // Ruta para detalles del ejercicio
+        component: lazy(() => import('@/views/ejercicios/ExerciseDetailPage')),
         authority: [ADMIN, DUENIO],
     },
     {
         key: 'editar-ejercicio',
         path: '/ejercicios/editar/:id',
-        component: lazy(() => import('@/views/ejercicios/ExerciseFormPage')), // Reutiliza el formulario para editar
+        component: lazy(() => import('@/views/ejercicios/ExerciseFormPage')),
         authority: [ADMIN, DUENIO],
     },    
     {
@@ -91,18 +80,17 @@ export const protectedRoutes = [
         authority: [DUENIO],
     },
     {
-        key: 'dispositivos',
+        key: 'dispositivos-nuevo',
         path: '/dispositivos/nuevo',
         component: lazy(() => import('@/views/dispositivos/DeviceNewPage')),
         authority: [DUENIO],
     },
     {
-        key: 'dispositivos',
+        key: 'dispositivos-editar',
         path: '/dispositivos/editar/:id',
         component: lazy(() => import('@/views/dispositivos/DeviceNewPage')),
         authority: [DUENIO],
     },
-    
     {
         key: 'rutinas',
         path: '/rutinas',
@@ -156,5 +144,23 @@ export const protectedRoutes = [
         path: '/clases/:id/editar',
         component: lazy(() => import('@/views/clases/ClaseForm')),
         authority: [ADMIN, ENTRENADOR, DUENIO],
+    },
+    {
+        key: 'tiposDeClases',
+        path: '/clases/tipo/listado',
+        component: lazy(() => import('@/views/tiposDeClases/TiposDeClasesListPage')),
+        authority: [ADMIN, DUENIO],
+    },
+    {
+        key: 'nuevoTipoClase',
+        path: '/clases/tipo/nuevo',
+        component: lazy(() => import('@/views/tiposDeClases/TipoClaseFormPage')),
+        authority: [ADMIN, DUENIO],
+    },
+    {
+        key: 'editarTipoClase',
+        path: '/clases/tipo/:id/editar',
+        component: lazy(() => import('@/views/tiposDeClases/TipoClaseFormPage')),
+        authority: [ADMIN, DUENIO],
     },
 ]

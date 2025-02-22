@@ -13,6 +13,8 @@ import Spinner from '@/components/ui/Spinner';
 import SelectRutinas from '@/views/clases/components/SelectRutinas';
 import * as Yup from 'yup';
 import dayjs from 'dayjs';
+import CreatableSelect from 'react-select/creatable';
+import { useTipoClase } from '@/hooks/useTipoClase';
 
 const validationSchema = Yup.object().shape({
   descripcion: Yup.string().required('La descripción es obligatoria'),
@@ -30,6 +32,8 @@ const ClaseForm: React.FC = () => {
   const { formik, loading, fetching, error } = useClaseForm(claseId, () => {
     navigate('/clases/listado');
   });
+
+  const { tiposClases, loading: loadingTiposClases } = useTipoClase();
 
   useEffect(() => {
     if (!claseId && !formik.values.fechaInicio && !formik.values.fechaFin) {
@@ -117,12 +121,15 @@ const ClaseForm: React.FC = () => {
                 invalid={formik.touched.tipoClaseId && !!formik.errors.tipoClaseId}
                 errorMessage={formik.errors.tipoClaseId}
               >
-                <Field
-                  type="number"
-                  name="tipoClaseId"
-                  placeholder="Ingrese el tipo de clase"
-                  component={Input}
-                  className="w-full"
+                <CreatableSelect
+                  isClearable
+                  placeholder="Seleccione o cree un tipo de clase"
+                  onChange={(newValue) => {
+                    const valueUpper = newValue ? newValue.value.toUpperCase() : '';
+                    formik.setFieldValue('tipoClaseId', valueUpper);
+                  }}
+                  options={tiposClases.map(tc => ({ value: tc.descripcion, label: tc.descripcion }))}
+                  isLoading={loadingTiposClases}
                 />
               </FormItem>
 

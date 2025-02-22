@@ -11,29 +11,7 @@ import {
 } from '@tanstack/react-table';
 import type { ColumnDef, ColumnSort } from '@tanstack/react-table';
 import { IClase } from '@/types/clases';
-
-const columns: ColumnDef<IClase>[] = [
-    {
-        header: 'Descripción',
-        accessorKey: 'descripcion',
-    },
-    {
-        header: 'Fecha Inicio',
-        accessorKey: 'fechaInicio',
-    },
-    {
-        header: 'Fecha Fin',
-        accessorKey: 'fechaFin',
-    },
-    {
-        header: 'Tipo de Clase',
-        accessorKey: 'tipoClaseId',
-    },
-    {
-        header: 'Rutina',
-        accessorKey: 'rutinaId',
-    },
-];
+import { useTipoClase } from '@/hooks/useTipoClase';
 
 const { Tr, Th, Td, THead, TBody, Sorter } = Table;
 
@@ -47,9 +25,43 @@ const pageSizeOptions = [
 
 const ClaseTable = ({ data }: { data: IClase[] }) => {
     const [sorting, setSorting] = useState<ColumnSort[]>([]);
+    const { tiposClases, loading: loadingTiposClases } = useTipoClase();
+
+    const dataWithTipoClase = useMemo(() => {
+        return data.map(clase => {
+            const tipoClase = tiposClases.find(tc => tc.id === clase.tipoClaseId);
+            return {
+                ...clase,
+                tipoClaseDescripcion: tipoClase ? tipoClase.descripcion : 'Desconocido',
+            };
+        });
+    }, [data, tiposClases]);
+
+    const columns: ColumnDef<IClase>[] = [
+        {
+            header: 'Descripción',
+            accessorKey: 'descripcion',
+        },
+        {
+            header: 'Fecha Inicio',
+            accessorKey: 'fechaInicio',
+        },
+        {
+            header: 'Fecha Fin',
+            accessorKey: 'fechaFin',
+        },
+        {
+            header: 'Tipo de Clase',
+            accessorKey: 'tipoClaseDescripcion',
+        },
+        {
+            header: 'Rutina',
+            accessorKey: 'rutinaId',
+        },
+    ];
 
     const table = useReactTable({
-        data,
+        data: dataWithTipoClase,
         columns,
         state: {
             sorting,
