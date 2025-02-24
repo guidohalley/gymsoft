@@ -154,14 +154,14 @@ const getRutinaVideos = async (req, res,next) => {
         const datoExistente = await commonService.getById(model,id,gimnasioId);
 
         if(datoExistente === null) {
-            return next(mensajeError('No se encontraron datos', HTTP_STATUS.NOT_FOUND));
+            return next(mensajeError('No se la clase', HTTP_STATUS.NOT_FOUND));
         }
 
         const rutina = await getRutina(id);
 
         res.json(mensajeExito('Datos encontrados', HTTP_STATUS.OK, rutina));
     } catch (error) {
-        return next(mensajeError("Error al obtener los datos", HTTP_STATUS.INTERNAL_SERVER_ERROR, null, __fileName, 'getRutina', error));
+        return next(mensajeError("Error al obtener la clase", HTTP_STATUS.INTERNAL_SERVER_ERROR, null, __fileName, 'getRutina', error));
     }
 }
 
