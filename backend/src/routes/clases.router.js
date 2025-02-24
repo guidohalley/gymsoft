@@ -33,6 +33,7 @@ router.get('/',clasesController.getAll );
 router.get('/:id', clasesController.getById);
 router.put('/:id',validarId.concat(validarActualizacion),clasesController.update);
 router.delete('/:id',validarId,clasesController.remove);
+router.get('/:id/rutina',validarId,clasesController.getRutinaVideos);
 
 
 export default router;
