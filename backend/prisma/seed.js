@@ -7,6 +7,7 @@ const crearRoles = async () => {
     {id:2, nombre: 'Dueño', descripcion: 'Dueño del gimnasio' },
     {id:3, nombre: 'Entrenador', descripcion: 'Entrenador del Gym' },
     {id:4, nombre: 'Cliente', descripcion: 'Cliente del Gym' },
+    {id:5, nombre: 'Dispositivo', descripcion: 'Dispositivo para mostrar clases' },
   ];
 
   await prisma.rol.createMany({
@@ -110,6 +111,17 @@ const crearUsuarios = async () => {
       "password": "$2b$10$a8VEjlLNJ6h0tMi8o6xgnOV7SrhFsvS2oLXtAF6nod8jlVpJwXqHK",
       "gimnasioId": 1,
       "rolId": 3
+    },
+    {
+      "email": "tvneutron@gmail.com",
+      "nombre": "TV",
+      "apellido": "Neutron",
+      "nroTelefono": "",
+      "direccion": "",
+      "activo": true,
+      "password": "$2b$10$a8VEjlLNJ6h0tMi8o6xgnOV7SrhFsvS2oLXtAF6nod8jlVpJwXqHK",
+      "gimnasioId": 1,
+      "rolId": 5
     },
   ]
 
