@@ -2,9 +2,10 @@
 import { lazy } from 'react'
 import authRoute from './authRoute'
 import type { Routes } from '@/@types/routes'
-import { ADMIN, ENTRENADOR, DUENIO } from '@/constants/roles.constant'
 
 export const publicRoutes: Routes = [...authRoute]
+import { ADMIN, ENTRENADOR, DUENIO } from '@/constants/roles.constant'
+import path from 'path'
 
 export const protectedRoutes = [
     {
@@ -12,6 +13,12 @@ export const protectedRoutes = [
         path: '/home',
         component: lazy(() => import('@/views/Home')),
         authority: [ADMIN, ENTRENADOR, DUENIO],
+    },
+    {
+        key: 'tiposDeClases',
+        path: '/ajustes/tipos-de-clases',
+        component: lazy(() => import('@/views/ajustes/TiposDeClases')),
+        authority: [ADMIN, DUENIO],
     },
     {
         key: 'categoriasEjercicios',
@@ -26,32 +33,36 @@ export const protectedRoutes = [
         authority: [ADMIN, DUENIO],
     },
     {
+        component: lazy(() => import('@/views/ejercicios/ExerciseListPage')), // Ruta principal para ejercicios
+        authority: [ADMIN, DUENIO],
+    },
+    {
         key: 'listado-ejercicios',
         path: '/ejercicios/listado',
-        component: lazy(() => import('@/views/ejercicios/ExerciseListPage')),
+        component: lazy(() => import('@/views/ejercicios/ExerciseListPage')), // Ruta para el listado
         authority: [ADMIN, DUENIO],
     },
     {
         key: 'nuevo-ejercicio',
-        path: '/ejercicios/nueva',
-        component: lazy(() => import('@/views/ejercicios/ExerciseFormPage')),
+        path: '/ejercicios/nuevo',
+        component: lazy(() => import('@/views/ejercicios/ExerciseFormPage')), // Ruta para crear un nuevo ejercicio
         authority: [ADMIN, DUENIO],
     },
     {
         key: 'detalle-ejercicio',
         path: '/ejercicios/:id',
-        component: lazy(() => import('@/views/ejercicios/ExerciseDetailPage')),
+        component: lazy(() => import('@/views/ejercicios/ExerciseDetailPage')), // Ruta para detalles del ejercicio
         authority: [ADMIN, DUENIO],
     },
     {
         key: 'editar-ejercicio',
         path: '/ejercicios/editar/:id',
-        component: lazy(() => import('@/views/ejercicios/ExerciseFormPage')),
+        component: lazy(() => import('@/views/ejercicios/ExerciseFormPage')), // Reutiliza el formulario para editar
         authority: [ADMIN, DUENIO],
     },    
     {
         key: 'bloques-list',
-        path: '/bloques',
+        path: '/bloques/listado',
         component: lazy(() => import('@/views/BloquesEjercicios/BloquesListPage')),
         authority: [ADMIN, DUENIO],
     },
@@ -63,7 +74,7 @@ export const protectedRoutes = [
     },
     {
         key: 'bloque-new',
-        path: '/bloques/nueva',
+        path: '/bloques/nuevo',
         component: lazy(() => import('@/views/BloquesEjercicios/components/BloquesForm')),
         authority: [ADMIN, DUENIO],
     },
@@ -80,17 +91,18 @@ export const protectedRoutes = [
         authority: [DUENIO],
     },
     {
-        key: 'dispositivos-nuevo',
+        key: 'dispositivos',
         path: '/dispositivos/nuevo',
         component: lazy(() => import('@/views/dispositivos/DeviceNewPage')),
         authority: [DUENIO],
     },
     {
-        key: 'dispositivos-editar',
+        key: 'dispositivos',
         path: '/dispositivos/editar/:id',
         component: lazy(() => import('@/views/dispositivos/DeviceNewPage')),
         authority: [DUENIO],
     },
+    
     {
         key: 'rutinas',
         path: '/rutinas',
