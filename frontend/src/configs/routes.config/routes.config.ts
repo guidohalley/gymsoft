@@ -62,7 +62,7 @@ export const protectedRoutes = [
     },    
     {
         key: 'bloques-list',
-        path: '/bloques',
+        path: '/bloques/listado',
         component: lazy(() => import('@/views/BloquesEjercicios/BloquesListPage')),
         authority: [ADMIN, DUENIO],
     },
@@ -133,5 +133,46 @@ export const protectedRoutes = [
         component: lazy(() => import('@/views/rutinas/RutinaFormPage')),
         authority: [ADMIN, ENTRENADOR, DUENIO],
     },
-
+    {
+        key: 'clases-listado',
+        path: '/clases/listado',
+        component: lazy(() => import('@/views/clases/ClasesListPage')),
+        authority: [ADMIN, ENTRENADOR, DUENIO],
+    },
+    {
+        key: 'clase-detalle',
+        path: '/clases/:id',
+        component: lazy(() => import('@/views/clases/ClaseDetailPage')),
+        authority: [ADMIN, ENTRENADOR, DUENIO],
+    },
+    {
+        key: 'clase-nueva',
+        path: '/clases/nueva',
+        component: lazy(() => import('@/views/clases/ClaseForm')),
+        authority: [ADMIN, ENTRENADOR, DUENIO],
+    },
+    {
+        key: 'clase-editar',
+        path: '/clases/:id/editar',
+        component: lazy(() => import('@/views/clases/ClaseForm')),
+        authority: [ADMIN, ENTRENADOR, DUENIO],
+    },
+    {
+        key: 'tiposDeClases',
+        path: '/clases/tipo/listado',
+        component: lazy(() => import('@/views/tiposDeClases/TiposDeClasesListPage')),
+        authority: [ADMIN, DUENIO],
+    },
+    {
+        key: 'nuevoTipoClase',
+        path: '/clases/tipo/nuevo',
+        component: lazy(() => import('@/views/tiposDeClases/TipoClaseFormPage')),
+        authority: [ADMIN, DUENIO],
+    },
+    {
+        key: 'editarTipoClase',
+        path: '/clases/tipo/:id/editar',
+        component: lazy(() => import('@/views/tiposDeClases/TipoClaseFormPage')),
+        authority: [ADMIN, DUENIO],
+    },
 ]

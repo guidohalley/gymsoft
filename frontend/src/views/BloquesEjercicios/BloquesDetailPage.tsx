@@ -18,6 +18,13 @@ const BloquesDetailPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        if (isNaN(bloqueId) || bloqueId <= 0) {
+            console.error('ID de bloque no válido:', id);
+            setError('ID de bloque no válido.');
+            setLoading(false);
+            return;
+        }
+
         const fetchBloque = async () => {
             try {
                 const response = await getBloqueById(bloqueId);
@@ -40,7 +47,7 @@ const BloquesDetailPage: React.FC = () => {
                 customIcon={<HiOutlineCheckCircle />}
             >
                 Los datos del bloque han sido actualizados correctamente.
-            </Notification>
+            </Notification>,
         );
         navigate('/bloques');
     };
