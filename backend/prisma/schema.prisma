@@ -78,25 +78,12 @@ model Dispositivo {
   descripcion       String             @db.VarChar(255)
   gimnasioId        Int                @map("gimnasio_id")
   activo            Boolean            @default(true)
+  claseId           Int?               @map("clase_id")
   createdAt         DateTime           @default(now()) @map("created_at")
   updatedAt         DateTime           @updatedAt @map("updated_at")
   gimnasio          Gimnasio           @relation(fields: [gimnasioId], references: [id])
-  clasesDispositivo ClaseDispositivo[]
-
+  clase             Clase?             @relation(fields: [claseId], references: [id])
   @@map("dispositivos")
-}
-
-model ClaseDispositivo {
-  claseId       Int         @map("clase_id")
-  dispositivoId Int         @map("dispositivo_id")
-  fechaInicio   DateTime    @map("fecha_inicio")
-  fechaFin      DateTime    @map("fecha_fin")
-  orden         Int
-  clase         Clase       @relation(fields: [claseId], references: [id])
-  dispositivo   Dispositivo @relation(fields: [dispositivoId], references: [id])
-
-  @@id([claseId, dispositivoId])
-  @@map("clases_dispositivos")
 }
 
 model TipoClase {
@@ -128,10 +115,10 @@ model Clase {
   createdAt       DateTime           @default(now()) @map("created_at")
   updatedAt       DateTime           @updatedAt @map("updated_at")
   rutina          Rutina?            @relation(fields: [rutinaId], references: [id])
-  claseDispotivio ClaseDispositivo[]
   gimnasio        Gimnasio           @relation(fields: [gimnasioId], references: [id])
   tipoClase       TipoClase          @relation(fields: [tipoClaseId], references: [id])
   usuario         Usuario            @relation(fields: [creadoPor], references: [id])
+  dispositivos    Dispositivo[]
 
   @@map("clases")
 }
