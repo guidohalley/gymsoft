@@ -47,21 +47,11 @@ CREATE TABLE "dispositivos" (
     "descripcion" VARCHAR(255) NOT NULL,
     "gimnasio_id" INTEGER NOT NULL,
     "activo" BOOLEAN NOT NULL DEFAULT true,
+    "clase_id" INTEGER,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "dispositivos_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "clases_dispositivos" (
-    "clase_id" INTEGER NOT NULL,
-    "dispositivo_id" INTEGER NOT NULL,
-    "fecha_inicio" TIMESTAMP(3) NOT NULL,
-    "fecha_fin" TIMESTAMP(3) NOT NULL,
-    "orden" INTEGER NOT NULL,
-
-    CONSTRAINT "clases_dispositivos_pkey" PRIMARY KEY ("clase_id","dispositivo_id")
 );
 
 -- CreateTable
@@ -239,10 +229,7 @@ ALTER TABLE "usuarios" ADD CONSTRAINT "usuarios_gimnasio_id_fkey" FOREIGN KEY ("
 ALTER TABLE "dispositivos" ADD CONSTRAINT "dispositivos_gimnasio_id_fkey" FOREIGN KEY ("gimnasio_id") REFERENCES "gimnasios"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "clases_dispositivos" ADD CONSTRAINT "clases_dispositivos_clase_id_fkey" FOREIGN KEY ("clase_id") REFERENCES "clases"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "clases_dispositivos" ADD CONSTRAINT "clases_dispositivos_dispositivo_id_fkey" FOREIGN KEY ("dispositivo_id") REFERENCES "dispositivos"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "dispositivos" ADD CONSTRAINT "dispositivos_clase_id_fkey" FOREIGN KEY ("clase_id") REFERENCES "clases"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "tipos_clases" ADD CONSTRAINT "tipos_clases_creado_por_fkey" FOREIGN KEY ("creado_por") REFERENCES "usuarios"("id") ON DELETE SET NULL ON UPDATE CASCADE;
