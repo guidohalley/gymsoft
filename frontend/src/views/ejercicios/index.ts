@@ -1,3 +1,4 @@
 
 export { default as ExerciseListPage } from './ExerciseListPage';
-// En el futuro, agregaremos aquí las exportaciones para otras páginas o componentes
+export { default as ExerciseDetailPage } from './ExerciseDetailPage';
+export { default as ExerciseFormPage } from './ExerciseFormPage';
