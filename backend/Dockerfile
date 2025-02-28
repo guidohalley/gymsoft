@@ -9,18 +9,15 @@ COPY package*.json ./
 
 # Instalar las dependencias
 RUN npm install
+RUN npm install -g nodemon
 
 # Copiar el resto del código de la aplicación
 COPY . .
 
-# Generar Prisma Client
 RUN npx prisma generate
-
-# Ejecutar las migraciones de Prisma
-RUN npx prisma migrate deploy
 
 # Exponer el puerto de la API
 EXPOSE 5000
 
 # Comando para iniciar el servidor
-CMD ["node", "server.js"]
+CMD ["nodemon", "--legacy-watch", "server.js"]
