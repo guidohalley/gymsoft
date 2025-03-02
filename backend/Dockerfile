@@ -16,14 +16,8 @@ COPY . .
 # Generar Prisma Client
 RUN npx prisma generate
 
-# Asegurar que DATABASE_URL esté disponible antes de correr migraciones
-ENV DATABASE_URL=$DATABASE_URL
-
-# Ejecutar migraciones solo si hay cambios pendientes
-RUN sh -c 'if npx prisma migrate status | grep -q "Database schema is up to date!"; then echo "No hay migraciones pendientes"; else npx prisma migrate deploy; fi'
-
 # Exponer el puerto de la API
 EXPOSE 5000
 
-# Comando para iniciar el servidor en producción
-CMD ["node", "server.js"]
+# Comando para iniciar el servidor en producción y ejecutar migraciones al inicio
+CMD npx prisma migrate deploy && node server.js
