@@ -4,15 +4,16 @@ import authRoute from './authRoute'
 import type { Routes } from '@/@types/routes'
 
 export const publicRoutes: Routes = [...authRoute]
-import { ADMIN, ENTRENADOR, DUENIO } from '@/constants/roles.constant'
+import { ADMIN, ENTRENADOR, DUENIO, DISPOSITIVO } from '@/constants/roles.constant'
 import path from 'path'
+import { components } from 'react-select'
 
 export const protectedRoutes = [
     {
         key: 'home',
         path: '/home',
         component: lazy(() => import('@/views/Home')),
-        authority: [ADMIN, ENTRENADOR, DUENIO],
+        authority: [ADMIN, ENTRENADOR, DUENIO,DISPOSITIVO],
     },
     {
         key: 'tiposDeClases',
@@ -87,22 +88,21 @@ export const protectedRoutes = [
     {
         key: 'dispositivos',
         path: '/dispositivos',
-        component: lazy(() => import('@/views/dispositivos')),
+        component: lazy(() => import('@/views/dispositivos/DeviceListPage')),
         authority: [DUENIO],
     },
     {
-        key: 'dispositivos',
+        key: 'dispositivos-new',
         path: '/dispositivos/nuevo',
         component: lazy(() => import('@/views/dispositivos/DeviceNewPage')),
         authority: [DUENIO],
     },
     {
-        key: 'dispositivos',
+        key: 'dispositivos-edit',
         path: '/dispositivos/editar/:id',
-        component: lazy(() => import('@/views/dispositivos/DeviceNewPage')),
+        components: lazy(() => import('@/views/dispositivos/DeviceNewPage')),
         authority: [DUENIO],
     },
-    
     {
         key: 'rutinas',
         path: '/rutinas',
@@ -175,4 +175,11 @@ export const protectedRoutes = [
         component: lazy(() => import('@/views/tiposDeClases/TipoClaseFormPage')),
         authority: [ADMIN, DUENIO],
     },
+    {
+        key: 'transmitir-dispositivo',
+        path: '/transmision-dispositivo',
+        component: lazy(() => import('@/views/dispositivos/DeviceTransmission')),
+        authority: [DISPOSITIVO],
+    }
+    
 ]

@@ -43,10 +43,19 @@ export async function apiDeleteClase(id: number) {
     });
 }
 
+// Función para obtener la rutina de una clase por su ID
+export async function apiGetClaseRutina(id: number) {
+    return ApiService.fetchData<IClase, void>({
+        url: `/clases/${id}/rutina`,
+        method: 'get',
+    });
+}
+
 export default {
     apiGetClases,
     apiGetClaseById,
     apiCreateClase,
     apiUpdateClase,
     apiDeleteClase,
+    apiGetClaseRutina,
 };

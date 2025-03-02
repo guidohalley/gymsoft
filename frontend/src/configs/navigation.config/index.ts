@@ -4,18 +4,29 @@ import {
     NAV_ITEM_TYPE_COLLAPSE
 } from '@/constants/navigation.constant';
 import type { NavigationTree } from '@/@types/navigation';
-import { ADMIN, DUENIO, ENTRENADOR } from '@/constants/roles.constant';
+import { ADMIN, DUENIO, ENTRENADOR, DISPOSITIVO } from '@/constants/roles.constant';
 
 const navigationConfig: NavigationTree[] = [
     {
         key: 'home',
         path: '/home',
-        title: '🏠 Home',
+        title: '🏠 Inicio',
         translateKey: 'nav.home',
         icon: 'HiOutlineHome',
         type: NAV_ITEM_TYPE_ITEM,
         authority: [],
         subMenu: [],
+    },
+    {
+        key: 'transmitir',
+        path: '/transmision-dispositivo',
+        title: 'Transmitir',
+        translateKey: 'nav.transmitir',
+        icon: '',
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: [DISPOSITIVO],
+        subMenu: [],
+        
     },
     {
         key: 'categorias',
