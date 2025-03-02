@@ -1,5 +1,5 @@
 # Usar una imagen base de Node.js
-FROM node:20.17-alpine
+FROM node:20.17-alpine AS build
 
 # Establecer el directorio de trabajo dentro del contenedor
 WORKDIR /app
@@ -16,14 +16,12 @@ COPY . .
 # Construir el proyecto con Vite
 RUN npm run build
 
-# Eliminar las dependencias de desarrollo para reducir el tamaño de la imagen
-RUN npm prune --production
+# Usar una imagen de Nginx para servir los archivos estáticos
+FROM nginx:alpine
+COPY --from=build /app/dist /usr/share/nginx/html
 
-# Instalar un servidor web liviano para servir los archivos estáticos
-RUN npm install -g serve
+# Exponer el puerto 80 para servir en producción
+EXPOSE 80
 
-# Exponer el puerto 4173 (Vite usa este puerto en producción)
-EXPOSE 4173
-
-# Iniciar el servidor en producción
-CMD ["serve", "-s", "dist", "-l", "4173"]
+# Iniciar Nginx
+CMD ["nginx", "-g", "daemon off;"]
