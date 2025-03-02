@@ -7,14 +7,17 @@ WORKDIR /app
 # Copiar los archivos de package.json y package-lock.json
 COPY package*.json ./
 
-# Instalar las dependencias de producción (sin las devDependencies)
-RUN npm install --production
+# Instalar TODAS las dependencias (incluidas las de desarrollo)
+RUN npm install
 
 # Copiar el resto del código de la aplicación
 COPY . .
 
 # Construir el proyecto con Vite
 RUN npm run build
+
+# Eliminar las dependencias de desarrollo para reducir el tamaño de la imagen
+RUN npm prune --production
 
 # Instalar un servidor web liviano para servir los archivos estáticos
 RUN npm install -g serve
