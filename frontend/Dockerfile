@@ -8,13 +8,19 @@ WORKDIR /app
 COPY package*.json ./
 
 # Instalar las dependencias de producción (sin las devDependencies)
-RUN npm install
+RUN npm install --production
 
 # Copiar el resto del código de la aplicación
 COPY . .
 
+# Construir el proyecto con Vite
+RUN npm run build
 
-EXPOSE 5173
+# Instalar un servidor web liviano para servir los archivos estáticos
+RUN npm install -g serve
 
-#Establece el comando por defecto para iniciar Vite en modo desarrollo
-CMD ["npm", "run",  "dev"]
+# Exponer el puerto 4173 (Vite usa este puerto en producción)
+EXPOSE 4173
+
+# Iniciar el servidor en producción
+CMD ["serve", "-s", "dist", "-l", "4173"]
