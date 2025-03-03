@@ -12,6 +12,7 @@ RUN npm run build
 
 # Etapa de producción
 FROM nginx:stable-alpine
+
 # Copiar los archivos generados (asumiendo que el output está en "build")
 COPY --from=builder /app/build /usr/share/nginx/html
 
@@ -20,5 +21,8 @@ COPY nginx.conf /etc/nginx/nginx.conf
 
 # Exponer el puerto en el que nginx servirá la aplicación
 EXPOSE 80
+
+# Establecer un valor por defecto para PORT
+ENV PORT 80
 
 CMD envsubst '$PORT' < /etc/nginx/nginx.conf > /tmp/nginx.conf && mv /tmp/nginx.conf /etc/nginx/nginx.conf && nginx -g 'daemon off;'
