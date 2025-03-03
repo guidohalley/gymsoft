@@ -12,8 +12,8 @@ RUN npm run build
 
 # Etapa de producción
 FROM nginx:stable-alpine
-# Copiar los archivos generados (asumiendo que el output está en la carpeta "dist")
-COPY --from=builder /app/dist /usr/share/nginx/html
+# Copiar los archivos generados (asumiendo que el output está en la carpeta "build")
+COPY --from=builder /app/build /usr/share/nginx/html
 
 # Exponer el puerto en el que nginx servirá la aplicación
 EXPOSE 80
