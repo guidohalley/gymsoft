@@ -23,6 +23,12 @@ export const dateLocales: {
     [key: string]: () => Promise<ILocale>
 } = {
     en: () => import('dayjs/locale/en'),
+    es: () => import('dayjs/locale/es'),
+}
+
+const loadDateLocale = async (lang: string) => {
+  const loader = dateLocales[lang] || dateLocales[appConfig.locale] || dateLocales['en']
+  return loader()
 }
 
 export default i18n
