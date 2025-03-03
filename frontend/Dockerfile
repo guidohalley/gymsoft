@@ -1,20 +1,21 @@
-# Usar una imagen base de Node.js
-FROM node:20.17-alpine
-
-# Establecer el directorio de trabajo dentro del contenedor
+# Etapa de construcción
+FROM node:20.17-alpine AS builder
 WORKDIR /app
 
-# Copiar los archivos de package.json y package-lock.json
+# Copiar archivos de dependencias e instalar
 COPY package*.json ./
-
-# Instalar las dependencias de producción (sin las devDependencies)
 RUN npm install
 
-# Copiar el resto del código de la aplicación
+# Copiar el resto del código y construir la aplicación
 COPY . .
+RUN npm run build
 
+# Etapa de producción
+FROM nginx:stable-alpine
+# Copiar los archivos generados (asumiendo que el output está en la carpeta "dist")
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-EXPOSE 5173
+# Exponer el puerto en el que nginx servirá la aplicación
+EXPOSE 80
 
-#Establece el comando por defecto para iniciar Vite en modo desarrollo
-CMD ["npm", "run",  "dev"]
+CMD ["nginx", "-g", "daemon off;"]
